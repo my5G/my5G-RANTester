@@ -66,5 +66,7 @@ func main() {
 				usage()
 
 		}
+	} else {
+		usage()
 	}
 }
