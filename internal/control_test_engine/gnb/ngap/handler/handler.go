@@ -459,7 +459,7 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 						sst = "was not informed"
 					}
 
-					if slice.SNSSAI.SD.Value != nil {
+					if slice.SNSSAI.SD != nil {
 						sd = fmt.Sprintf("%x", slice.SNSSAI.SD.Value)
 					} else {
 						sd = "was not informed"

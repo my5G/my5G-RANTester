@@ -29,8 +29,8 @@ func RegistrationUe(conf config.Config, id uint8) {
 		conf.Ue.Sqn,
 		conf.Ue.Hplmn.Mcc,
 		conf.Ue.Hplmn.Mnc,
-		int32(conf.Ue.Snssai.Sd),
-		conf.Ue.Snssai.Sst,
+		int32(conf.Ue.Snssai.Sst),
+		conf.Ue.Snssai.Sd,
 		id)
 
 	// starting communication with GNB and listen.

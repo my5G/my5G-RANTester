@@ -35,8 +35,8 @@ type DataInfo struct {
 }
 
 type Slice struct {
-	st  string
 	sst string
+	sd  string
 }
 
 type ControlInfo struct {
@@ -49,13 +49,13 @@ type ControlInfo struct {
 	unixlistener net.Listener
 }
 
-func (gnb *GNBContext) NewRanGnbContext(gnbId, mcc, mnc, tac, st, sst, ip, ipData string, port, portData int) {
+func (gnb *GNBContext) NewRanGnbContext(gnbId, mcc, mnc, tac, sst, sd, ip, ipData string, port, portData int) {
 	gnb.controlInfo.mcc = mcc
 	gnb.controlInfo.mnc = mnc
 	gnb.controlInfo.tac = tac
 	gnb.controlInfo.gnbId = gnbId
-	gnb.sliceInfo.st = st
 	gnb.sliceInfo.sst = sst
+	gnb.sliceInfo.sd = sd
 	gnb.idUeGenerator = 1
 	gnb.idAmfGenerator = 1
 	gnb.controlInfo.gnbIp = ip
@@ -390,16 +390,16 @@ func (gnb *GNBContext) GetTacInBytes() []byte {
 }
 
 func (gnb *GNBContext) getSlice() (string, string) {
-	return gnb.sliceInfo.st, gnb.sliceInfo.sst
+	return gnb.sliceInfo.sst, gnb.sliceInfo.sd
 }
 
 func (gnb *GNBContext) GetSliceInBytes() ([]byte, []byte) {
-	stBytes, err := hex.DecodeString(gnb.sliceInfo.st)
+	stBytes, err := hex.DecodeString(gnb.sliceInfo.sst)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	sstBytes, err := hex.DecodeString(gnb.sliceInfo.sst)
+	sstBytes, err := hex.DecodeString(gnb.sliceInfo.sd)
 	if err != nil {
 		fmt.Println(err)
 	}
