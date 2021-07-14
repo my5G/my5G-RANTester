@@ -9,19 +9,12 @@ import (
 	"my5G-RANTester/lib/ngap/ngapType"
 )
 
-var TestPlmn ngapType.PLMNIdentity
-
-func init() {
-	// TODO PLMN is hardcode here.
-	TestPlmn.Value = aper.OctetString("\x02\xf8\x39")
-}
-
-func GetInitialUEMessage(ranUeNgapID int64, nasPdu []byte, fiveGSTmsi string, plmn []byte, tac []byte) ([]byte, error) {
-	message := BuildInitialUEMessage(ranUeNgapID, nasPdu, fiveGSTmsi, plmn, tac)
+func GetInitialUEMessage(ranUeNgapID int64, nasPdu []byte, fiveGSTmsi string, plmn []byte, tac []byte, ueContext bool) ([]byte, error) {
+	message := BuildInitialUEMessage(ranUeNgapID, nasPdu, fiveGSTmsi, plmn, tac, ueContext)
 	return ngap.Encoder(message)
 }
 
-func BuildInitialUEMessage(ranUeNgapID int64, nasPdu []byte, fiveGSTmsi string, plmn []byte, tac []byte) (pdu ngapType.NGAPPDU) {
+func BuildInitialUEMessage(ranUeNgapID int64, nasPdu []byte, fiveGSTmsi string, plmn []byte, tac []byte, ueContext bool) (pdu ngapType.NGAPPDU) {
 
 	pdu.Present = ngapType.NGAPPDUPresentInitiatingMessage
 	pdu.InitiatingMessage = new(ngapType.InitiatingMessage)
@@ -121,57 +114,41 @@ func BuildInitialUEMessage(ranUeNgapID int64, nasPdu []byte, fiveGSTmsi string, 
 
 		initialUEMessageIEs.List = append(initialUEMessageIEs.List, ie)
 	}
+
 	// AMF Set ID (optional)
 
 	// UE Context Request (optional)
-	ie = ngapType.InitialUEMessageIEs{}
-	ie.Id.Value = ngapType.ProtocolIEIDUEContextRequest
-	ie.Criticality.Value = ngapType.CriticalityPresentIgnore
-	ie.Value.Present = ngapType.InitialUEMessageIEsPresentUEContextRequest
-	ie.Value.UEContextRequest = new(ngapType.UEContextRequest)
-	ie.Value.UEContextRequest.Value = ngapType.UEContextRequestPresentRequested
-	initialUEMessageIEs.List = append(initialUEMessageIEs.List, ie)
+	if ueContext {
+		ie = ngapType.InitialUEMessageIEs{}
+		ie.Id.Value = ngapType.ProtocolIEIDUEContextRequest
+		ie.Criticality.Value = ngapType.CriticalityPresentIgnore
+		ie.Value.Present = ngapType.InitialUEMessageIEsPresentUEContextRequest
+		ie.Value.UEContextRequest = new(ngapType.UEContextRequest)
+		ie.Value.UEContextRequest.Value = ngapType.UEContextRequestPresentRequested
+		initialUEMessageIEs.List = append(initialUEMessageIEs.List, ie)
+	}
 
 	// Allowed NSSAI (optional)
+
 	return
 }
 
 func SendInitialUeMessage(registrationRequest []byte, ue *context.GNBUe, gnb *context.GNBContext) ([]byte, error) {
-	sendMsg, err := GetInitialUEMessage(ue.GetRanUeId(), registrationRequest, "", gnb.GetMccAndMncInOctets(), gnb.GetTacInBytes())
-	if err != nil {
-		return nil, fmt.Errorf("Error in %d ue initial message", ue.GetRanUeId())
+
+	var sendMsg []byte
+	var err error
+
+	if gnb.GetTest() == "normal-registration" {
+		sendMsg, err = GetInitialUEMessage(ue.GetRanUeId(), registrationRequest, "", gnb.GetMccAndMncInOctets(), gnb.GetTacInBytes(), true)
+		if err != nil {
+			return nil, fmt.Errorf("Error in %d ue initial message", ue.GetRanUeId())
+		}
+	} else if gnb.GetTest() == "context-registration" {
+		sendMsg, err = GetInitialUEMessage(ue.GetRanUeId(), registrationRequest, "", gnb.GetMccAndMncInOctets(), gnb.GetTacInBytes(), false)
+		if err != nil {
+			return nil, fmt.Errorf("Error in %d ue initial message", ue.GetRanUeId())
+		}
 	}
 
 	return sendMsg, nil
 }
-
-/*
-
-func InitialUEMessage(connN2 *sctp.SCTPConn, registrationRequest []byte, ue *context.RanUeContext, gnb *context.RanGnbContext) error {
-
-	// new UE Context
-	// ue.NewRanUeContext(imsi, ranUeId, security.AlgCiphering128NEA0, security.AlgIntegrity128NIA2, key, opc, "c9e8763286b5b9ffbdf56e1297d0887b", amf)
-
-	// ueSecurityCapability := context.SetUESecurityCapability(ue)
-	// registrationRequest := mm_5gs.GetRegistrationRequestWith5GMM(nasMessage.RegistrationType5GSInitialRegistration, ue.Suci, nil, nil, ueSecurityCapability)
-	sendMsg, err := GetInitialUEMessage(ue.RanUeNgapId, registrationRequest, "", gnb.GetMccAndMncInOctets(), gnb.GetTacInBytes())
-	if err != nil {
-		return fmt.Errorf("Error in %s ue initial message", ue.Supi)
-	}
-
-	_, err = connN2.Write(sendMsg)
-	if err != nil {
-		return fmt.Errorf("Error sending %s ue initial message", ue.Supi)
-	}
-
-	log.WithFields(log.Fields{
-		"protocol":    "NGAP",
-		"source":      fmt.Sprintf("GNB[ID:%s]", gnb.GetGnbId()),
-		"destination": "AMF",
-		"message":     "INITIAL UE MESSAGE",
-	}).Info("Sending message")
-
-	return nil
-}
-
-*/

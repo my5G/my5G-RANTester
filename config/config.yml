@@ -13,18 +13,30 @@ gnodeb:
   slicesupportlist:
     sst: "01"
     sd: "010203"
+  test: "normal-registration"
+
 ue:
-  msin: "00000001"
+  msin: "00000002"
   key: "465B5CE8B199B49FAA5F0A2EE238A6BC"
   opc: "E8ED289DEBA952E4283B54E88E6183CA"
   amf: "8000"
-  sqn: "0000000"
+  sqn: "6bff4d789991"
+  dnn: "internet"
   hplmn:
     mcc: "208"
     mnc: "93"
   snssai:
     sst: 1
     sd: "010203"
+  integrity:
+    nia0: false
+    nia1: false
+    nia2: true
+  ciphering:
+    nea0: true
+    nea1: false
+    nea2: false
+
 amfif:
   ip: "127.0.0.1"
   port: 38412

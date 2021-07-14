@@ -76,8 +76,18 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 	var messageNas []byte
 	var sst []string
 	var sd []string
+	var sstPdu string
+	var sdPdu string
 	var mobilityRestrict = "not informed"
 	var maskedImeisv string
+	var pduSessionId int64
+	var allocationPdu bool
+	var pduSType uint64
+	var qosId int64
+	var fiveQi int64
+	var priArp int64
+	var ulTeid uint32
+	var upfAddress []byte
 	// var securityKey []byte
 
 	valueMessage := message.InitiatingMessage.Value.InitialContextSetupRequest
@@ -170,6 +180,85 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 			if ies.Value.UESecurityCapabilities == nil {
 				log.Fatal("[GNB][NGAP] UE Security Capabilities is missing")
 			}
+		case ngapType.ProtocolIEIDPDUSessionResourceSetupListCxtReq:
+
+			if ies.Value.PDUSessionResourceSetupListCxtReq != nil {
+
+				// initial context setup request used by establish PDU session
+				allocationPdu = true
+
+				pDUSessionResourceSetupList := ies.Value.PDUSessionResourceSetupListCxtReq
+
+				// resources of PDU session.
+				for _, item := range pDUSessionResourceSetupList.List {
+
+					// NAS PDU -- DL NAS TRANSPORT and PDU establishment accept
+					if item.NASPDU != nil {
+						messageNas = item.NASPDU.Value
+					} else {
+						log.Fatal("[GNB][NGAP] NAS PDU is missing in Initial Context Setup Request")
+					}
+
+					// create a PDU session
+
+					// PDU session id
+					pduSessionId = item.PDUSessionID.Value
+
+					// NSSAI related to PDU session
+					if item.SNSSAI.SD != nil {
+						sdPdu = fmt.Sprintf("%x", item.SNSSAI.SD.Value)
+					} else {
+						sdPdu = "not informed"
+					}
+
+					if item.SNSSAI.SST.Value != nil {
+						sstPdu = fmt.Sprintf("%x", item.SNSSAI.SST.Value)
+					} else {
+						sstPdu = "not informed"
+					}
+
+					// PDU session request transfer.
+					if item.PDUSessionResourceSetupRequestTransfer != nil {
+
+						pdu := &ngapType.PDUSessionResourceSetupRequestTransfer{}
+
+						err := aper.UnmarshalWithParams(item.PDUSessionResourceSetupRequestTransfer, pdu, "valueExt")
+						if err == nil {
+
+							for _, ies := range pdu.ProtocolIEs.List {
+
+								switch ies.Id.Value {
+
+								case ngapType.ProtocolIEIDULNGUUPTNLInformation:
+									ulTeid = binary.BigEndian.Uint32(ies.Value.ULNGUUPTNLInformation.GTPTunnel.GTPTEID.Value)
+									upfAddress = ies.Value.ULNGUUPTNLInformation.GTPTunnel.TransportLayerAddress.Value.Bytes
+
+								case ngapType.ProtocolIEIDQosFlowSetupRequestList:
+									for _, itemsQos := range ies.Value.QosFlowSetupRequestList.List {
+										qosId = itemsQos.QosFlowIdentifier.Value
+										fiveQi = itemsQos.QosFlowLevelQosParameters.QosCharacteristics.NonDynamic5QI.FiveQI.Value
+										priArp = itemsQos.QosFlowLevelQosParameters.AllocationAndRetentionPriority.PriorityLevelARP.Value
+									}
+
+								case ngapType.ProtocolIEIDPDUSessionAggregateMaximumBitRate:
+
+								case ngapType.ProtocolIEIDPDUSessionType:
+									pduSType = uint64(ies.Value.PDUSessionType.Value)
+
+								case ngapType.ProtocolIEIDSecurityIndication:
+
+								}
+							}
+						} else {
+
+							log.Info("[GNB][NGAP] Error in decode Pdu Session Resource Setup Request Transfer in Initial Context Setup Request")
+						}
+					} else {
+
+						log.Fatal("[GNB][NGAP] Error in Initial Context Setup Request, Pdu Session Resource Setup Request Transfer is missing")
+					}
+				}
+			}
 		}
 
 	}
@@ -177,14 +266,18 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 	// check RanUeId and get UE.
 	ue, err := gnb.GetGnbUe(ranUeId)
 	if err != nil || ue == nil {
+
 		log.Fatal("[GNB][NGAP] RAN UE NGAP ID is incorrect")
 		// TODO SEND ERROR INDICATION
+
 	}
 
 	// check if AMF UE id.
 	if ue.GetAmfUeId() != amfUeId {
+
 		log.Fatal("[GNB][NGAP] AMF UE NGAP ID is incorrect")
 		// TODO SEND ERROR INDICATION
+
 	}
 
 	// create UE context.
@@ -198,17 +291,77 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 	log.Info("[GNB][UE] UE Mobility Restrict --Plmn-- Mcc: ", mcc, " Mnc: ", mnc)
 	log.Info("[GNB][UE] UE Masked Imeisv: ", ue.GetUeMaskedImeiSv())
 	for i := 0; i < ue.GetLenSlice(); i++ {
+
 		sst, sd := ue.GetAllowedNssai(i)
 		log.Info("[GNB][UE] Allowed Nssai-- Sst: ", sst, " Sd: ", sd)
+
+	}
+
+	if allocationPdu {
+
+		// creation of PDU session.
+		if ue.CreatePduSession(pduSessionId, sstPdu, sdPdu, pduSType, qosId, priArp, fiveQi, ulTeid) != "" {
+
+			log.Info("[GNB][NGAP] Error in Initial Context Setup Request. NSSAI informed was not found")
+
+		} else {
+
+			log.Info("[GNB][NGAP][UE] PDU Session Resources established successful.")
+			log.Info("[GNB][NGAP][UE] PDU Session Id: ", ue.GetPduSessionId())
+			sst, sd := ue.GetSelectedNssai()
+			log.Info("[GNB][NGAP][UE] NSSAI Selected --- sst: ", sst, " sd: ", sd)
+			log.Info("[GNB][NGAP][UE] PDU Session Type: ", ue.GetPduType())
+			log.Info("[GNB][NGAP][UE] QOS Flow Identifier: ", ue.GetQosId())
+			log.Info("[GNB][NGAP][UE] Uplink Teid: ", ue.GetTeidUplink())
+			log.Info("[GNB][NGAP][UE] Downlink Teid: ", ue.GetTeidDownlink())
+			log.Info("[GNB][NGAP][UE] Non-Dynamic-5QI: ", ue.GetFiveQI())
+			log.Info("[GNB][NGAP][UE] Priority Level ARP: ", ue.GetPriorityARP())
+			log.Info("[GNB][NGAP][UE] UPF Address: ", fmt.Sprintf("%d.%d.%d.%d", upfAddress[0], upfAddress[1], upfAddress[2], upfAddress[3]), " :2152")
+
+		}
+
+		// get UPF ip.
+		if gnb.GetUpfIp() == "" {
+
+			upfIp := fmt.Sprintf("%d.%d.%d.%d", upfAddress[0], upfAddress[1], upfAddress[2], upfAddress[3])
+			gnb.SetUpfIp(upfIp)
+
+		}
+
+		// configure GTP tunnel and GNB-UE radio resources simulated.
+		if gnb.GetN3Plane() == nil {
+
+			// TODO check if GTP tunnel and gateway is ok.
+			serviceGtp.InitGTPTunnel(gnb)
+			serviceGateway.InitGatewayGnb(gnb)
+
+		}
+
+		log.Info("[GNB][NAS][UE] Send DL NAS Transport/PDU Session Establishment accept")
+
+	} else {
+
+		log.Info("[GNB][NAS][UE] Send Registration Accept.")
+
 	}
 
 	// send NAS message to UE.
-	log.Info("[GNB][NAS][UE] Send Registration Accept.")
 	sender.SendToUe(ue, messageNas)
 
 	// send Initial Context Setup Response.
-	log.Info("[GNB][NGAP][AMF] Send Initial Context Setup Response.")
-	trigger.SendInitialContextSetupResponse(ue)
+	log.Info("[GNB][NGAP][AMF] Send Initial Context Setup Response")
+	trigger.SendInitialContextSetupResponse(ue, gnb, allocationPdu)
+
+	// allocation resources for tunnel UE and GNB(DRB).
+	if allocationPdu {
+
+		time.Sleep(20 * time.Millisecond)
+
+		// ue is ready for data plane.
+		// send GNB UE IP message to UE.
+		UeGnBIp := ue.GetIp()
+		sender.SendToUe(ue, UeGnBIp)
+	}
 }
 
 func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *ngapType.NGAPPDU) {

@@ -55,6 +55,7 @@ type PDUSession struct {
 
 type SECURITY struct {
 	Supi               string
+	Suci               string
 	Msin               string
 	mcc                string
 	mnc                string
@@ -67,29 +68,39 @@ type SECURITY struct {
 	KnasInt            [16]uint8
 	Kamf               []uint8
 	AuthenticationSubs models.AuthenticationSubscription
-	Suci               nasType.MobileIdentity5GS
+	mobileIdentity     nasType.MobileIdentity5GS
 	Guti               [4]byte
 }
 
 func (ue *UEContext) NewRanUeContext(msin string,
-	cipheringAlg, integrityAlg uint8,
+	nia0, nia1, nia2 bool,
+	nea0, nea1, nea2 bool,
 	k, opc, op, amf, sqn, mcc, mnc string,
-	sst int32, sd string, id uint8) {
+	sst int32, sd string, dnn string, id uint8) {
 
 	// added SUPI.
 	ue.UeSecurity.Msin = msin
 
-	// added ciphering algorithm.
-	ue.UeSecurity.CipheringAlg = cipheringAlg
+	// set the algorithms of integrity
+	if nia0 {
+		ue.UeSecurity.IntegrityAlg = security.AlgIntegrity128NIA0
+	} else if nia1 {
+		ue.UeSecurity.IntegrityAlg = security.AlgIntegrity128NIA1
+	} else if nia2 {
+		ue.UeSecurity.IntegrityAlg = security.AlgIntegrity128NIA2
+	}
 
-	// added integrity algorithm.
-	ue.UeSecurity.IntegrityAlg = integrityAlg
+	// set the algorithms of ciphering
+	if nea0 {
+		ue.UeSecurity.CipheringAlg = security.AlgCiphering128NEA0
+	} else if nea1 {
+		ue.UeSecurity.CipheringAlg = security.AlgCiphering128NEA1
+	} else if nea2 {
+		ue.UeSecurity.CipheringAlg = security.AlgCiphering128NEA2
+	}
 
 	// added key, AuthenticationManagementField and opc or op.
 	ue.SetAuthSubscription(k, opc, op, amf, sqn)
-
-	// added suci
-	suciV1, suciV2, suciV3, suciV4, suciV5 := ue.EncodeUeSuci()
 
 	// added mcc and mnc
 	ue.UeSecurity.mcc = mcc
@@ -108,27 +119,11 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	ue.PduSession.Snssai.Sd = sd
 	ue.PduSession.Snssai.Sst = sst
 
-	// added Domain Network Name.
-	ue.PduSession.Dnn = "internet"
+	// added Data Network Name.
+	ue.PduSession.Dnn = dnn
 
 	// added gateway ip.
 	ue.PduSession.gatewayIP = net.ParseIP("127.0.0.2").To4()
-
-	// encode mcc and mnc for mobileIdentity5Gs.
-	resu := ue.GetMccAndMncInOctets()
-
-	// added suci to mobileIdentity5GS
-	if len(ue.UeSecurity.Msin) == 8 {
-		ue.UeSecurity.Suci = nasType.MobileIdentity5GS{
-			Len:    12,
-			Buffer: []uint8{0x01, resu[0], resu[1], resu[2], 0xf0, 0xff, 0x00, 0x00, suciV4, suciV3, suciV2, suciV1},
-		}
-	} else if len(ue.UeSecurity.Msin) == 10 {
-		ue.UeSecurity.Suci = nasType.MobileIdentity5GS{
-			Len:    13,
-			Buffer: []uint8{0x01, resu[0], resu[1], resu[2], 0xf0, 0xff, 0x00, 0x00, suciV5, suciV4, suciV3, suciV2, suciV1},
-		}
-	}
 
 	// added snn.
 	ue.UeSecurity.Snn = ue.deriveSNN()
@@ -141,12 +136,48 @@ func (ue *UEContext) NewRanUeContext(msin string,
 
 }
 
-func (ue *UEContext) GetUeId() uint8 {
-	return ue.id
+func (ue *UEContext) GetMobileIdentity(identity5gs string) nasType.MobileIdentity5GS {
+
+	// encode mcc and mnc for mobileIdentity5Gs.
+	resu := ue.GetMccAndMncInOctets()
+
+	if identity5gs == "SUCI" {
+
+		// added suci
+		suciV1, suciV2, suciV3, suciV4, suciV5 := ue.EncodeUeSuci()
+
+		//suci value
+		if len(ue.UeSecurity.Msin) == 8 {
+
+			ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
+				Len:    12,
+				Buffer: []uint8{0x01, resu[0], resu[1], resu[2], 0xf0, 0xff, 0x00, 0x00, suciV4, suciV3, suciV2, suciV1},
+			}
+
+		} else if len(ue.UeSecurity.Msin) == 10 {
+
+			ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
+				Len:    13,
+				Buffer: []uint8{0x01, resu[0], resu[1], resu[2], 0xf0, 0xff, 0x00, 0x00, suciV5, suciV4, suciV3, suciV2, suciV1},
+			}
+
+		}
+
+	} else if identity5gs == "5G-GUTI" {
+
+		// GUTI value
+		ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
+			Len:    11,
+			Buffer: []uint8{0xf2, resu[0], resu[1], resu[2], 0xca, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00},
+		}
+
+	}
+
+	return ue.UeSecurity.mobileIdentity
 }
 
-func (ue *UEContext) GetSuci() nasType.MobileIdentity5GS {
-	return ue.UeSecurity.Suci
+func (ue *UEContext) GetUeId() uint8 {
+	return ue.id
 }
 
 func (ue *UEContext) GetMsin() string {

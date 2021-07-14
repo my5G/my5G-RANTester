@@ -63,7 +63,7 @@ func NASMacCalculate(AlgoID uint8, KnasInt [16]uint8, Count uint32, Bearer uint8
 	case AlgIntegrity128NIA0:
 		// logger.SecurityLog.Warningln("Integrity NIA0 is emergency.")
 		return nil, nil
-	case AlgCiphering128NEA1:
+	case AlgIntegrity128NIA1:
 		return NIA1(KnasInt, Count, Bearer, uint32(Direction), msg, uint64(len(msg))*8)
 	case AlgIntegrity128NIA2:
 		return NIA2(KnasInt, Count, Bearer, Direction, msg)

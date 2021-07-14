@@ -6,7 +6,6 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/nas/service"
 	"my5G-RANTester/internal/control_test_engine/ue/nas/trigger"
-	"my5G-RANTester/lib/nas/security"
 	"sync"
 )
 
@@ -20,8 +19,12 @@ func RegistrationUe(conf config.Config, id uint8) {
 	// new UE context
 	ue.NewRanUeContext(
 		conf.Ue.Msin,
-		security.AlgCiphering128NEA0,
-		security.AlgIntegrity128NIA2,
+		conf.Ue.Integrity.Nia0,
+		conf.Ue.Integrity.Nia1,
+		conf.Ue.Integrity.Nia2,
+		conf.Ue.Ciphering.Nea0,
+		conf.Ue.Ciphering.Nea1,
+		conf.Ue.Ciphering.Nea2,
 		conf.Ue.Key,
 		conf.Ue.Opc,
 		"c9e8763286b5b9ffbdf56e1297d0887b",
@@ -30,7 +33,7 @@ func RegistrationUe(conf config.Config, id uint8) {
 		conf.Ue.Hplmn.Mcc,
 		conf.Ue.Hplmn.Mnc,
 		int32(conf.Ue.Snssai.Sst),
-		conf.Ue.Snssai.Sd,
+		conf.Ue.Snssai.Sd, conf.Ue.Dnn,
 		id)
 
 	// starting communication with GNB and listen.

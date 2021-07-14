@@ -28,10 +28,11 @@ func SendPduSessionResourceSetupResponse(ue *context.GNBUe, gnb *context.GNBCont
 	}
 }
 
-func SendInitialContextSetupResponse(ue *context.GNBUe) {
+func SendInitialContextSetupResponse(ue *context.GNBUe, gnb *context.GNBContext, allocationPdu bool) {
 
 	// send Initial Context Setup Response.
-	ngapMsg, err := ue_context_management.InitialContextSetupResponse(ue)
+	gnbIp := gnb.GetGnbIpByData()
+	ngapMsg, err := ue_context_management.InitialContextSetupResponse(ue, allocationPdu, gnbIp)
 	if err != nil {
 		log.Fatal("[GNB][NGAP] Error sending Initial Context Setup Response")
 	}

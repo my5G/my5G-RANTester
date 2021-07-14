@@ -146,3 +146,61 @@ func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message)
 		ue.SetIp(UeIp)
 	}
 }
+
+func HandlerIdentityRequest(ue *context.UEContext, message *nas.Message) {
+
+	var identity5gs string
+
+	type5gs := message.IdentityRequest.GetTypeOfIdentity()
+
+	switch type5gs {
+
+	case 1:
+		log.Info("[UE][NAS] Requested SUCI 5GS type")
+		identity5gs = "SUCI"
+
+	case 2:
+		log.Info("[UE][NAS] Requested 5G-GUTI 5GS type")
+		identity5gs = "5G-GUTI"
+
+	case 3:
+		log.Info("[UE][NAS] Requested IMEI 5GS type")
+		identity5gs = "IMEI"
+
+	case 4:
+	case 5:
+		log.Info("[UE][NAS] Requested IMEISV 5GS type")
+		identity5gs = "IMEISV"
+
+	}
+
+	// trigger identity response.
+	identityResponse := mm_5gs.IdentityResponse(identity5gs, ue)
+
+	// send to GNB.
+	sender.SendToGnb(ue, identityResponse)
+}
+
+func HandlerConfigurationUpdateCommand(ue *context.UEContext, message *nas.Message) {
+
+	networkName := message.ConfigurationUpdateCommand.FullNameForNetwork.GetTextString()
+	log.Info("[UE][NAS] Network Name: ", string(networkName))
+
+	// time zone
+	timeZone := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetTimeZone()
+	log.Info("[UE][NAS] Time Zone: ", timeZone)
+
+	//time
+	/*
+		year := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetYear()
+		day := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetDay()
+		mounth := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetMonth()
+		hour := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetHour()
+		minute := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetMinute()
+		second := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetSecond()
+		log.Info("[UE][NAS] Time: ", mounth, year, day, hour, ":", minute, ":", second)
+	*/
+
+	// return configuration update complete
+	//message.ConfigurationUpdateCommand.ConfigurationUpdateIndication.GetACK()
+}

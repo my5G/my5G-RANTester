@@ -134,6 +134,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 
 	case nas.MsgTypeIdentityRequest:
 		log.Info("[UE][NAS] Receive Identify Request")
+		handler.HandlerIdentityRequest(ue, m)
 		// handler identity request.
 
 	case nas.MsgTypeSecurityModeCommand:
@@ -149,6 +150,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 	case nas.MsgTypeConfigurationUpdateCommand:
 		log.Info("[UE][NAS] Receive Configuration Update Command")
 		// handler Configuration Update Command.
+		handler.HandlerConfigurationUpdateCommand(ue, m)
 
 	case nas.MsgTypeDLNASTransport:
 		// handler DL NAS Transport.

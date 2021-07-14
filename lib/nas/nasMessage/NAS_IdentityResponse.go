@@ -10,7 +10,7 @@ type IdentityResponse struct {
 	nasType.ExtendedProtocolDiscriminator
 	nasType.SpareHalfOctetAndSecurityHeaderType
 	nasType.IdentityResponseMessageIdentity
-	nasType.MobileIdentity
+	nasType.MobileIdentity5GS
 }
 
 func NewIdentityResponse(iei uint8) (identityResponse *IdentityResponse) {
@@ -22,8 +22,8 @@ func (a *IdentityResponse) EncodeIdentityResponse(buffer *bytes.Buffer) {
 	binary.Write(buffer, binary.BigEndian, &a.ExtendedProtocolDiscriminator.Octet)
 	binary.Write(buffer, binary.BigEndian, &a.SpareHalfOctetAndSecurityHeaderType.Octet)
 	binary.Write(buffer, binary.BigEndian, &a.IdentityResponseMessageIdentity.Octet)
-	binary.Write(buffer, binary.BigEndian, a.MobileIdentity.GetLen())
-	binary.Write(buffer, binary.BigEndian, &a.MobileIdentity.Buffer)
+	binary.Write(buffer, binary.BigEndian, a.MobileIdentity5GS.GetLen())
+	binary.Write(buffer, binary.BigEndian, &a.MobileIdentity5GS.Buffer)
 }
 
 func (a *IdentityResponse) DecodeIdentityResponse(byteArray *[]byte) {
@@ -31,9 +31,9 @@ func (a *IdentityResponse) DecodeIdentityResponse(byteArray *[]byte) {
 	binary.Read(buffer, binary.BigEndian, &a.ExtendedProtocolDiscriminator.Octet)
 	binary.Read(buffer, binary.BigEndian, &a.SpareHalfOctetAndSecurityHeaderType.Octet)
 	binary.Read(buffer, binary.BigEndian, &a.IdentityResponseMessageIdentity.Octet)
-	binary.Read(buffer, binary.BigEndian, &a.MobileIdentity.Len)
-	a.MobileIdentity.SetLen(a.MobileIdentity.GetLen())
-	binary.Read(buffer, binary.BigEndian, &a.MobileIdentity.Buffer)
+	binary.Read(buffer, binary.BigEndian, &a.MobileIdentity5GS.Len)
+	a.MobileIdentity5GS.SetLen(a.MobileIdentity5GS.GetLen())
+	binary.Read(buffer, binary.BigEndian, &a.MobileIdentity5GS.Buffer)
 	for buffer.Len() > 0 {
 		var ieiN uint8
 		var tmpIeiN uint8

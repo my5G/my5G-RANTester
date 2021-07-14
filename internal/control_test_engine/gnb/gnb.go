@@ -28,7 +28,7 @@ func InitGnb(conf config.Config) {
 		conf.GNodeB.ControlIF.Ip,
 		conf.GNodeB.DataIF.Ip,
 		conf.GNodeB.ControlIF.Port,
-		conf.GNodeB.DataIF.Port)
+		conf.GNodeB.DataIF.Port, conf.GNodeB.Test)
 
 	// start communication with AMF(server SCTP).
 
