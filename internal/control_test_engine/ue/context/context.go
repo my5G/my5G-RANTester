@@ -36,6 +36,7 @@ type UEContext struct {
 	UnixConn   net.Conn
 	PduSession PDUSession
 	amfInfo    Amf
+	Test       string
 }
 
 type Amf struct {
@@ -76,10 +77,13 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	nia0, nia1, nia2 bool,
 	nea0, nea1, nea2 bool,
 	k, opc, op, amf, sqn, mcc, mnc string,
-	sst int32, sd string, dnn string, id uint8) {
+	sst int32, sd string, dnn string, id uint8, test string) {
 
 	// added SUPI.
 	ue.UeSecurity.Msin = msin
+
+	// set the testing
+	ue.Test = test
 
 	// set the algorithms of integrity
 	if nia0 {
@@ -141,7 +145,7 @@ func (ue *UEContext) GetMobileIdentity(identity5gs string) nasType.MobileIdentit
 	// encode mcc and mnc for mobileIdentity5Gs.
 	resu := ue.GetMccAndMncInOctets()
 
-	if identity5gs == "SUCI" {
+	if identity5gs == "suci" {
 
 		// added suci
 		suciV1, suciV2, suciV3, suciV4, suciV5 := ue.EncodeUeSuci()
@@ -163,7 +167,7 @@ func (ue *UEContext) GetMobileIdentity(identity5gs string) nasType.MobileIdentit
 
 		}
 
-	} else if identity5gs == "5G-GUTI" {
+	} else if identity5gs == "guti" {
 
 		// GUTI value
 		ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
@@ -353,6 +357,14 @@ func (ue *UEContext) Get5gGuti() [4]uint8 {
 
 func (ue *UEContext) Set5gGuti(guti [4]uint8) {
 	ue.UeSecurity.Guti = guti
+}
+
+func (ue *UEContext) SetTesting(test string) {
+	ue.Test = test
+}
+
+func (ue *UEContext) GetTesting() string {
+	return ue.Test
 }
 
 func (ue *UEContext) deriveAUTN(autn []byte, ak []uint8) ([]byte, []byte, []byte) {

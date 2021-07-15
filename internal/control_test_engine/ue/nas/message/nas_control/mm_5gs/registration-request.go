@@ -25,7 +25,7 @@ func GetRegistrationRequest(registrationType uint8, requestedNSSAI *nasType.Requ
 	registrationRequest.NgksiAndRegistrationType5GS.SetTSC(nasMessage.TypeOfSecurityContextFlagNative)
 	registrationRequest.NgksiAndRegistrationType5GS.SetNasKeySetIdentifiler(ue.GetUeId())
 	registrationRequest.NgksiAndRegistrationType5GS.SetRegistrationType5GS(registrationType)
-	registrationRequest.MobileIdentity5GS = ue.GetMobileIdentity("SUCI")
+	registrationRequest.MobileIdentity5GS = ue.GetMobileIdentity(ue.GetTesting())
 
 	if capability {
 		registrationRequest.Capability5GMM = &nasType.Capability5GMM{

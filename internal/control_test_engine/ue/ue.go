@@ -34,7 +34,8 @@ func RegistrationUe(conf config.Config, id uint8) {
 		conf.Ue.Hplmn.Mnc,
 		int32(conf.Ue.Snssai.Sst),
 		conf.Ue.Snssai.Sd, conf.Ue.Dnn,
-		id)
+		id,
+		conf.Ue.Test)
 
 	// starting communication with GNB and listen.
 	err := service.InitConn(ue)

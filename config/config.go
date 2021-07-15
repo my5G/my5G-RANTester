@@ -59,6 +59,7 @@ type Config struct {
 			Nea1 bool `yaml: "nea1"`
 			Nea2 bool `yaml: "nea2"`
 		} `yaml: "ciphering"`
+		Test string `yaml: "test"`
 	} `yaml:"ue"`
 	AMF struct {
 		Ip   string `yaml: "ip"`
