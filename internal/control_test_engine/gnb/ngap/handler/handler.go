@@ -196,7 +196,7 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 					if item.NASPDU != nil {
 						messageNas = item.NASPDU.Value
 					} else {
-						log.Fatal("[GNB][NGAP] NAS PDU is missing in Initial Context Setup Request")
+						log.Info("[GNB][NGAP] NAS PDU is missing in Initial Context Setup Request")
 					}
 
 					// create a PDU session
@@ -492,6 +492,7 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	if ue.CreatePduSession(pduSessionId, sst, sd, pduSType, qosId, priArp, fiveQi, ulTeid) != "" {
 
 		log.Info("[GNB][NGAP] Error in Pdu Session Resource Setup Request. NSSAI informed was not found")
+
 	} else {
 
 		log.Info("[GNB][NGAP][UE] PDU Session was created with successful.")

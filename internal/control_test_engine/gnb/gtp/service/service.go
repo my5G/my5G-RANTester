@@ -34,6 +34,8 @@ func InitGTPTunnel(gnb *context.GNBContext) error {
 		return fmt.Errorf("[GNB][GTP] Error in dial between GNB and UPF", err)
 	}
 
+	//log.Info("[GNB][GTP] check gtp tunnel", userPlane)
+
 	// successful established GTP/UDP tunnel.
 	gnb.SetN3Plane(userPlane)
 

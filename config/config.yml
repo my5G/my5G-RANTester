@@ -6,28 +6,28 @@ gnodeb:
     ip: "192.168.10.108"
     port: 2152
   plmnlist:
-    mcc: "208"
-    mnc: "95"
-    tac: "00a000"
+    mcc: "901"
+    mnc: "70"
+    tac: "000001"
     gnbid: "000001"
   slicesupportlist:
-    sst: "222"
-    sd: "00007b"
+    sst: "01"
+    sd: ""
   test: "normal-registration"
 
 ue:
-  msin: "0000000031"
-  key: "0C0A34601D4F07677303652C0462535B"
-  opc: "63bfa50ee6523365ff14c1f45f88737d"
+  msin: "00000001"
+  key: "465B5CE8B199B49FAA5F0A2EE238A6BC"
+  opc: "E8ED289DEBA952E4283B54E88E6183CA"
   amf: "8000"
-  sqn: "000000000000"
-  dnn: "default"
+  sqn: "0000000"
+  dnn: "internet"
   hplmn:
-    mcc: "208"
-    mnc: "95"
+    mcc: "901"
+    mnc: "70"
   snssai:
-    sst: 222
-    sd: "00007b"
+    sst: 01
+    sd: ""
   integrity:
     nia0: false
     nia1: false
@@ -36,9 +36,9 @@ ue:
     nea0: true
     nea1: false
     nea2: false
-  test: "guti"
+  test: "suci"
 
 amfif:
-  ip: "192.168.70.132"
+  ip: "192.168.122.83"
   port: 38412
-  name: "free5gc"
+  name: "open5gs"

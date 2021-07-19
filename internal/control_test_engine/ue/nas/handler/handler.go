@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/nas/message/nas_control"
@@ -102,6 +103,9 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 	ue.SetAmfSetId(message.RegistrationAccept.GetAMFSetID())
 	ue.Set5gGuti(message.RegistrationAccept.GetTMSI5G())
 
+	// check allowed slices.
+	log.Info("[UE][NAS] Allowed NSSAI", message.RegistrationAccept.AllowedNSSAI.GetSNSSAIValue())
+
 	log.Info("[UE][NAS] UE 5G GUTI: ", ue.Get5gGuti())
 
 	// getting NAS registration complete.
@@ -141,9 +145,27 @@ func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message)
 		// change the state of ue(SM)(PDU Session Active).
 		ue.SetStateSM_PDU_SESSION_ACTIVE()
 
-		// get UE ip
+		// get QoS Rules
+		QosRule := payloadContainer.PDUSessionEstablishmentAccept.AuthorizedQosRules.GetQosRule()
+
+		// get PDU session IP.
 		UeIp := payloadContainer.PDUSessionEstablishmentAccept.GetPDUAddressInformation()
+
+		// get DNN
+		dnn := payloadContainer.PDUSessionEstablishmentAccept.DNN.GetDNN()
+
+		// get SNSSAI
+		sst := payloadContainer.PDUSessionEstablishmentAccept.SNSSAI.GetSST()
+		sd := payloadContainer.PDUSessionEstablishmentAccept.SNSSAI.GetSD()
+
+		// set UE ip
 		ue.SetIp(UeIp)
+
+		log.Info("[UE][NAS] PDU session QoS RULES: ", QosRule)
+		log.Info("[UE][NAS] PDU session DNN: ", string(dnn))
+		log.Info("[UE][NAS] PDU session NSSAI -- sst: ", sst, " sd: ",
+			fmt.Sprintf("%x%x%x", sd[0], sd[1], sd[2]))
+		log.Info("[UE][NAS] PDU address received: ", ue.GetIp())
 	}
 }
 
@@ -157,20 +179,20 @@ func HandlerIdentityRequest(ue *context.UEContext, message *nas.Message) {
 
 	case 1:
 		log.Info("[UE][NAS] Requested SUCI 5GS type")
-		identity5gs = "SUCI"
+		identity5gs = "suci"
 
 	case 2:
 		log.Info("[UE][NAS] Requested 5G-GUTI 5GS type")
-		identity5gs = "5G-GUTI"
+		identity5gs = "guti"
 
 	case 3:
 		log.Info("[UE][NAS] Requested IMEI 5GS type")
-		identity5gs = "IMEI"
+		identity5gs = "imei"
 
 	case 4:
 	case 5:
 		log.Info("[UE][NAS] Requested IMEISV 5GS type")
-		identity5gs = "IMEISV"
+		identity5gs = "imeisv"
 
 	}
 
