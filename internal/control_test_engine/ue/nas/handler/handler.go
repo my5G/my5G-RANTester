@@ -26,6 +26,10 @@ func HandlerAuthenticationRequest(ue *context.UEContext, message *nas.Message) {
 	rand := message.AuthenticationRequest.GetRANDValue()
 	autn := message.AuthenticationRequest.GetAUTN()
 
+	// getting 5G NAS security identifier.
+	ngksi := message.AuthenticationRequest.GetNasKeySetIdentifiler()
+	ue.SetNgKsi(ngksi)
+
 	// getting resStar
 	paramAutn, check := ue.DeriveRESstarAndSetKey(ue.UeSecurity.AuthenticationSubs, rand[:], ue.UeSecurity.Snn, autn[:])
 
@@ -49,6 +53,7 @@ func HandlerAuthenticationRequest(ue *context.UEContext, message *nas.Message) {
 		log.Info("[UE][NAS][MAC] Authenticity of the authentication request message: OK")
 		log.Info("[UE][NAS][SQN] SQN of the authentication request message: VALID")
 		log.Info("[UE][NAS] Send authentication response")
+		log.Info("[UE][NAS] 5G NAS security identifier: ", ue.GetNgKsi())
 		authenticationResponse = mm_5gs.AuthenticationResponse(paramAutn, "")
 
 		// change state of UE for registered-initiated
@@ -79,17 +84,33 @@ func HandlerSecurityModeCommand(ue *context.UEContext, message *nas.Message) {
 		log.Info("[UE][NAS] Type of integrity protection algorithm is 128-5G-IA2")
 	}
 
-	// checking BIT RINMR that triggered registration request in security mode complete.
-	rinmr := message.SecurityModeCommand.Additional5GSecurityInformation.GetRINMR()
+	// send invalid flows.
+	if ue.GetTesting() == "test-invalid-flows" {
 
-	// getting NAS Security Mode Complete.
-	securityModeComplete, err := mm_5gs.SecurityModeComplete(ue, rinmr)
-	if err != nil {
-		log.Fatal("[UE][NAS] Error sending Security Mode Complete: ", err)
+		// getting ul nas transport and pduSession establishment request.
+		ulNasTransport, err := mm_5gs.UlNasTransport(ue, nasMessage.ULNASTransportRequestTypeInitialRequest, "test-invalid-flows")
+		if err != nil {
+			log.Fatal("[UE][NAS] Error sending ul nas transport and pdu session establishment request: ", err)
+		}
+
+		// sending to GNB
+		sender.SendToGnb(ue, ulNasTransport)
+
+	} else {
+
+		// checking BIT RINMR that triggered registration request in security mode complete.
+		rinmr := message.SecurityModeCommand.Additional5GSecurityInformation.GetRINMR()
+
+		// getting NAS Security Mode Complete.
+		securityModeComplete, err := mm_5gs.SecurityModeComplete(ue, rinmr)
+		if err != nil {
+			log.Fatal("[UE][NAS] Error sending Security Mode Complete: ", err)
+		}
+
+		// sending to GNB
+		sender.SendToGnb(ue, securityModeComplete)
+
 	}
-
-	// sending to GNB
-	sender.SendToGnb(ue, securityModeComplete)
 }
 
 func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
@@ -121,7 +142,7 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 	time.Sleep(20 * time.Millisecond)
 
 	// getting ul nas transport and pduSession establishment request.
-	ulNasTransport, err := mm_5gs.UlNasTransport(ue, nasMessage.ULNASTransportRequestTypeInitialRequest)
+	ulNasTransport, err := mm_5gs.UlNasTransport(ue, nasMessage.ULNASTransportRequestTypeInitialRequest, "")
 	if err != nil {
 		log.Fatal("[UE][NAS] Error sending ul nas transport and pdu session establishment request: ", err)
 	}
@@ -131,6 +152,14 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 
 	// sending to GNB
 	sender.SendToGnb(ue, ulNasTransport)
+
+	// testing Ul NAS transport replicate
+	if ue.GetTesting() == "test-duplicate-messages" {
+		time.Sleep(2 * time.Millisecond)
+		sender.SendToGnb(ue, ulNasTransport)
+		time.Sleep(1 * time.Second)
+		sender.SendToGnb(ue, ulNasTransport)
+	}
 }
 
 func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message) {

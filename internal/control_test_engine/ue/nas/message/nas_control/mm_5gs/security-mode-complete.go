@@ -11,7 +11,7 @@ import (
 )
 
 // TS 24.501 8.2.26
-func getSecurityModeComplete(nasMessageContainer []uint8) (nasPdu []byte) {
+func getSecurityModeComplete(nasMessageContainer []uint8, test string) (nasPdu []byte) {
 
 	m := nas.NewMessage()
 	m.GmmMessage = nas.NewGmmMessage()
@@ -24,13 +24,15 @@ func getSecurityModeComplete(nasMessageContainer []uint8) (nasPdu []byte) {
 	securityModeComplete.SpareHalfOctetAndSecurityHeaderType.SetSpareHalfOctet(0)
 	securityModeComplete.SecurityModeCompleteMessageIdentity.SetMessageType(nas.MsgTypeSecurityModeComplete)
 
-	securityModeComplete.IMEISV = nasType.NewIMEISV(nasMessage.SecurityModeCompleteIMEISVType)
-	securityModeComplete.IMEISV.SetLen(9)
-	securityModeComplete.SetOddEvenIdic(0)
-	securityModeComplete.SetTypeOfIdentity(nasMessage.MobileIdentity5GSTypeImeisv)
-	securityModeComplete.SetIdentityDigit1(1)
-	securityModeComplete.SetIdentityDigitP_1(1)
-	securityModeComplete.SetIdentityDigitP(1)
+	if test != "test-imei" {
+		securityModeComplete.IMEISV = nasType.NewIMEISV(nasMessage.SecurityModeCompleteIMEISVType)
+		securityModeComplete.IMEISV.SetLen(9)
+		securityModeComplete.SetOddEvenIdic(0)
+		securityModeComplete.SetTypeOfIdentity(nasMessage.MobileIdentity5GSTypeImeisv)
+		securityModeComplete.SetIdentityDigit1(1)
+		securityModeComplete.SetIdentityDigitP_1(1)
+		securityModeComplete.SetIdentityDigitP(1)
+	}
 
 	if nasMessageContainer != nil {
 		securityModeComplete.NASMessageContainer = nasType.NewNASMessageContainer(nasMessage.SecurityModeCompleteNASMessageContainerType)
@@ -55,14 +57,24 @@ func SecurityModeComplete(ue *context.UEContext, rinmr uint8) ([]byte, error) {
 
 	// ueSecurityCapability := context.SetUESecurityCapability(ue)
 	if rinmr == 1 {
-		registrationRequest = GetRegistrationRequest(nasMessage.RegistrationType5GSInitialRegistration, nil, nil, true, ue)
+
+		if ue.GetTesting() == "test-resend-registration-request" {
+			registrationRequest = nil
+		} else {
+			registrationRequest = GetRegistrationRequest(nasMessage.RegistrationType5GSInitialRegistration, nil, nil, true, ue)
+
+		}
+
 	} else {
-		// TODO: free5gc does not send rinmr and wait for restransmission of registration request
-		// registrationRequest = nil
-		registrationRequest = GetRegistrationRequest(nasMessage.RegistrationType5GSInitialRegistration, nil, nil, true, ue)
+
+		if ue.GetTesting() == "test-non-clear-text" {
+			registrationRequest = nil
+		} else {
+			registrationRequest = GetRegistrationRequest(nasMessage.RegistrationType5GSInitialRegistration, nil, nil, true, ue)
+		}
 	}
 
-	pdu := getSecurityModeComplete(registrationRequest)
+	pdu := getSecurityModeComplete(registrationRequest, ue.GetTesting())
 	pdu, err := nas_control.EncodeNasPduWithSecurity(ue, pdu, nas.SecurityHeaderTypeIntegrityProtectedAndCipheredWithNew5gNasSecurityContext, true, true)
 	if err != nil {
 		return nil, fmt.Errorf("Error encoding %s IMSI UE  NAS Security Mode Complete message", ue.UeSecurity.Supi)

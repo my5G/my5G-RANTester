@@ -18,7 +18,7 @@ func SendPduSessionResourceSetupResponse(ue *context.GNBUe, gnb *context.GNBCont
 		log.Fatal("[GNB][NGAP] Error sending PDU Session Resource Setup Response.")
 	}
 
-	ue.SetStateReady()
+	// ue.SetStateReady()
 
 	// Send PDU Session Resource Setup Response.
 	conn := ue.GetSCTP()

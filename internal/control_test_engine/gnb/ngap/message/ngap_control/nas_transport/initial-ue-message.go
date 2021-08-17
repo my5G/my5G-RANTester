@@ -138,12 +138,12 @@ func SendInitialUeMessage(registrationRequest []byte, ue *context.GNBUe, gnb *co
 	var sendMsg []byte
 	var err error
 
-	if gnb.GetTest() == "normal-registration" {
+	if gnb.GetTest() == "test-normal-registration" {
 		sendMsg, err = GetInitialUEMessage(ue.GetRanUeId(), registrationRequest, "", gnb.GetMccAndMncInOctets(), gnb.GetTacInBytes(), true)
 		if err != nil {
 			return nil, fmt.Errorf("Error in %d ue initial message", ue.GetRanUeId())
 		}
-	} else if gnb.GetTest() == "context-registration" {
+	} else if gnb.GetTest() == "test-context-registration" {
 		sendMsg, err = GetInitialUEMessage(ue.GetRanUeId(), registrationRequest, "", gnb.GetMccAndMncInOctets(), gnb.GetTacInBytes(), false)
 		if err != nil {
 			return nil, fmt.Errorf("Error in %d ue initial message", ue.GetRanUeId())

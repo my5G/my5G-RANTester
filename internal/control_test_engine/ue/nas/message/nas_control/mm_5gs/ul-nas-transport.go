@@ -13,15 +13,19 @@ import (
 	"my5G-RANTester/lib/openapi/models"
 )
 
-func UlNasTransport(ue *context.UEContext, requestType uint8) ([]byte, error) {
+func UlNasTransport(ue *context.UEContext, requestType uint8, test string) ([]byte, error) {
 
 	pdu := getUlNasTransport_PduSessionEstablishmentRequest(ue.PduSession.Id, requestType, ue.PduSession.Dnn, &ue.PduSession.Snssai)
 	if pdu == nil {
 		return nil, fmt.Errorf("Error encoding %s IMSI UE PduSession Establishment Request Msg", ue.UeSecurity.Supi)
 	}
-	pdu, err := nas_control.EncodeNasPduWithSecurity(ue, pdu, nas.SecurityHeaderTypeIntegrityProtectedAndCiphered, true, false)
-	if err != nil {
-		return nil, fmt.Errorf("Error encoding %s IMSI UE PduSession Establishment Request Msg", ue.UeSecurity.Supi)
+
+	if test != "test-invalid-flows" {
+		pdu, err := nas_control.EncodeNasPduWithSecurity(ue, pdu, nas.SecurityHeaderTypeIntegrityProtectedAndCiphered, true, false)
+		if err != nil {
+			return nil, fmt.Errorf("Error encoding %s IMSI UE PduSession Establishment Request Msg", ue.UeSecurity.Supi)
+		}
+		return pdu, nil
 	}
 
 	return pdu, nil

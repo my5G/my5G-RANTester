@@ -11,6 +11,11 @@ import (
 
 func GetRegistrationRequest(registrationType uint8, requestedNSSAI *nasType.RequestedNSSAI, uplinkDataStatus *nasType.UplinkDataStatus, capability bool, ue *context.UEContext) (nasPdu []byte) {
 
+	// set some values for testing.
+	if ue.GetTesting() == "test-non-clear-text" {
+		capability = true
+	}
+
 	ueSecurityCapability := context.SetUESecurityCapability(ue)
 
 	m := nas.NewMessage()

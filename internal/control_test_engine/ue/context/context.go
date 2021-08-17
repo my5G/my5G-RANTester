@@ -37,6 +37,7 @@ type UEContext struct {
 	PduSession PDUSession
 	amfInfo    Amf
 	Test       string
+	ngKsi      uint8
 }
 
 type Amf struct {
@@ -145,12 +146,40 @@ func (ue *UEContext) GetMobileIdentity(identity5gs string) nasType.MobileIdentit
 	// encode mcc and mnc for mobileIdentity5Gs.
 	resu := ue.GetMccAndMncInOctets()
 
-	if identity5gs == "suci" {
+	if identity5gs == "test-5g-guti" {
+
+		// testing 5G-GUTI identity value
+		ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
+			Len:    11,
+			Buffer: []uint8{0xf2, resu[0], resu[1], resu[2], 0xca, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00},
+		}
+
+	} else if identity5gs == "test-without-identity" {
+
+		// testing without identity5gs
+		ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{}
+
+	} else if identity5gs == "test-malformed-identity" {
+
+		// testing mal-formaded identity5gs
+		ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
+			Len:    13,
+			Buffer: []uint8{0x00, 0x00},
+		}
+
+	} else if identity5gs == "imei" {
+
+		//  imei 356938035643803
+		ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
+			Len:    8,
+			Buffer: []uint8{0x53, 0x96, 0x39, 0x08, 0x53, 0x46, 0x83, 0x30},
+		}
+	} else {
 
 		// added suci
 		suciV1, suciV2, suciV3, suciV4, suciV5 := ue.EncodeUeSuci()
 
-		//suci value
+		// testing SUCI identity value
 		if len(ue.UeSecurity.Msin) == 8 {
 
 			ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
@@ -165,14 +194,6 @@ func (ue *UEContext) GetMobileIdentity(identity5gs string) nasType.MobileIdentit
 				Buffer: []uint8{0x01, resu[0], resu[1], resu[2], 0xf0, 0xff, 0x00, 0x00, suciV5, suciV4, suciV3, suciV2, suciV1},
 			}
 
-		}
-
-	} else if identity5gs == "guti" {
-
-		// GUTI value
-		ue.UeSecurity.mobileIdentity = nasType.MobileIdentity5GS{
-			Len:    11,
-			Buffer: []uint8{0xf2, resu[0], resu[1], resu[2], 0xca, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00},
 		}
 
 	}
@@ -361,6 +382,14 @@ func (ue *UEContext) Set5gGuti(guti [4]uint8) {
 
 func (ue *UEContext) SetTesting(test string) {
 	ue.Test = test
+}
+
+func (ue *UEContext) SetNgKsi(ngksi uint8) {
+	ue.ngKsi = ngksi
+}
+
+func (ue *UEContext) GetNgKsi() uint8 {
+	return ue.ngKsi
 }
 
 func (ue *UEContext) GetTesting() string {
