@@ -14,6 +14,7 @@ import (
 const version = "0.1"
 
 func init() {
+
 	// Output to stdout instead of the default stderr
 	// Can be any io.Writer, see below for File example
 	log.SetOutput(os.Stdout)

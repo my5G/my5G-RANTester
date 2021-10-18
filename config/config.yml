@@ -1,13 +1,13 @@
 gnodeb:
   controlif:
-    ip: "127.0.0.1"
+    ip: "192.168.10.108"
     port: 9487
   dataif:
-    ip: "10.200.200.2"
+    ip: "192.168.10.108"
     port: 2152
   plmnlist:
-    mcc: "208"
-    mnc: "93"
+    mcc: "901"
+    mnc: "70"
     tac: "000001"
     gnbid: "000001"
   slicesupportlist:
@@ -23,11 +23,11 @@ ue:
   sqn: "0000000"
   dnn: "internet"
   hplmn:
-    mcc: "208"
-    mnc: "93"
+    mcc: "901"
+    mnc: "70"
   snssai:
     sst: 01
-    sd: "010203"
+    sd: ""
   integrity:
     nia0: false
     nia1: false
@@ -36,9 +36,9 @@ ue:
     nea0: true
     nea1: false
     nea2: false
-  test: "test-invalid-flows"
+  test: ""
 
 amfif:
-  ip: "127.0.0.1"
+  ip: "192.168.122.83"
   port: 38412
-  name: "free5gc"
+  name: "open5gs"

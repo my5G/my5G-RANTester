@@ -50,5 +50,4 @@ func RegistrationUe(conf config.Config, id uint8) {
 	trigger.InitRegistration(ue)
 
 	wg.Wait()
-
 }

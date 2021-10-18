@@ -67,7 +67,7 @@ func SecurityModeComplete(ue *context.UEContext, rinmr uint8) ([]byte, error) {
 
 	} else {
 
-		if ue.GetTesting() == "test-non-clear-text" {
+		if ue.GetTesting() == "test-non-clear-text" || ue.GetTesting() == "test-resend-registration-request" {
 			registrationRequest = nil
 		} else {
 			registrationRequest = GetRegistrationRequest(nasMessage.RegistrationType5GSInitialRegistration, nil, nil, true, ue)

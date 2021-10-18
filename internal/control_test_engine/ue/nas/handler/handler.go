@@ -30,34 +30,43 @@ func HandlerAuthenticationRequest(ue *context.UEContext, message *nas.Message) {
 	ngksi := message.AuthenticationRequest.GetNasKeySetIdentifiler()
 	ue.SetNgKsi(ngksi)
 
-	// getting resStar
-	paramAutn, check := ue.DeriveRESstarAndSetKey(ue.UeSecurity.AuthenticationSubs, rand[:], ue.UeSecurity.Snn, autn[:])
-
-	switch check {
-
-	case "MAC failure":
-		log.Info("[UE][NAS][MAC] Authenticity of the authentication request message: FAILED")
-		log.Info("[UE][NAS] Send authentication failure with MAC failure")
-		authenticationResponse = mm_5gs.AuthenticationFailure("MAC failure", "", paramAutn)
-		// not change the state of UE.
-
-	case "SQN failure":
-		log.Info("[UE][NAS][MAC] Authenticity of the authentication request message: OK")
-		log.Info("[UE][NAS][SQN] SQN of the authentication request message: INVALID")
-		log.Info("[UE][NAS] Send authentication failure with Synch failure")
-		authenticationResponse = mm_5gs.AuthenticationFailure("SQN failure", "", paramAutn)
-		// not change the state of UE.
-
-	case "successful":
-		// getting NAS Authentication Response.
-		log.Info("[UE][NAS][MAC] Authenticity of the authentication request message: OK")
-		log.Info("[UE][NAS][SQN] SQN of the authentication request message: VALID")
+	if ue.GetTesting() == "test-authentication-reject" {
+		// produce wrong messages in the process of authentication
+		// getting resStar
+		paramAutn := ue.DeriveRESstarAndSetKeyWrongly(ue.UeSecurity.AuthenticationSubs, rand[:], ue.UeSecurity.Snn, autn[:])
 		log.Info("[UE][NAS] Send authentication response")
 		log.Info("[UE][NAS] 5G NAS security identifier: ", ue.GetNgKsi())
 		authenticationResponse = mm_5gs.AuthenticationResponse(paramAutn, "")
+	} else {
+		// getting resStar
+		paramAutn, check := ue.DeriveRESstarAndSetKey(ue.UeSecurity.AuthenticationSubs, rand[:], ue.UeSecurity.Snn, autn[:])
+		// handled correctly the process of authentication
+		switch check {
 
-		// change state of UE for registered-initiated
-		ue.SetStateMM_REGISTERED_INITIATED()
+		case "MAC failure":
+			log.Info("[UE][NAS][MAC] Authenticity of the authentication request message: FAILED")
+			log.Info("[UE][NAS] Send authentication failure with MAC failure")
+			authenticationResponse = mm_5gs.AuthenticationFailure("MAC failure", "", paramAutn)
+			// not change the state of UE.
+
+		case "SQN failure":
+			log.Info("[UE][NAS][MAC] Authenticity of the authentication request message: OK")
+			log.Info("[UE][NAS][SQN] SQN of the authentication request message: INVALID")
+			log.Info("[UE][NAS] Send authentication failure with Synch failure")
+			authenticationResponse = mm_5gs.AuthenticationFailure("SQN failure", "", paramAutn)
+			// not change the state of UE.
+
+		case "successful":
+			// getting NAS Authentication Response.
+			log.Info("[UE][NAS][MAC] Authenticity of the authentication request message: OK")
+			log.Info("[UE][NAS][SQN] SQN of the authentication request message: VALID")
+			log.Info("[UE][NAS] Send authentication response")
+			log.Info("[UE][NAS] 5G NAS security identifier: ", ue.GetNgKsi())
+			authenticationResponse = mm_5gs.AuthenticationResponse(paramAutn, "")
+
+			// change state of UE for registered-initiated
+			ue.SetStateMM_REGISTERED_INITIATED()
+		}
 	}
 
 	// sending to GNB
@@ -164,6 +173,13 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 
 func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message) {
 
+	// handle errors in DL NAS TRANSPORT
+	if message.DLNASTransport.Cause5GMM != nil {
+		if message.DLNASTransport.Cause5GMM.GetCauseValue() == 91 {
+			log.Fatal("[UE][NAS] Receive Error in Selection of SMF in DL NAS TRANSPORT")
+		}
+	}
+
 	//getting PDU Session establishment accept.
 	payloadContainer := nas_control.GetNasPduFromPduAccept(message)
 	if payloadContainer.GsmHeader.GetMessageType() == nas.MsgTypePDUSessionEstablishmentAccept {
@@ -195,6 +211,9 @@ func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message)
 		log.Info("[UE][NAS] PDU session NSSAI -- sst: ", sst, " sd: ",
 			fmt.Sprintf("%x%x%x", sd[0], sd[1], sd[2]))
 		log.Info("[UE][NAS] PDU address received: ", ue.GetIp())
+	} else if payloadContainer.GsmHeader.GetMessageType() == nas.MsgTypePDUSessionEstablishmentReject {
+		// handler PDU Establishment Reject
+		log.Fatal("[UE][NAS] Receive PDU Establishment Reject")
 	}
 }
 

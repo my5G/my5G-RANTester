@@ -23,7 +23,7 @@ func TestAttachUeWithConfiguration() {
 
 	wg.Add(1)
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	go ue.RegistrationUe(cfg, 1)
 

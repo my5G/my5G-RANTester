@@ -6,7 +6,6 @@ import (
 	"github.com/vishvananda/netlink"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"net"
-	"time"
 )
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
@@ -49,13 +48,39 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 		log.Fatal("[UE][DATA] Error in adding IP for virtual interface", err)
 	}
 
+	// create route in linux to table 1
+	ueRoute := &netlink.Route{
+		LinkIndex: newInterface.Attrs().Index,
+		Src:       net.ParseIP(ueIp).To4(),
+		Dst: &net.IPNet{
+			IP:   net.IPv4zero,
+			Mask: net.IPv4Mask(0, 0, 0, 0),
+		},
+		Table: 1,
+	}
+
+	if err := netlink.RouteAdd(ueRoute); err != nil {
+		log.Fatal("[UE][DATA] Error in setting route", err)
+	}
+
+	// create rule to mapped traffic
+	ueRule := netlink.NewRule()
+
+	ueRule.Src = &net.IPNet{
+		IP:   net.ParseIP(ueIp).To4(),
+		Mask: net.IPv4Mask(255, 255, 255, 255),
+	}
+
+	ueRule.Table = 1
+
+	if err := netlink.RuleAdd(ueRule); err != nil {
+		log.Fatal("[UE][DATA] Error in setting rule", err)
+	}
+
 	log.Info("[UE][DATA] UE is ready for using data plane")
 
-	defer func() {
-		_ = netlink.LinkSetDown(newInterface)
-		_ = netlink.LinkDel(newInterface)
-	}()
-
-	time.Sleep(60 * time.Minute)
-
+	// setting the parameters of the tun interface by ue
+	ue.SetTunInterface(newInterface)
+	ue.SetTunRoute(ueRoute)
+	ue.SetTunRule(ueRule)
 }

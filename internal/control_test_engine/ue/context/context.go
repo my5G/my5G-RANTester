@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	log "github.com/sirupsen/logrus"
+	"github.com/vishvananda/netlink"
 	"my5G-RANTester/lib/UeauCommon"
 	"my5G-RANTester/lib/milenage"
 	"my5G-RANTester/lib/nas/nasMessage"
@@ -53,6 +55,9 @@ type PDUSession struct {
 	Dnn       string
 	Snssai    models.Snssai
 	gatewayIP net.IP
+	tun       netlink.Link
+	routeTun  *netlink.Route
+	ruleTun   *netlink.Rule
 }
 
 type SECURITY struct {
@@ -135,6 +140,11 @@ func (ue *UEContext) NewRanUeContext(msin string,
 
 	// added initial state for MM(NULL)
 	ue.SetStateMM_NULL()
+
+	// init tun context
+	ue.PduSession.ruleTun = nil
+	ue.PduSession.routeTun = nil
+	ue.PduSession.tun = nil
 
 	// added initial state for SM(INACTIVE)
 	ue.SetStateSM_PDU_SESSION_INACTIVE()
@@ -396,6 +406,30 @@ func (ue *UEContext) GetTesting() string {
 	return ue.Test
 }
 
+func (ue *UEContext) SetTunInterface(tun netlink.Link) {
+	ue.PduSession.tun = tun
+}
+
+func (ue *UEContext) GetTunInterface() netlink.Link {
+	return ue.PduSession.tun
+}
+
+func (ue *UEContext) SetTunRoute(route *netlink.Route) {
+	ue.PduSession.routeTun = route
+}
+
+func (ue *UEContext) GetTunRoute() *netlink.Route {
+	return ue.PduSession.routeTun
+}
+
+func (ue *UEContext) SetTunRule(rule *netlink.Rule) {
+	ue.PduSession.ruleTun = rule
+}
+
+func (ue *UEContext) GetTunRule() *netlink.Rule {
+	return ue.PduSession.ruleTun
+}
+
 func (ue *UEContext) deriveAUTN(autn []byte, ak []uint8) ([]byte, []byte, []byte) {
 
 	sqn := make([]byte, 6)
@@ -412,6 +446,48 @@ func (ue *UEContext) deriveAUTN(autn []byte, ak []uint8) ([]byte, []byte, []byte
 
 	// return SQN, amf, mac_a
 	return sqn, amf, mac_a
+}
+
+func (ue *UEContext) DeriveRESstarAndSetKeyWrongly(authSubs models.AuthenticationSubscription,
+	RAND []byte,
+	snNmae string,
+	AUTN []byte) []byte {
+
+	// parameters for authentication challenge.
+	mac_a, mac_s := make([]byte, 8), make([]byte, 8)
+	CK, IK := make([]byte, 16), make([]byte, 16)
+	RES := make([]byte, 8)
+	AK, AKstar := make([]byte, 6), make([]byte, 6)
+
+	// Get OPC, K, SQN, AMF from USIM.
+	OPC, _ := hex.DecodeString(authSubs.Opc.OpcValue)
+	K, _ := hex.DecodeString(authSubs.PermanentKey.PermanentKeyValue)
+	_, _ = hex.DecodeString(authSubs.SequenceNumber)
+	AMF, _ := hex.DecodeString(authSubs.AuthenticationManagementField)
+
+	// Generate RES, CK, IK, AK, AKstar
+	milenage.F2345_Test(OPC, K, RAND, RES, CK, IK, AK, AKstar)
+
+	// Get SQN, MAC_A, AMF from AUTN
+	sqnHn, _, _ := ue.deriveAUTN(AUTN, AK)
+
+	// Generate MAC_A, MAC_S
+	milenage.F1_Test(OPC, K, RAND, sqnHn, AMF, mac_a, mac_s)
+
+	// updated sqn value.
+	authSubs.SequenceNumber = fmt.Sprintf("%x", sqnHn)
+
+	// derive RES*
+	key := append(CK, IK...)
+	FC := UeauCommon.FC_FOR_RES_STAR_XRES_STAR_DERIVATION
+	P0 := []byte(snNmae)
+	P1 := RAND
+	P2 := RES
+
+	ue.DerivateKamf(key, snNmae, sqnHn, AK)
+	ue.DerivateAlgKey()
+	kdfVal_for_resStar := UeauCommon.GetKDFValue(key, FC, P0, UeauCommon.KDFLen(P0), P1, UeauCommon.KDFLen(P1), P2, UeauCommon.KDFLen(P2))
+	return kdfVal_for_resStar[len(kdfVal_for_resStar)/2:]
 }
 
 func (ue *UEContext) DeriveRESstarAndSetKey(authSubs models.AuthenticationSubscription,
@@ -575,6 +651,30 @@ func SetUESecurityCapability(ue *UEContext) (UESecurityCapability *nasType.UESec
 	}
 
 	return
+}
+
+func (ue *UEContext) Terminate() {
+
+	// clean all context of tun interface
+	ueTun := ue.GetTunInterface()
+	ueRoute := ue.GetTunRoute()
+	ueRule := ue.GetTunRule()
+
+	if ueTun != nil {
+
+		_ = netlink.LinkSetDown(ueTun)
+		_ = netlink.LinkDel(ueTun)
+	}
+
+	if ueRoute != nil {
+		_ = netlink.RouteDel(ueRoute)
+	}
+
+	if ueRule != nil {
+		_ = netlink.RuleDel(ueRule)
+		log.Info("STOP Tester")
+	}
+
 }
 
 func reverse(s string) string {
