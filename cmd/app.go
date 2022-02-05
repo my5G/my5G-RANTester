@@ -102,22 +102,21 @@ func main() {
 			{
 				Name:    "amf-requests",
 				Aliases: []string{"amf-requests"},
-				Usage: "\nTesting AMF response per second\n" +
-					"Example for testing multiple requests: amf-requests -n 5 \n",
+				Usage: "\nTesting AMF requests for the specified time in milliseconds\n" +
+					"Example for testing multiple requests per second: amf-requests -n 5 \n" +
+					"Example for testing multiple requests per specifying time: amf-requests -n 5 -t 200\n",
 				Flags: []cli.Flag{
 					&cli.IntFlag{Name: "number-of-requests", Value: 1, Aliases: []string{"n"}},
+					&cli.IntFlag{Name: "time", Value: 1000, Aliases: []string{"t"}},
 				},
 				Action: func(c *cli.Context) error {
 					var numRqs int
-					name := "Testing AMF response per second"
+					var time int
+					name := "Testing AMF requests for the specified time"
 					cfg := config.Data
 
-					if c.IsSet("number-of-requests") {
-						numRqs = c.Int("number-of-requests")
-					} else {
-						log.Info(c.Command.Usage)
-						return nil
-					}
+					numRqs = c.Int("number-of-requests")
+					time = c.Int("time")
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
@@ -126,9 +125,7 @@ func main() {
 					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
 					log.Info("---------------------------------------")
-					templates.TestRqsPerSecond(numRqs)
-					// templates.TestMultiUesInQueue(numUes)
-
+					log.Info("[TESTER][GNB] AMF Requests per Time:", templates.TestRqsPerTime(numRqs, time))
 					return nil
 				},
 			},
