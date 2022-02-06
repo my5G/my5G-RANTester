@@ -31,3 +31,6 @@ ue:
 amfif:
   ip: "127.0.0.1"
   port: 38412
+
+logs:
+  level: 3

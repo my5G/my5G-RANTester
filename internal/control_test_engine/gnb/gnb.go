@@ -67,7 +67,7 @@ func InitGnb(conf config.Config, wg *sync.WaitGroup) {
 }
 
 func InitGnbForLoad(conf config.Config, wg *sync.WaitGroup,
-	monitor *monitoring.Monitor, responseTime time.Duration) {
+	monitor *monitoring.Monitor, interval time.Duration) {
 
 	// instance new gnb.
 	gnb := &context.GNBContext{}
@@ -102,10 +102,115 @@ func InitGnbForLoad(conf config.Config, wg *sync.WaitGroup,
 
 	trigger.SendNgSetupRequest(gnb, amf)
 
-	time.Sleep(responseTime * time.Millisecond)
+	time.Sleep(interval * time.Millisecond)
 
 	if amf.GetState() == 0x01 {
 		monitor.IncRqs()
+	}
+
+	gnb.Terminate()
+	wg.Done()
+	// os.Exit(0)
+}
+
+func InitGnbForLoad2(conf config.Config, wg *sync.WaitGroup,
+	monitor *monitoring.Monitor) {
+
+	// instance new gnb.
+	gnb := &context.GNBContext{}
+
+	// new gnb context.
+	gnb.NewRanGnbContext(
+		conf.GNodeB.PlmnList.GnbId,
+		conf.GNodeB.PlmnList.Mcc,
+		conf.GNodeB.PlmnList.Mnc,
+		conf.GNodeB.PlmnList.Tac,
+		conf.GNodeB.SliceSupportList.Sst,
+		conf.GNodeB.SliceSupportList.Sd,
+		conf.GNodeB.ControlIF.Ip,
+		conf.GNodeB.DataIF.Ip,
+		conf.GNodeB.ControlIF.Port,
+		conf.GNodeB.DataIF.Port)
+
+	// start communication with AMF (server SCTP).
+
+	// new AMF context.
+	amf := gnb.NewGnBAmf(conf.AMF.Ip, conf.AMF.Port)
+
+	// start communication with AMF(SCTP).
+	if err := serviceNgap.InitConn(amf, gnb); err != nil {
+		log.Info("Error in", err)
+		time.Sleep(1000 * time.Millisecond)
+		wg.Done()
+		return
+	} else {
+		log.Info("[GNB] SCTP/NGAP service is running")
+		// wg.Add(1)
+	}
+
+	trigger.SendNgSetupRequest(gnb, amf)
+
+	time.Sleep(1000 * time.Millisecond)
+
+	if amf.GetState() == 0x01 {
+		monitor.IncRqs()
+	}
+
+	gnb.Terminate()
+	wg.Done()
+	// os.Exit(0)
+}
+
+// carga não fica suspensa por 1s
+func InitGnbWithoutInterruption(conf config.Config, wg *sync.WaitGroup,
+	monitor *monitoring.Monitor) {
+
+	// instance new gnb.
+	gnb := &context.GNBContext{}
+
+	// new gnb context.
+	gnb.NewRanGnbContext(
+		conf.GNodeB.PlmnList.GnbId,
+		conf.GNodeB.PlmnList.Mcc,
+		conf.GNodeB.PlmnList.Mnc,
+		conf.GNodeB.PlmnList.Tac,
+		conf.GNodeB.SliceSupportList.Sst,
+		conf.GNodeB.SliceSupportList.Sd,
+		conf.GNodeB.ControlIF.Ip,
+		conf.GNodeB.DataIF.Ip,
+		conf.GNodeB.ControlIF.Port,
+		conf.GNodeB.DataIF.Port)
+
+	// start communication with AMF (server SCTP).
+
+	// new AMF context.
+	amf := gnb.NewGnBAmf(conf.AMF.Ip, conf.AMF.Port)
+
+	// start communication with AMF(SCTP).
+	if err := serviceNgap.InitConn(amf, gnb); err != nil {
+		log.Info("Error in", err)
+		wg.Done()
+		return
+	} else {
+		log.Info("[GNB] SCTP/NGAP service is running")
+		// wg.Add(1)
+	}
+
+	trigger.SendNgSetupRequest(gnb, amf)
+
+	// handle time for response of packet
+	start := time.Now()
+	for {
+
+		if amf.GetState() == 0x01 {
+			monitor.InitRqsLocal()
+			break
+		}
+
+		elapsed := time.Since(start)
+		if 1000-elapsed.Milliseconds() <= 0 {
+			break
+		}
 	}
 
 	gnb.Terminate()
