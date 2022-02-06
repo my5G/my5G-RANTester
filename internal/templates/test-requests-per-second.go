@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+// raja de mensagens por um determinado tempo
+// ,e.g, requests per second
 func TestRqsPerTime(numRqs int, interval int) int64 {
 
 	wg := sync.WaitGroup{}
@@ -66,7 +68,7 @@ func TestRqsLoop(numRqs int, interval int) int64 {
 
 			cfg.GNodeB.ControlIF.Port = ranPort
 
-			go gnb.InitGnbForLoad2(cfg, &wg, &monitor)
+			go gnb.InitGnbForLoadSeconds(cfg, &wg, &monitor)
 
 			wg.Add(1)
 
@@ -110,7 +112,7 @@ func TestRqsLoopWithSpace(numRqs int, interval int, space int) int64 {
 
 			cfg.GNodeB.ControlIF.Port = ranPort
 
-			go gnb.InitGnbForLoad2(cfg, &wg, &monitor)
+			go gnb.InitGnbForLoadSeconds(cfg, &wg, &monitor)
 
 			// espaço entre as mensagens
 			time.Sleep(time.Duration(space) * time.Millisecond)

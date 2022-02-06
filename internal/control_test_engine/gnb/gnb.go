@@ -113,7 +113,7 @@ func InitGnbForLoad(conf config.Config, wg *sync.WaitGroup,
 	// os.Exit(0)
 }
 
-func InitGnbForLoad2(conf config.Config, wg *sync.WaitGroup,
+func InitGnbForLoadSeconds(conf config.Config, wg *sync.WaitGroup,
 	monitor *monitoring.Monitor) {
 
 	// instance new gnb.
@@ -200,6 +200,7 @@ func InitGnbWithoutInterruption(conf config.Config, wg *sync.WaitGroup,
 
 	// handle time for response of packet
 	start := time.Now()
+
 	for {
 
 		if amf.GetState() == 0x01 {
@@ -208,7 +209,7 @@ func InitGnbWithoutInterruption(conf config.Config, wg *sync.WaitGroup,
 		}
 
 		elapsed := time.Since(start)
-		if 1000-elapsed.Milliseconds() <= 0 {
+		if (1000 - elapsed.Milliseconds()) <= 0 {
 			break
 		}
 	}
