@@ -80,7 +80,7 @@ func TestUesLatencyInInterval(interval int) int64 {
 			// increment the latency global for the mean
 			monitor.SetLtGlobal(monitor.LtRegisterLocal)
 		} else {
-			log.Warn("[TESTER][UE] UE LATENCY IN REGISTRATION: EXPIRED")
+			log.Warn("[TESTER][UE] UE LATENCY IN REGISTRATION: WITHOUT CONNECTION")
 		}
 
 		// ue registration per second
