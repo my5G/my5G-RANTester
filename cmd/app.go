@@ -107,10 +107,10 @@ func main() {
 			},
 			{
 				Name:    "amf-load",
-				Aliases: []string{"amf-requests"},
+				Aliases: []string{"amf-load"},
 				Usage: "\nTesting AMF requests for the specified time in milliseconds\n" +
-					"Example for testing multiple requests per second: amf-requests -n 5 \n" +
-					"Example for testing multiple requests per specifying time: amf-requests -n 5 -t 200\n",
+					"Example for testing multiple requests per second: amf-load -n 5 \n" +
+					"Example for testing multiple requests per specifying time: amf-load -n 5 -t 200\n",
 				Flags: []cli.Flag{
 					&cli.IntFlag{Name: "number-of-requests", Value: 1, Aliases: []string{"n"}},
 					&cli.IntFlag{Name: "time", Value: 1000, Aliases: []string{"t"}},
@@ -139,7 +139,7 @@ func main() {
 				Name:    "amf-load-loop",
 				Aliases: []string{"amf-load-loop"},
 				Usage: "\nTesting AMF requests in interval\n" +
-					"Example for testing multiple requests in 20 seconds: amf-requests-loop -n 20 -t 20\n",
+					"Example for testing multiple requests in 20 seconds: amf-load-loop -n 20 -t 20\n",
 				Flags: []cli.Flag{
 					&cli.IntFlag{Name: "number-of-requests", Value: 1, Aliases: []string{"n"}},
 					&cli.IntFlag{Name: "time", Value: 1, Aliases: []string{"t"}},

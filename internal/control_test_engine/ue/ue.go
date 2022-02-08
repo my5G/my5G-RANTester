@@ -63,7 +63,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 }
 
 func RegistrationUeMonitor(conf config.Config,
-	id uint8, monitor *monitoring.Monitor) {
+	id uint8, monitor *monitoring.Monitor, wg *sync.WaitGroup) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
@@ -120,6 +120,7 @@ func RegistrationUeMonitor(conf config.Config,
 		count++
 	}
 
-	ue.Terminate()
+	wg.Done()
+	//ue.Terminate()
 	// os.Exit(0)
 }

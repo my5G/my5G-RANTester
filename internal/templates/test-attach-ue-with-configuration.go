@@ -54,7 +54,11 @@ func TestUeLatency() int64 {
 
 	time.Sleep(1 * time.Second)
 
-	ue.RegistrationUeMonitor(cfg, 1, &monitor)
+	go ue.RegistrationUeMonitor(cfg, 1, &monitor, &wg)
+
+	wg.Add(1)
+
+	wg.Wait()
 
 	wg.Done()
 

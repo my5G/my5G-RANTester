@@ -56,24 +56,41 @@ func TestUesLatencyInInterval(interval int) int64 {
 		log.Fatal("Error in get configuration")
 	}
 
-	go gnb.InitGnb(cfg, &wg)
-
-	wg.Add(1)
-
-	time.Sleep(1 * time.Second)
-
 	for i := 1; i <= interval; i++ {
 
-		ue.RegistrationUeMonitor(cfg, uint8(i), &monitor)
+		// sinal da gnb para manter a execução
+		sigGnb := make(chan bool, 1)
+		synch := make(chan bool, 1)
 
-		// increment the latency global for the mean
-		monitor.SetLtGlobal(monitor.LtRegisterLocal)
+		// usado para sincronizar se a thread da gnb gerou um erro
+
+		go gnb.InitGnb2(cfg, sigGnb, synch)
+
+		// não houve erro na gnb
+		if <-synch {
+
+			time.Sleep(400 * time.Millisecond)
+
+			go ue.RegistrationUeMonitor(cfg, uint8(i), &monitor, &wg)
+
+			wg.Add(1)
+
+			wg.Wait()
+
+			// increment the latency global for the mean
+			monitor.SetLtGlobal(monitor.LtRegisterLocal)
+		} else {
+			log.Warn("[TESTER][UE] UE LATENCY IN REGISTRATION: EXPIRED")
+		}
 
 		// ue registration per second
-		time.Sleep(900 * time.Millisecond)
-	}
+		time.Sleep(600 * time.Millisecond)
 
-	wg.Done()
+		// seta o sinal e termina a gnb
+		sigGnb <- true
+
+		time.Sleep(20 * time.Millisecond)
+	}
 
 	return monitor.LtRegisterGlobal
 }
