@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/nas/message/nas_control"
@@ -104,7 +105,13 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 
 	log.Info("[UE][NAS] UE 5G GUTI: ", ue.Get5gGuti())
 
-	// getting NAS registration complete.
+	snssai := message.RegistrationAccept.AllowedNSSAI.GetSNSSAIValue()
+	ue.PduSession.Snssai.Sst = int32(snssai[1])
+	ue.PduSession.Snssai.Sd = fmt.Sprintf("0%x0%x0%x", snssai[2], snssai[3], snssai[4])
+
+	log.Warn("[UE][NAS] SNSSAI ALLOWED: SST -- ", ue.PduSession.Snssai.Sst, " SD --", ue.PduSession.Snssai.Sd)
+
+	// getting NAS registration complete
 	registrationComplete, err := mm_5gs.RegistrationComplete(ue)
 	if err != nil {
 		log.Fatal("[UE][NAS] Error sending Registration Complete: ", err)
