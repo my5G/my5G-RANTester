@@ -498,7 +498,7 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 		}
 		for i := 0; i < amf.GetLenSlice(); i++ {
 			sst, sd := amf.GetSliceSupport(i)
-			log.Info("[GNB][AMF] List of AMF slices Supported by AMF -- sst:", sst, " sd:", sd)
+			log.Warn("[GNB][AMF] List of AMF slices Supported by AMF -- sst:", sst, " sd:", sd)
 		}
 	}
 
