@@ -190,7 +190,7 @@ func main() {
 			{
 				Name:    "ue-latency-interval",
 				Aliases: []string{"ue-latency-interval"},
-				Usage: "\nTesting UE latency in registration for specific interval in seconds\n" +
+				Usage: "\nTesting UE latency in registration for specific interval\n" +
 					"Testing UE latency in 20 seconds: ue-latency-interval -t 20\n",
 				Flags: []cli.Flag{
 					&cli.IntFlag{Name: "time", Value: 1, Aliases: []string{"t"}},

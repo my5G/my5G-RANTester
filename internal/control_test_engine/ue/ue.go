@@ -110,8 +110,8 @@ func RegistrationUeMonitor(conf config.Config,
 			break
 		}
 
-		if count == 100 {
-			log.Warn("[TESTER][UE] TIME EXPIRED IN UE REGISTRATION 1000 ms")
+		if count == 1000 {
+			log.Warn("[TESTER][UE] TIME EXPIRED IN UE REGISTRATION 10000 ms")
 			monitor.LtRegisterLocal = 1000
 			break
 		}

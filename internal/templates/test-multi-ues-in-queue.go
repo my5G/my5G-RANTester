@@ -63,7 +63,6 @@ func TestUesLatencyInInterval(interval int) int64 {
 		synch := make(chan bool, 1)
 
 		// usado para sincronizar se a thread da gnb gerou um erro
-
 		go gnb.InitGnb2(cfg, sigGnb, synch)
 
 		// não houve erro na gnb
@@ -71,6 +70,7 @@ func TestUesLatencyInInterval(interval int) int64 {
 
 			time.Sleep(400 * time.Millisecond)
 
+			log.Warn("[TESTER][UE] Test UE REGISTRATION:")
 			go ue.RegistrationUeMonitor(cfg, uint8(i), &monitor, &wg)
 
 			wg.Add(1)
@@ -89,7 +89,7 @@ func TestUesLatencyInInterval(interval int) int64 {
 		// seta o sinal e termina a gnb
 		sigGnb <- true
 
-		time.Sleep(20 * time.Millisecond)
+		time.Sleep(40 * time.Millisecond)
 	}
 
 	return monitor.LtRegisterGlobal
