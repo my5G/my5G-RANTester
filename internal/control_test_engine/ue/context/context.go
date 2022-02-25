@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	log "github.com/sirupsen/logrus"
+	"github.com/vishvananda/netlink"
 	"my5G-RANTester/lib/UeauCommon"
 	"my5G-RANTester/lib/milenage"
 	"my5G-RANTester/lib/nas/nasMessage"
@@ -51,6 +53,9 @@ type PDUSession struct {
 	Dnn       string
 	Snssai    models.Snssai
 	gatewayIP net.IP
+	tun       netlink.Link
+	routeTun  *netlink.Route
+	ruleTun   *netlink.Rule
 }
 
 type SECURITY struct {
@@ -73,7 +78,7 @@ type SECURITY struct {
 
 func (ue *UEContext) NewRanUeContext(msin string,
 	cipheringAlg, integrityAlg uint8,
-	k, opc, op, amf, sqn, mcc, mnc string,
+	k, opc, op, amf, sqn, mcc, mnc, dnn string,
 	sst int32, sd string, id uint8) {
 
 	// added SUPI.
@@ -109,7 +114,7 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	ue.PduSession.Snssai.Sst = sst
 
 	// added Domain Network Name.
-	ue.PduSession.Dnn = "internet"
+	ue.PduSession.Dnn = dnn
 
 	// added gateway ip.
 	ue.PduSession.gatewayIP = net.ParseIP("127.0.0.2").To4()
@@ -503,6 +508,59 @@ func SetUESecurityCapability(ue *UEContext) (UESecurityCapability *nasType.UESec
 	}
 
 	return
+}
+
+func (ue *UEContext) SetTunInterface(tun netlink.Link) {
+	ue.PduSession.tun = tun
+}
+
+func (ue *UEContext) GetTunInterface() netlink.Link {
+	return ue.PduSession.tun
+}
+
+func (ue *UEContext) SetTunRoute(route *netlink.Route) {
+	ue.PduSession.routeTun = route
+}
+
+func (ue *UEContext) GetTunRoute() *netlink.Route {
+	return ue.PduSession.routeTun
+}
+
+func (ue *UEContext) SetTunRule(rule *netlink.Rule) {
+	ue.PduSession.ruleTun = rule
+}
+
+func (ue *UEContext) GetTunRule() *netlink.Rule {
+	return ue.PduSession.ruleTun
+}
+
+func (ue *UEContext) Terminate() {
+
+	// clean all context of tun interface
+	ueTun := ue.GetTunInterface()
+	ueRoute := ue.GetTunRoute()
+	ueRule := ue.GetTunRule()
+	ueUnix := ue.GetUnixConn()
+
+	if ueTun != nil {
+		_ = netlink.LinkSetDown(ueTun)
+		_ = netlink.LinkDel(ueTun)
+	}
+
+	if ueRoute != nil {
+		_ = netlink.RouteDel(ueRoute)
+	}
+
+	if ueRule != nil {
+		_ = netlink.RuleDel(ueRule)
+	}
+
+	if ueUnix != nil {
+		ueUnix.Close()
+	}
+
+	log.Info("[UE] UE Terminated")
+
 }
 
 func reverse(s string) string {
