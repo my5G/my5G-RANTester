@@ -1,0 +1,16 @@
+package main
+
+import (
+	"github.com/urfave/cli/v2"
+	"my5G-RANTester/internal/templates"
+)
+
+func testUE(_ *cli.Context) error {
+	const (
+		name = "Testing an ue attached with configuration"
+	)
+
+	testLogCommonInfo(name, argNumUEDefault)
+
+	return templates.TestAttachUeWithConfiguration(*cfg)
+}
