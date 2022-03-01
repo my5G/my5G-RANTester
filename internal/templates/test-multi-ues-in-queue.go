@@ -24,7 +24,7 @@ func TestMultiUesInQueue(cfg config.Config, numUes int) error {
 		imsi := imsiGenerator(i)
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 		cfg.Ue.Msin = imsi
-		go ue.RegistrationUe(cfg, uint8(i))
+		go ue.RegistrationUe(cfg, uint8(i), &wg)
 		wg.Add(1)
 
 		time.Sleep(10 * time.Second)

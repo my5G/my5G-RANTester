@@ -17,7 +17,7 @@ func TestAttachUeWithConfiguration(cfg config.Config) error {
 
 	time.Sleep(time.Second)
 
-	go ue.RegistrationUe(cfg, 1)
+	go ue.RegistrationUe(cfg, 1, &wg)
 
 	wg.Add(1)
 
