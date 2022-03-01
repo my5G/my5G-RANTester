@@ -3,7 +3,6 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-
 	"my5G-RANTester/internal/templates"
 )
 
@@ -21,7 +20,6 @@ func testRegisterMultiUE(c *cli.Context) error {
 	numUE := c.Int(argNumUE)
 
 	testLogCommonInfo(name, numUE)
-	templates.TestMultiUesInQueue(numUE)
 
-	return nil
+	return templates.TestMultiUesInQueue(*cfg, numUE)
 }

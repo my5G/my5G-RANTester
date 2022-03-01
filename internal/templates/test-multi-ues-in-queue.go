@@ -10,15 +10,8 @@ import (
 	"time"
 )
 
-func TestMultiUesInQueue(numUes int) {
-
+func TestMultiUesInQueue(cfg config.Config, numUes int) error {
 	wg := sync.WaitGroup{}
-
-	cfg, err := config.GetConfig()
-	if err != nil {
-		//return nil
-		log.Fatal("Error in get configuration")
-	}
 
 	go gnb.InitGnb(cfg)
 
@@ -38,10 +31,11 @@ func TestMultiUesInQueue(numUes int) {
 	}
 
 	wg.Wait()
+
+	return nil
 }
 
 func imsiGenerator(i int) string {
-
 	var base string
 	switch true {
 	case i < 10:

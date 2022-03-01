@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/urfave/cli/v2"
-
 	"my5G-RANTester/internal/templates"
 )
 
@@ -13,7 +12,5 @@ func testUE(_ *cli.Context) error {
 
 	testLogCommonInfo(name, argNumUEDefault)
 
-	templates.TestAttachUeWithConfiguration()
-
-	return nil
+	return templates.TestAttachUeWithConfiguration(*cfg)
 }

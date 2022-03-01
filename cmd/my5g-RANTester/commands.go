@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/urfave/cli/v2"
+	"my5G-RANTester/config"
 )
 
 const (
@@ -22,6 +23,14 @@ const (
 
 func setupCommands(a *cli.App) {
 	var commands []*cli.Command
+
+	// TODO: this code is coupled to the ./config module.
+	// this is here because config data is used inside of the test functions.
+	if fixme, err := config.Load(); err != nil {
+		panic(err)
+	} else {
+		cfg = fixme
+	}
 
 	loadTestFlags := []cli.Flag{
 		&cli.IntFlag{Name: argNumUE, Value: argNumUEDefault, Aliases: []string{"n"}},

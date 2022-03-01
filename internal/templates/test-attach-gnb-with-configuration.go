@@ -1,21 +1,14 @@
 package templates
 
 import (
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
 	"sync"
 )
 
-func TestAttachGnbWithConfiguration() {
+func TestAttachGnbWithConfiguration(cfg config.Config) error {
 
 	wg := sync.WaitGroup{}
-
-	cfg, err := config.GetConfig()
-	if err != nil {
-		//return nil
-		log.Fatal("Error in get configuration")
-	}
 
 	// wrong messages:
 	// cfg.GNodeB.PlmnList.Mcc = "891"
@@ -29,4 +22,6 @@ func TestAttachGnbWithConfiguration() {
 	wg.Add(1)
 
 	wg.Wait()
+
+	return nil
 }

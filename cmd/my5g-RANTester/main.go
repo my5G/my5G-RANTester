@@ -14,12 +14,11 @@ const (
 )
 
 func main() {
+	app := &cli.App{Before: runAllActions}
+
 	initLogger()
-
 	log.Infof(fmtMsgVersion, version)
-
-	app := &cli.App{}
-
+	setupOptions(app)
 	setupCommands(app)
 
 	if err := app.Run(os.Args); err != nil {
@@ -32,8 +31,22 @@ func initLogger() {
 	// Can be any io.Writer, see below for File example
 	log.SetOutput(os.Stdout)
 
-	// Only log the warning severity or above.
-	log.SetLevel(log.WarnLevel)
+	log.SetLevel(0)
 
 	spew.Config.Indent = "\t"
+}
+
+func runAllActions(c *cli.Context) (err error) {
+	for _, fn := range []func(c *cli.Context) error{
+		showUsageString,
+		setLogLevel,
+		setConfigFile,
+	} {
+		err = fn(c)
+		if err != nil {
+			break
+		}
+	}
+
+	return err
 }

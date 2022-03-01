@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
-
-	"my5G-RANTester/config"
 )
 
 func testLogCommonInfo(name string, numUE int) {
@@ -17,8 +15,6 @@ func testLogCommonInfo(name string, numUE int) {
 		fmtDataInfo    = "Data interface IP/Port: " + fmtIPPort
 		fmtAMFInfo     = "AMF IP/Port: " + fmtIPPort
 	)
-
-	cfg := config.Data
 
 	log.Info(logSep)
 
