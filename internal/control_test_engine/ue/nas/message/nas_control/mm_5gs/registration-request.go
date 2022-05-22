@@ -12,7 +12,7 @@ import (
 func GetRegistrationRequest(registrationType uint8, requestedNSSAI *nasType.RequestedNSSAI, uplinkDataStatus *nasType.UplinkDataStatus, capability bool, ue *context.UEContext) (nasPdu []byte) {
 
 	// set some values for testing.
-	if ue.GetTesting() == "test-non-clear-text" {
+	if ue.GetTesting() == "test-non-clear-text" || ue.GetTesting() == "test-resend-registration-request" {
 		capability = true
 	}
 
