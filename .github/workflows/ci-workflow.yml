@@ -34,3 +34,6 @@ jobs:
           
       - name: Install Go Deps
         run: go mod download
+
+      - name: Build my5g-RANTester
+        run: go build ./cmd/my5g-RANTester
