@@ -99,6 +99,44 @@ func main() {
 					return nil
 				},
 			},
+			{
+				Name:    "load-test-parallel",
+				Aliases: []string{"load-test-parallel"},
+				Usage: "\nLoad endurance stress tests.\n" +
+					"Example for testing multiple UEs: load-test-parallel -n 1000 -d 30 -t 30\n",
+				Flags: []cli.Flag{
+					&cli.IntFlag{Name: "number-of-ues", Value: 1, Aliases: []string{"n"}},
+					&cli.IntFlag{Name: "delay-per-ue", Value: 1, Aliases: []string{"d"}},
+					&cli.IntFlag{Name: "startup-delay", Value: 1, Aliases: []string{"t"}},
+				},
+				Action: func(c *cli.Context) error {
+					var numUes int
+					var delayUes int
+					var delayStart int
+					name := "Testing registration of multiple UEs in parallel"
+					cfg := config.Data
+
+					if c.IsSet("number-of-ues") && c.IsSet("delay-per-ue") && c.IsSet("startup-delay") {
+						numUes = c.Int("number-of-ues")
+						delayUes = c.Int("delay-per-ue")
+						delayStart = c.Int("startup-delay")
+					} else {
+						log.Info(c.Command.Usage)
+						return nil
+					}
+
+					log.Info("---------------------------------------")
+					log.Info("[TESTER] Starting test function: ", name)
+					log.Info("[TESTER][UE] Number of UEs: ", numUes)
+					log.Info("[TESTER][GNB] gNodeB control interface IP/Port: ", cfg.GNodeB.ControlIF.Ip, "/", cfg.GNodeB.ControlIF.Port)
+					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
+					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
+					log.Info("---------------------------------------")
+					templates.TestMultiUesInParallel(numUes, delayUes, delayStart)
+
+					return nil
+				},
+			},
 		},
 	}
 	err := app.Run(os.Args)

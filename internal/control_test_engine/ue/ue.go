@@ -10,9 +10,13 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+
+	"github.com/bradhe/stopwatch"
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
+
+	//watch := stopwatch.Start()
 
 	// wg := sync.WaitGroup{}
 
@@ -37,7 +41,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 		id)
 
 	// starting communication with GNB and listen.
-	err := service.InitConn(ue)
+	err := service.InitConn2(ue, nil)
 	if err != nil {
 		log.Fatal("Error in", err)
 	} else {
@@ -48,6 +52,8 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	// registration procedure started.
 	trigger.InitRegistration(ue)
 
+	// watch.Stop()
+	// log.Info(fmt.Sprintf("[UE] Milliseconds elapsed: %v", watch.Milliseconds()))
 	// wg.Wait()
 
 	// control the signals
@@ -59,5 +65,4 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	ue.Terminate()
 	wg.Done()
 	// os.Exit(0)
-
 }

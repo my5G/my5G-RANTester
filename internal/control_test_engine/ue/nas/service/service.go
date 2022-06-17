@@ -5,6 +5,8 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
+
+	"github.com/bradhe/stopwatch"
 )
 
 func CloseConn(ue *context.UEContext) {
@@ -13,6 +15,10 @@ func CloseConn(ue *context.UEContext) {
 }
 
 func InitConn(ue *context.UEContext) error {
+	return InitConn2(ue, nil)
+}
+
+func InitConn2(ue *context.UEContext, watch stopwatch.Watch) error {
 
 	// initiated communication with GNB(unix sockets).
 	conn, err := net.Dial("unix", "/tmp/gnb.sock")
@@ -24,13 +30,13 @@ func InitConn(ue *context.UEContext) error {
 	ue.SetUnixConn(conn)
 
 	// listen NAS.
-	go UeListen(ue)
+	go UeListen(ue, watch)
 
 	return nil
 }
 
 // ue listen unix sockets.
-func UeListen(ue *context.UEContext) {
+func UeListen(ue *context.UEContext, watch stopwatch.Watch) {
 
 	buf := make([]byte, 65535)
 	conn := ue.GetUnixConn()
@@ -56,7 +62,7 @@ func UeListen(ue *context.UEContext) {
 		copy(forwardData, buf[:n])
 
 		// handling NAS message.
-		go state.DispatchState(ue, forwardData)
+		go state.DispatchState2(ue, forwardData, watch)
 
 	}
 }
