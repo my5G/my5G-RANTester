@@ -11,7 +11,7 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/bradhe/stopwatch"
+	//"github.com/bradhe/stopwatch"
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
