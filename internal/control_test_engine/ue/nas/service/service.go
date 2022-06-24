@@ -15,10 +15,6 @@ func CloseConn(ue *context.UEContext) {
 }
 
 func InitConn(ue *context.UEContext) error {
-	return InitConn2(ue, nil)
-}
-
-func InitConn2(ue *context.UEContext, watch stopwatch.Watch) error {
 
 	// initiated communication with GNB(unix sockets).
 	conn, err := net.Dial("unix", "/tmp/gnb.sock")
@@ -30,13 +26,13 @@ func InitConn2(ue *context.UEContext, watch stopwatch.Watch) error {
 	ue.SetUnixConn(conn)
 
 	// listen NAS.
-	go UeListen(ue, watch)
+	go UeListen(ue)
 
 	return nil
 }
 
 // ue listen unix sockets.
-func UeListen(ue *context.UEContext, watch stopwatch.Watch) {
+func UeListen(ue *context.UEContext) {
 
 	buf := make([]byte, 65535)
 	conn := ue.GetUnixConn()
@@ -62,7 +58,7 @@ func UeListen(ue *context.UEContext, watch stopwatch.Watch) {
 		copy(forwardData, buf[:n])
 
 		// handling NAS message.
-		go state.DispatchState2(ue, forwardData, watch)
+		go state.DispatchState(ue, forwardData)
 
 	}
 }
