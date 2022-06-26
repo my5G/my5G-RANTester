@@ -352,6 +352,8 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 	log.Info("[GNB][NGAP][AMF] Send Initial Context Setup Response")
 	trigger.SendInitialContextSetupResponse(ue, gnb, allocationPdu)
 
+	log.Info("[GNB][NGAP] Time of UE Context management: ", time.Since(gnb.Time).Milliseconds())
+
 	// allocation resources for tunnel UE and GNB(DRB).
 	if allocationPdu {
 
@@ -378,6 +380,8 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	var qosId int64
 	var fiveQi int64
 	var priArp int64
+
+	log.Info("[GNB][NGAP] Time of Transport NAS Messages: ", time.Since(gnb.Time).Milliseconds())
 
 	valueMessage := message.InitiatingMessage.Value.PDUSessionResourceSetupRequest
 
@@ -520,17 +524,19 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	// send NAS message to UE.
 	sender.SendToUe(ue, messageNas)
 
+	// send PDU Session Resource Setup Response.
+	trigger.SendPduSessionResourceSetupResponse(ue, gnb)
+
+	log.Info("[GNB][NGAP] Time of PDU session management: ", time.Since(gnb.Time).Milliseconds())
+
+	time.Sleep(20 * time.Millisecond)
+
 	// configure GTP tunnel and listen.
 	if gnb.GetN3Plane() == nil {
 		// TODO check if GTP tunnel and gateway is ok.
 		serviceGtp.InitGTPTunnel(gnb)
 		serviceGateway.InitGatewayGnb(gnb)
 	}
-
-	// send PDU Session Resource Setup Response.
-	trigger.SendPduSessionResourceSetupResponse(ue, gnb)
-
-	time.Sleep(20 * time.Millisecond)
 
 	// ue is ready for data plane.
 	// send GNB UE IP message to UE.
@@ -655,6 +661,8 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 			log.Info("[GNB][AMF] List of AMF slices Supported by AMF -- sst:", sst, " sd:", sd)
 		}
 	}
+
+	log.Info("[GNB][AMF] Time of Interface Management ", time.Since(gnb.Time).Milliseconds())
 
 }
 

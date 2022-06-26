@@ -54,7 +54,6 @@ func Dispatch(amf *context.GNBAmf, gnb *context.GNBContext, message []byte) {
 			// handler NGAP Setup Response.
 			log.Info("[GNB][NGAP] Receive Ng Setup Response")
 			handler.HandlerNgSetupResponse(amf, gnb, ngapMsg)
-
 		}
 
 	case ngapType.NGAPPDUPresentUnsuccessfulOutcome:

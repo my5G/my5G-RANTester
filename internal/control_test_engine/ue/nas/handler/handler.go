@@ -22,6 +22,8 @@ func HandlerAuthenticationReject(ue *context.UEContext, message *nas.Message) {
 func HandlerAuthenticationRequest(ue *context.UEContext, message *nas.Message) {
 	var authenticationResponse []byte
 
+	log.Info("[UE][NAS] Time of Identification: ", time.Since(ue.Time).Milliseconds())
+
 	// getting RAND and AUTN from the message.
 	rand := message.AuthenticationRequest.GetRANDValue()
 	autn := message.AuthenticationRequest.GetAUTN()
@@ -75,6 +77,8 @@ func HandlerAuthenticationRequest(ue *context.UEContext, message *nas.Message) {
 
 func HandlerSecurityModeCommand(ue *context.UEContext, message *nas.Message) {
 
+	log.Info("[UE][NAS] Time of Primary authentication and key agreement: ", time.Since(ue.Time).Milliseconds())
+
 	switch message.SecurityModeCommand.SelectedNASSecurityAlgorithms.GetTypeOfCipheringAlgorithm() {
 	case 0:
 		log.Info("[UE][NAS] Type of ciphering algorithm is 5G-EA0")
@@ -124,6 +128,8 @@ func HandlerSecurityModeCommand(ue *context.UEContext, message *nas.Message) {
 
 func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 
+	log.Info("[UE][NAS] Time of Security Mode: ", time.Since(ue.Time).Milliseconds())
+
 	// change the state of ue for registered
 	ue.SetStateMM_REGISTERED()
 
@@ -146,6 +152,8 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 
 	// sending to GNB
 	sender.SendToGnb(ue, registrationComplete)
+
+	log.Info("[UE][NAS] Time of Registration: ", time.Since(ue.Time).Milliseconds())
 
 	// waiting receive Configuration Update Command.
 	time.Sleep(20 * time.Millisecond)
@@ -180,6 +188,8 @@ func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message)
 		}
 	}
 
+	log.Info("[UE][NAS] Time of Transport: ", time.Since(ue.Time).Milliseconds())
+
 	//getting PDU Session establishment accept.
 	payloadContainer := nas_control.GetNasPduFromPduAccept(message)
 	if payloadContainer.GsmHeader.GetMessageType() == nas.MsgTypePDUSessionEstablishmentAccept {
@@ -211,6 +221,9 @@ func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message)
 		log.Info("[UE][NAS] PDU session NSSAI -- sst: ", sst, " sd: ",
 			fmt.Sprintf("%x%x%x", sd[0], sd[1], sd[2]))
 		log.Info("[UE][NAS] PDU address received: ", ue.GetIp())
+
+		log.Info("[UE][NAS] Time of Session Management: ", time.Since(ue.Time).Milliseconds())
+
 	} else if payloadContainer.GsmHeader.GetMessageType() == nas.MsgTypePDUSessionEstablishmentReject {
 		// handler PDU Establishment Reject
 		log.Fatal("[UE][NAS] Receive PDU Establishment Reject")
@@ -259,6 +272,8 @@ func HandlerConfigurationUpdateCommand(ue *context.UEContext, message *nas.Messa
 	// time zone
 	timeZone := message.ConfigurationUpdateCommand.UniversalTimeAndLocalTimeZone.GetTimeZone()
 	log.Info("[UE][NAS] Time Zone: ", timeZone)
+
+	log.Info("[UE][NAS] Time of Generic UE configuration update: ", time.Since(ue.Time).Milliseconds())
 
 	//time
 	/*

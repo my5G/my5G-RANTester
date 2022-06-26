@@ -15,6 +15,7 @@ import (
 	"net"
 	"reflect"
 	"regexp"
+	"time"
 )
 
 // 5GMM main states in the UE.
@@ -31,6 +32,7 @@ const SM5G_PDU_SESSION_ACTIVE_PENDING = 0x07
 const SM5G_PDU_SESSION_ACTIVE = 0x08
 
 type UEContext struct {
+	Time       time.Time
 	id         uint8
 	UeSecurity SECURITY
 	StateMM    int
@@ -149,6 +151,8 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	// added initial state for SM(INACTIVE)
 	ue.SetStateSM_PDU_SESSION_INACTIVE()
 
+	// start time of UE procedures
+	ue.Time = time.Now()
 }
 
 func (ue *UEContext) GetMobileIdentity(identity5gs string) nasType.MobileIdentity5GS {

@@ -8,9 +8,11 @@ import (
 	"log"
 	"net"
 	"sync"
+	"time"
 )
 
 type GNBContext struct {
+	Time           time.Time   // time of NGAP procedures
 	dataInfo       DataInfo    // gnb data plane information
 	controlInfo    ControlInfo // gnb control plane information
 	uePool         sync.Map    // map[in64]*GNBUe, UeRanNgapId as key
@@ -70,6 +72,7 @@ func (gnb *GNBContext) NewRanGnbContext(gnbId, mcc, mnc, tac, sst, sd, ip, ipDat
 	gnb.dataInfo.gnbIp = ipData
 	gnb.dataInfo.gnbPort = portData
 	gnb.test = test
+	gnb.Time = time.Now()
 }
 
 func (gnb *GNBContext) NewGnBUe(conn net.Conn) *GNBUe {
