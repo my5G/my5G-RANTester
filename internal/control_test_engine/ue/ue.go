@@ -15,10 +15,10 @@ import (
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
-	RegistrationUe(conf, id, wg, int(0))
+	RegistrationUe2(conf, id, wg, int(0))
 }
 
-func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int) {
+func RegistrationUe2(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
