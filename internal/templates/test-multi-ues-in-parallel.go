@@ -31,7 +31,7 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int) {
     msin :=  cfg.Ue.Msin
 
 	for i := 1; i <= numUes; i++ {
-		go registerSingleUe2(cfg, wg, msin, i)
+		go registerSingleUe(cfg, wg, msin, i)
 		time.Sleep(time.Duration(delayUes) * time.Millisecond)
 	}
 
@@ -44,7 +44,7 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) 
 	imsi := imsiGenerator2(i, msin)
 	log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 	cfg.Ue.Msin = imsi
-	go ue.RegistrationUe(cfg, uint8(i), &wg, i)
+	go ue.RegistrationUe2(cfg, uint8(i), &wg, i)
 	log_time.LogUeTime(i, 0)
 	//wg.Add(1)
 }
