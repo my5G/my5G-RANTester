@@ -15,7 +15,7 @@ import (
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
-	RegistrationUe(conf, id, wg, (int)0)
+	RegistrationUe(conf, id, wg, int(0))
 }
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int) {
