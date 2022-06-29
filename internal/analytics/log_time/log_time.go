@@ -8,13 +8,14 @@ import (
 
 func LogUeTime(id int, task_id int) {
 
-	nsec_now := now.UnixNano()
+	now := time.Now()
 
-	go ShowUeLog(id, task_id, nsec_now)
+	go ShowUeLog(id, task_id, now)
 }
 
-func ShowUeLog(id int, task_id int, time int64) {
+func ShowUeLog(id int, task_id int, now Time) {
 	if id > 0 {
-		log.Info(fmt.Sprintf("[Lando] %d, %d, %d", id, task_id, time))
+		nsec_now := now.UnixNano()
+		log.Info(fmt.Sprintf("[Lando] %d, %d, %d", id, task_id, nsec_now))
 	}
 }
