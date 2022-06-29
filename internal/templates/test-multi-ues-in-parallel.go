@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 	"fmt"
+	
+	"my5G-RANTester/internal/analytics/log_time"
 )
 
 func TestMultiUesInParallel(numUes int, delayUes int, delayStart int) {
@@ -42,7 +44,8 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) 
 	imsi := imsiGenerator2(i, msin)
 	log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 	cfg.Ue.Msin = imsi
-	go ue.RegistrationUe(cfg, uint8(i), &wg)
+	go ue.RegistrationUe(cfg, uint8(i), &wg, i)
+	log_time.LogUeTime(i, 0)
 	//wg.Add(1)
 }
 

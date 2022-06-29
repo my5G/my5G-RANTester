@@ -10,9 +10,15 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+
+	"my5G-RANTester/internal/analytics/log_time"
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
+	RegistrationUe(conf, id, wg, 0)
+}
+
+func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
@@ -44,7 +50,8 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	}
 
 	// registration procedure started.
-	trigger.InitRegistration(ue)
+	trigger.InitRegistration(ue, ue_id)
+	log_time.LogUeTime(ue_id, 1)
 
 	// control the signals
 	sigUe := make(chan os.Signal, 1)
