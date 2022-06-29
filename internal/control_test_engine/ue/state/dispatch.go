@@ -23,5 +23,5 @@ func DispatchState(ue *context.UEContext, message []byte) {
 		data.InitDataPlane(ue, message)
 	}
 
-	log_time.LogUeTime(ue_id, state)
+	log_time.LogUeTime(ue.ue_id, state)
 }

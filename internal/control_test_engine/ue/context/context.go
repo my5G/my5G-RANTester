@@ -38,6 +38,7 @@ type UEContext struct {
 	UnixConn   net.Conn
 	PduSession PDUSession
 	amfInfo    Amf
+	ue_id      int
 }
 
 type Amf struct {
@@ -81,6 +82,19 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	k, opc, op, amf, sqn, mcc, mnc, dnn string,
 	sst int32, sd string, id uint8) {
 
+	ue.NewRanUeContext(
+		msin,
+		cipheringAlg, integrityAlg,
+		k, opc, op, amf, sqn, mcc, mnc, dnn
+		sst, sd, id, 0
+	)
+}
+
+func (ue *UEContext) NewRanUeContext(msin string,
+	cipheringAlg, integrityAlg uint8,
+	k, opc, op, amf, sqn, mcc, mnc, dnn string,
+	sst int32, sd string, id uint8, ue_id int) {
+
 	// added SUPI.
 	ue.UeSecurity.Msin = msin
 
@@ -108,6 +122,9 @@ func (ue *UEContext) NewRanUeContext(msin string,
 
 	// added UE id.
 	ue.id = id
+
+	// added ue_id
+	ue.ue_id = ue_id
 
 	// added network slice
 	ue.PduSession.Snssai.Sd = sd

@@ -10,11 +10,6 @@ import (
 )
 
 func InitRegistration(ue *context.UEContext) {
-	InitRegistration(ue, 0)
-}
-
-func InitRegistration(ue *context.UEContext, ue_id int) {
-
 	// registration procedure started.
 	registrationRequest := mm_5gs.GetRegistrationRequest(
 		nasMessage.RegistrationType5GSInitialRegistration,
@@ -24,8 +19,8 @@ func InitRegistration(ue *context.UEContext, ue_id int) {
 		ue)
 
 	// send to GNB.
-	sender.SendToGnb(ue, registrationRequest, ue_id)
-	log_time.LogUeTime(ue_id, 2)
+	sender.SendToGnb(ue, registrationRequest)
+	log_time.LogUeTime(ue.ue_id, 2)
 
 	// change the state of ue for deregistered
 	ue.SetStateMM_DEREGISTERED()

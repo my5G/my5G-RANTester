@@ -38,7 +38,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int)
 		conf.Ue.Dnn,
 		int32(conf.Ue.Snssai.Sst),
 		conf.Ue.Snssai.Sd,
-		id)
+		id, ue_id)
 
 	// starting communication with GNB and listen.
 	err := service.InitConn(ue)
@@ -50,7 +50,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int)
 	}
 
 	// registration procedure started.
-	trigger.InitRegistration(ue, ue_id)
+	trigger.InitRegistration(ue)
 	log_time.LogUeTime(ue_id, 1)
 
 	// control the signals

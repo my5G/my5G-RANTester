@@ -8,10 +8,6 @@ import (
 )
 
 func SendToGnb(ue *context.UEContext, message []byte) {
-	SendToGnb(ue, message, 0)
-}
-
-func SendToGnb(ue *context.UEContext, message []byte, ue_id int) {
 
 	conn := ue.GetUnixConn()
 	
@@ -20,5 +16,5 @@ func SendToGnb(ue *context.UEContext, message []byte, ue_id int) {
 		fmt.Println("Tratar o erro")
 	}
 	
-	log_time.LogUeTime(ue_id, 3)
+	log_time.LogUeTime(ue.ue_id, 3)
 }
