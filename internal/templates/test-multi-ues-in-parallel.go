@@ -10,7 +10,7 @@ import (
 	"time"
 	"fmt"
 	
-	"my5G-RANTester/internal/analytics/log_time"
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func TestMultiUesInParallel(numUes int, delayUes int, delayStart int) {

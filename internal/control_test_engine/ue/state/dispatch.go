@@ -5,7 +5,7 @@ import (
 	data "my5G-RANTester/internal/control_test_engine/ue/data/service"
 	"my5G-RANTester/internal/control_test_engine/ue/nas"
 
-	"my5G-RANTester/internal/analytics/log_time"
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func DispatchState(ue *context.UEContext, message []byte) {
@@ -23,5 +23,5 @@ func DispatchState(ue *context.UEContext, message []byte) {
 		data.InitDataPlane(ue, message)
 	}
 
-	log_time.LogUeTime(ue.ue_id, state)
+	log_time.LogUeTime(ue.GetUeId2(), state)
 }

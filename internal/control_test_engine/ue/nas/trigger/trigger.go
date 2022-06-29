@@ -6,7 +6,7 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/nas/message/sender"
 	"my5G-RANTester/lib/nas/nasMessage"
 
-	"my5G-RANTester/internal/analytics/log_time"
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func InitRegistration(ue *context.UEContext) {
@@ -20,7 +20,7 @@ func InitRegistration(ue *context.UEContext) {
 
 	// send to GNB.
 	sender.SendToGnb(ue, registrationRequest)
-	log_time.LogUeTime(ue.ue_id, 2)
+	log_time.LogUeTime(ue.GetUeId2(), 2)
 
 	// change the state of ue for deregistered
 	ue.SetStateMM_DEREGISTERED()

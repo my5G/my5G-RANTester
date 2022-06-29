@@ -162,6 +162,10 @@ func (ue *UEContext) NewRanUeContextId(msin string,
 
 }
 
+func (ue *UEContext) GetUeId2() uint8 {
+	return ue.ue_id
+}
+
 func (ue *UEContext) GetUeId() uint8 {
 	return ue.id
 }
