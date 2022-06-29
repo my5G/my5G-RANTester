@@ -86,8 +86,7 @@ func (ue *UEContext) NewRanUeContext(msin string,
 		msin,
 		cipheringAlg, integrityAlg,
 		k, opc, op, amf, sqn, mcc, mnc, dnn,
-		sst, sd, id, 0
-	)
+		sst, sd, id, 0)
 }
 
 func (ue *UEContext) NewRanUeContext(msin string,
