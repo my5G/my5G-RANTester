@@ -82,14 +82,14 @@ func (ue *UEContext) NewRanUeContext(msin string,
 	k, opc, op, amf, sqn, mcc, mnc, dnn string,
 	sst int32, sd string, id uint8) {
 
-	ue.NewRanUeContext(
+	ue.NewRanUeContextId(
 		msin,
 		cipheringAlg, integrityAlg,
 		k, opc, op, amf, sqn, mcc, mnc, dnn,
 		sst, sd, id, 0)
 }
 
-func (ue *UEContext) NewRanUeContext(msin string,
+func (ue *UEContext) NewRanUeContextId(msin string,
 	cipheringAlg, integrityAlg uint8,
 	k, opc, op, amf, sqn, mcc, mnc, dnn string,
 	sst int32, sd string, id uint8, ue_id int) {
