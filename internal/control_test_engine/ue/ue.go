@@ -15,7 +15,7 @@ import (
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
-	RegistrationUe(conf, id, wg, 0)
+	RegistrationUe(conf, id, wg, (int)0)
 }
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int) {
@@ -24,7 +24,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int)
 	ue := &context.UEContext{}
 
 	// new UE context
-	ue.NewRanUeContext(
+	ue.NewRanUeContextId(
 		conf.Ue.Msin,
 		security.AlgCiphering128NEA0,
 		security.AlgIntegrity128NIA2,
