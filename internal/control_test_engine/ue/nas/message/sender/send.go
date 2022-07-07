@@ -9,12 +9,11 @@ import (
 
 func SendToGnb(ue *context.UEContext, message []byte) {
 
+	log_time.LogUeTime(0, ue.GetMsin(), "SendToGnb")
 	conn := ue.GetUnixConn()
 	
 	_, err := conn.Write(message)
 	if err != nil {
 		fmt.Println("Tratar o erro")
 	}
-	
-	log_time.LogUeTime(0, ue.GetMsin(), "SendToGnb")
 }

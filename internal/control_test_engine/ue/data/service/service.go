@@ -6,10 +6,14 @@ import (
 	"github.com/vishvananda/netlink"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"net"
+
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
 
+	log_time.LogUeTime(0, ue.GetMsin(), "InitDataPlane")
+	
 	// get UE GNB IP.
 	ue.SetGnbIp(message)
 

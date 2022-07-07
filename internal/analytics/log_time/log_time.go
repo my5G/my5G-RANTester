@@ -18,5 +18,5 @@ func LogUeTime(dev_type uint8, id string, task string) {
 
 func ShowUeLog(dev_type uint8, id string, task string, now time.Time) {
 	nsec_now := now.UnixNano()
-	log.Info(fmt.Sprintf("[Analytics] %d, %s, %s, %d", dev_type, id, task, nsec_now))
+	log.Info(fmt.Sprintf("[ANALYTICS] %d, %s, %s, %d", dev_type, id, task, nsec_now))
 }

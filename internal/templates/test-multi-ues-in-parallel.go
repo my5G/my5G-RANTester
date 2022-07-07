@@ -38,27 +38,11 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int) {
 	wg.Wait()
 }
 
-var lock sync.Mutex
-
 func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) {
-	imsi := imsiGenerator2(i, msin)
+	imsi := imsiGenerator(i, msin)
 	log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 	cfg.Ue.Msin = imsi
-	go ue.RegistrationUe(cfg, uint8(i), &wg)
 	log_time.LogUeTime(0, imsi, "StartRegistration")
+	go ue.RegistrationUe(cfg, uint8(i), &wg)
 	//wg.Add(1)
-}
-
-func imsiGenerator2(i int, msin string) string {
-	lock.Lock()
-	msin_int, err := strconv.Atoi(msin)
-	if err != nil {
-		defer lock.Unlock()
-		log.Fatal("Error in get configuration")
-	}
-	base := msin_int + (i -1)
-
-	imsi := fmt.Sprintf("%010d", base)
-	defer lock.Unlock()
-	return imsi
 }
