@@ -5,10 +5,8 @@ import (
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
 	"my5G-RANTester/internal/control_test_engine/ue"
-	"strconv"
 	"sync"
 	"time"
-	"fmt"
 	
 	log_time "my5G-RANTester/internal/analytics/log_time"
 )
