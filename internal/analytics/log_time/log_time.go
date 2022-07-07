@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-enabled := false
+var enabled = false
 func EnableAnalytics(){
 	enabled = true
 }
