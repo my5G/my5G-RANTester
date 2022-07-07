@@ -11,7 +11,7 @@ import (
 	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
-func TestMultiUesInParallel(numUes int, delayUes int, delayStart int) {
+func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalytics bool) {
 
 	wg := sync.WaitGroup{}
 
@@ -19,6 +19,10 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int) {
 	if err != nil {
 		//return nil
 		log.Fatal("Error in get configuration")
+	}
+
+	if showAnalytics {
+		log_time.EnableAnalytics()
 	}
 
 	go gnb.InitGnb(cfg, &wg)
