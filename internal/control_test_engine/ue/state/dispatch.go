@@ -4,8 +4,6 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	data "my5G-RANTester/internal/control_test_engine/ue/data/service"
 	"my5G-RANTester/internal/control_test_engine/ue/nas"
-
-	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func DispatchState(ue *context.UEContext, message []byte) {
@@ -22,6 +20,4 @@ func DispatchState(ue *context.UEContext, message []byte) {
 	case context.SM5G_PDU_SESSION_ACTIVE:
 		data.InitDataPlane(ue, message)
 	}
-
-	log_time.LogUeTime(ue.GetUeId2(), state)
 }

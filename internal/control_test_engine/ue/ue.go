@@ -15,16 +15,12 @@ import (
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
-	RegistrationUe2(conf, id, wg, int(0))
-}
-
-func RegistrationUe2(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
 
 	// new UE context
-	ue.NewRanUeContextId(
+	ue.NewRanUeContext(
 		conf.Ue.Msin,
 		security.AlgCiphering128NEA0,
 		security.AlgIntegrity128NIA2,
@@ -38,8 +34,7 @@ func RegistrationUe2(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int
 		conf.Ue.Dnn,
 		int32(conf.Ue.Snssai.Sst),
 		conf.Ue.Snssai.Sd,
-		id,
-		ue_id)
+		id)
 
 	// starting communication with GNB and listen.
 	err := service.InitConn(ue)
@@ -52,7 +47,7 @@ func RegistrationUe2(conf config.Config, id uint8, wg *sync.WaitGroup, ue_id int
 
 	// registration procedure started.
 	trigger.InitRegistration(ue)
-	log_time.LogUeTime(ue_id, 1)
+	log_time.LogUeTime(0, ue.GetMsin(), "RegistrationUe")
 
 	// control the signals
 	sigUe := make(chan os.Signal, 1)

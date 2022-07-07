@@ -16,5 +16,5 @@ func SendToGnb(ue *context.UEContext, message []byte) {
 		fmt.Println("Tratar o erro")
 	}
 	
-	log_time.LogUeTime(ue.GetUeId2(), 3)
+	log_time.LogUeTime(0, ue.GetMsin(), "SendToGnb")
 }

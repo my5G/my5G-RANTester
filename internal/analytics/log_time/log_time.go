@@ -6,16 +6,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func LogUeTime(id int, task_id int) {
+// dev_type:
+// 	0: UE
+// 	1: GNB
+func LogUeTime(dev_type uint8, id string, task string) {
 
 	now := time.Now()
 
-	go ShowUeLog(id, task_id, now)
+	go ShowUeLog(dev_type, id, task, now)
 }
 
-func ShowUeLog(id int, task_id int, now time.Time) {
+func ShowUeLog(dev_type uint8, id string, task string, now time.Time) {
 	if id > 0 {
 		nsec_now := now.UnixNano()
-		log.Info(fmt.Sprintf("[Lando] %d, %d, %d", id, task_id, nsec_now))
+		log.Info(fmt.Sprintf("[Analytics] %d, %s, %s, %d", dev_type, id, task, nsec_now))
 	}
 }

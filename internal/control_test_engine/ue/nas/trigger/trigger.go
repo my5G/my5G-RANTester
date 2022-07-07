@@ -20,7 +20,7 @@ func InitRegistration(ue *context.UEContext) {
 
 	// send to GNB.
 	sender.SendToGnb(ue, registrationRequest)
-	log_time.LogUeTime(ue.GetUeId2(), 2)
+	log_time.LogUeTime(0, ue.GetMsin(), "InitRegistration")
 
 	// change the state of ue for deregistered
 	ue.SetStateMM_DEREGISTERED()
