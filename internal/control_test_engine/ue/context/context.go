@@ -15,6 +15,8 @@ import (
 	"net"
 	"reflect"
 	"regexp"
+	
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 // 5GMM main states in the UE.
@@ -164,38 +166,47 @@ func (ue *UEContext) GetSupi() string {
 
 func (ue *UEContext) SetStateSM_PDU_SESSION_INACTIVE() {
 	ue.StateSM = SM5G_PDU_SESSION_INACTIVE
+	log_time.LogUeTime(0, ue.GetMsin(), "SM5G_PDU_SESSION_INACTIVE")
 }
 
 func (ue *UEContext) SetStateSM_PDU_SESSION_ACTIVE() {
 	ue.StateSM = SM5G_PDU_SESSION_ACTIVE
+	log_time.LogUeTime(0, ue.GetMsin(), "SM5G_PDU_SESSION_ACTIVE")
 }
 
 func (ue *UEContext) SetStateSM_PDU_SESSION_PENDING() {
 	ue.StateSM = SM5G_PDU_SESSION_ACTIVE_PENDING
+	log_time.LogUeTime(0, ue.GetMsin(), "SM5G_PDU_SESSION_ACTIVE_PENDING")
 }
 
 func (ue *UEContext) SetStateMM_DEREGISTERED_INITIATED() {
 	ue.StateMM = MM5G_DEREGISTERED_INIT
+	log_time.LogUeTime(0, ue.GetMsin(), "MM5G_DEREGISTERED_INIT")
 }
 
 func (ue *UEContext) SetStateMM_MM5G_SERVICE_REQ_INIT() {
 	ue.StateMM = MM5G_SERVICE_REQ_INIT
+	log_time.LogUeTime(0, ue.GetMsin(), "MM5G_SERVICE_REQ_INIT")
 }
 
 func (ue *UEContext) SetStateMM_REGISTERED_INITIATED() {
 	ue.StateMM = MM5G_REGISTERED_INITIATED
+	log_time.LogUeTime(0, ue.GetMsin(), "MM5G_REGISTERED_INITIATED")
 }
 
 func (ue *UEContext) SetStateMM_REGISTERED() {
 	ue.StateMM = MM5G_REGISTERED
+	log_time.LogUeTime(0, ue.GetMsin(), "MM5G_REGISTERED")
 }
 
 func (ue *UEContext) SetStateMM_NULL() {
 	ue.StateMM = MM5G_NULL
+	log_time.LogUeTime(0, ue.GetMsin(), "MM5G_NULL")
 }
 
 func (ue *UEContext) SetStateMM_DEREGISTERED() {
 	ue.StateMM = MM5G_DEREGISTERED
+	log_time.LogUeTime(0, ue.GetMsin(), "MM5G_DEREGISTERED")
 }
 
 func (ue *UEContext) GetStateSM() int {
