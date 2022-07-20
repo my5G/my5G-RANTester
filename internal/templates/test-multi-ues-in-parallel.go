@@ -21,9 +21,7 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalyt
 		log.Fatal("Error in get configuration")
 	}
 
-	if showAnalytics {
-		log_time.EnableAnalytics()
-	}
+	log_time.ChangeAnalyticsState(showAnalytics)
 
 	go gnb.InitGnb(cfg, &wg)
 

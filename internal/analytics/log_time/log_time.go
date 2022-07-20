@@ -6,9 +6,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var enabled = false
-func EnableAnalytics(){
-	enabled = true
+var enabled = true
+func ChangeAnalyticsState(state bool){
+	enabled = state
 }
 
 
