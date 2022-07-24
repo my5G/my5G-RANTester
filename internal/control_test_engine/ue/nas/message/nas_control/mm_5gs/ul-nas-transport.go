@@ -41,7 +41,7 @@ func getUlNasTransport_PduSessionEstablishmentRequest(pduSessionId int64, reques
 	ulNasTransport.ExtendedProtocolDiscriminator.SetExtendedProtocolDiscriminator(nasMessage.Epd5GSMobilityManagementMessage)
 	ulNasTransport.PduSessionID2Value = new(nasType.PduSessionID2Value)
 	ulNasTransport.PduSessionID2Value.SetIei(nasMessage.ULNASTransportPduSessionID2ValueType)
-	ulNasTransport.PduSessionID2Value.SetPduSessionID2Value(int64(pduSessionId))
+	ulNasTransport.PduSessionID2Value.SetPduSessionID2Value(uint8(pduSessionId))
 	ulNasTransport.RequestType = new(nasType.RequestType)
 	ulNasTransport.RequestType.SetIei(nasMessage.ULNASTransportRequestTypeType)
 	ulNasTransport.RequestType.SetRequestTypeValue(requestType)
