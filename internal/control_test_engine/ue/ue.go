@@ -12,7 +12,7 @@ import (
 	"sync"
 )
 
-func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
+func RegistrationUe(conf config.Config, id uint, wg *sync.WaitGroup) {
 
 	// new UE instance.
 	ue := &context.UEContext{}

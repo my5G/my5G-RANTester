@@ -33,7 +33,7 @@ const SM5G_PDU_SESSION_ACTIVE_PENDING = 0x07
 const SM5G_PDU_SESSION_ACTIVE = 0x08
 
 type UEContext struct {
-	id         uint8
+	id         uint
 	UeSecurity SECURITY
 	StateMM    int
 	StateSM    int
@@ -49,7 +49,7 @@ type Amf struct {
 }
 
 type PDUSession struct {
-	Id        uint8
+	Id        uint
 	ueIP      string
 	ueGnbIP   net.IP
 	Dnn       string
@@ -81,7 +81,7 @@ type SECURITY struct {
 func (ue *UEContext) NewRanUeContext(msin string,
 	cipheringAlg, integrityAlg uint8,
 	k, opc, op, amf, sqn, mcc, mnc, dnn string,
-	sst int32, sd string, id uint8) {
+	sst int32, sd string, id uint) {
 
 	// added SUPI.
 	ue.UeSecurity.Msin = msin
@@ -148,7 +148,7 @@ func (ue *UEContext) NewRanUeContext(msin string,
 
 }
 
-func (ue *UEContext) GetUeId() uint8 {
+func (ue *UEContext) GetUeId() uint {
 	return ue.id
 }
 
@@ -245,7 +245,7 @@ func (ue *UEContext) GetGnbIp() net.IP {
 	return ue.PduSession.ueGnbIP
 }
 
-func (ue *UEContext) GetPduSesssionId() uint8 {
+func (ue *UEContext) GetPduSesssionId() uint {
 	return ue.PduSession.Id
 }
 
