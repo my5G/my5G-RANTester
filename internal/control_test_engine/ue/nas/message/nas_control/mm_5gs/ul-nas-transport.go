@@ -15,7 +15,7 @@ import (
 
 func UlNasTransport(ue *context.UEContext, requestType uint8) ([]byte, error) {
 
-	pdu := getUlNasTransport_PduSessionEstablishmentRequest(ue.PduSession.Id, requestType, ue.PduSession.Dnn, &ue.PduSession.Snssai)
+	pdu := getUlNasTransport_PduSessionEstablishmentRequest(uint8(ue.PduSession.Id), requestType, ue.PduSession.Dnn, &ue.PduSession.Snssai)
 	if pdu == nil {
 		return nil, fmt.Errorf("Error encoding %s IMSI UE PduSession Establishment Request Msg", ue.UeSecurity.Supi)
 	}
