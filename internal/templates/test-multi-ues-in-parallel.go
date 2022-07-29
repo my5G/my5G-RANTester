@@ -10,6 +10,7 @@ import (
 	
 	log_time "my5G-RANTester/internal/analytics/log_time"
 	"github.com/gookit/event"
+	"fmt"
 )
 
 func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalytics bool) {
@@ -50,7 +51,7 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) 
 	//wg.Add(1)
 }
 
-func onDataPlaneReady(e event.Event) error {
+func (ue *UEContext) onDataPlaneReady(e event.Event) error {
 	fmt.Printf("Data Plane Ready for %d\n", e.Get("ue").GetMsin())
 	return nil
 }
