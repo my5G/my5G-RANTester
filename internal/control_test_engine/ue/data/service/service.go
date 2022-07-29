@@ -8,12 +8,11 @@ import (
 	"net"
 
 	log_time "my5G-RANTester/internal/analytics/log_time"
+	"github.com/gookit/event"
 )
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
 
-	log_time.LogUeTime(0, ue.GetMsin(), "InitDataPlane")
-	
 	// get UE GNB IP.
 	ue.SetGnbIp(message)
 
@@ -88,9 +87,12 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	log.Info("[UE][DATA] UE is ready for using data plane")
 
+	log_time.LogUeTime(0, ue.GetMsin(), "DataPlaneReady")
+	
 	// contex of tun interface
 	ue.SetTunInterface(newInterface)
 	ue.SetTunRoute(ueRoute)
 	ue.SetTunRule(ueRule)
 
+	event.MustFire("DataPlaneReady", event.M{"ue": ue})
 }
