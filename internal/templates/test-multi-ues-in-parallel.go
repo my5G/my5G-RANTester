@@ -37,18 +37,10 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, delayDisco
 	time.Sleep(time.Duration(delayStart) * time.Second)
     msin :=  cfg.Ue.Msin
 
-	// for i := 1; i <= numUes; i++ {
-	// 	go registerSingleUe(cfg, wg, msin, i)
-	// 	time.Sleep(time.Duration(delayUes) * time.Millisecond)
-	// }
-
-	for j := 1; j <= numUes/10; j++ {
-		for i := 1; i <= 10; i++ {
-			go registerSingleUe(cfg, wg, msin, i)
-			time.Sleep(time.Duration(delayUes) * time.Millisecond)
-		}
+	for i := 1; i <= numUes; i++ {
+		go registerSingleUe(cfg, wg, msin, i)
+		time.Sleep(time.Duration(delayUes) * time.Millisecond)
 	}
-	
 
 	wg.Wait()
 }
