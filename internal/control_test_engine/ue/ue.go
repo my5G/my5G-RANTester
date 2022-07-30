@@ -46,7 +46,7 @@ func RegistrationUe2(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc 
 	// listen for a disconnection event
 	running := true
 	if delayDsc != -1 {
-		event.On(ue.GetMsin(), event.ListenerFunc(func(e event.Event) error {
+		event.On(("Event" + ue.GetMsin()), event.ListenerFunc(func(e event.Event) error {
 			time.Sleep(time.Duration(delayDsc) * time.Millisecond)
 			log_time.LogUeTime(0, ue.GetMsin(), "StartDeregistration")
 			ue.Terminate()

@@ -94,5 +94,5 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	ue.SetTunRoute(ueRoute)
 	ue.SetTunRule(ueRule)
 
-	event.MustFire(ue.GetMsin(), event.M{"ue": ue})
+	event.MustFire(("Event" + ue.GetMsin()), event.M{"ue": ue})
 }
