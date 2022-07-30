@@ -11,6 +11,7 @@ import (
 	log_time "my5G-RANTester/internal/analytics/log_time"
 	"github.com/gookit/event"
 	"fmt"
+	"my5G-RANTester/internal/control_test_engine/ue/context"
 )
 
 func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalytics bool) {
