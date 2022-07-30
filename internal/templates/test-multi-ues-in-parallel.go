@@ -43,6 +43,6 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int, 
 	log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 	cfg.Ue.Msin = imsi
 	log_time.LogUeTime(0, imsi, "StartRegistration")
-	go ue.RegistrationUe(cfg, int64(i), &wg, delayDsc)
+	go ue.RegistrationUe2(cfg, int64(i), &wg, delayDsc)
 	//wg.Add(1)
 }

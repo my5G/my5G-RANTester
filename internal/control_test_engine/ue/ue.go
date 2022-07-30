@@ -15,10 +15,10 @@ import (
 )
 
 func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
-	RegistrationUe(conf, id, wg, -1)
+	RegistrationUe2(conf, id, wg, -1)
 }
 
-func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc int) {
+func RegistrationUe2(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc int) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
@@ -42,7 +42,7 @@ func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc i
 
 	// In case the disconnection delay is different of -1 (it's enabled),
 	// listen for a disconnection event
-	finished := false
+	running := true
 	if delayDsc != -1 {
 		event.On(ue.GetMsin(), event.ListenerFunc(func(e event.Event) error {
 			time.Sleep(time.Duration(delayDsc) * time.Millisecond)
@@ -51,7 +51,7 @@ func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc i
 			wg.Done()
 	
 			ue = nil // Clear UE pointer
-			finished = true
+			running = false
 			return nil
 		}))
 	}
@@ -70,7 +70,7 @@ func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc i
 
 	if delayDsc != -1 {
 		// Wait until finishes
-		while !finished {
+		for running != false {
 			time.Sleep(time.Duration(5) * time.Millisecond)
 		}
 	}
