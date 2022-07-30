@@ -10,9 +10,15 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+	
+	"github.com/gookit/event"
 )
 
 func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
+	RegistrationUe(conf, id, wg, -1)
+}
+
+func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc int) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
@@ -34,6 +40,22 @@ func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
 		conf.Ue.Snssai.Sd,
 		id)
 
+	// In case the disconnection delay is different of -1 (it's enabled),
+	// listen for a disconnection event
+	finished := false
+	if delayDsc != -1 {
+		event.On(ue.GetMsin(), event.ListenerFunc(func(e event.Event) error {
+			time.Sleep(time.Duration(delayDsc) * time.Millisecond)
+			log_time.LogUeTime(0, ue.GetMsin(), "StartDeregistration")
+			ue.Terminate()
+			wg.Done()
+	
+			ue = nil // Clear UE pointer
+			finished = true
+			return nil
+		}))
+	}
+
 	// starting communication with GNB and listen.
 	err := service.InitConn(ue)
 	if err != nil {
@@ -46,13 +68,23 @@ func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
 	// registration procedure started.
 	trigger.InitRegistration(ue)
 
-	// control the signals
-	sigUe := make(chan os.Signal, 1)
-	signal.Notify(sigUe, os.Interrupt)
+	if delayDsc != -1 {
+		// Wait until finishes
+		while !finished {
+			time.Sleep(time.Duration(5) * time.Millisecond)
+		}
+	}
+	else {
+		// Use a signal to verify when it needs to disconnect
 
-	// Block until a signal is received.
-	<-sigUe
-	ue.Terminate()
-	wg.Done()
-	// os.Exit(0)
+		// control the signals
+		sigUe := make(chan os.Signal, 1)
+		signal.Notify(sigUe, os.Interrupt)
+
+		// Block until a signal is received.
+		<-sigUe
+		ue.Terminate()
+		wg.Done()
+		// os.Exit(0)
+	}
 }

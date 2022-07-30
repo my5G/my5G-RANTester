@@ -9,13 +9,9 @@ import (
 	"time"
 	
 	log_time "my5G-RANTester/internal/analytics/log_time"
-	"github.com/gookit/event"
-	"my5G-RANTester/internal/control_test_engine/ue/context"
 )
 
-var delayDsc = 0
-
-func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, delayDisconnect int, showAnalytics bool) {
+func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, delayDsc int, showAnalytics bool) {
 
 	wg := sync.WaitGroup{}
 
@@ -31,37 +27,22 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, delayDisco
 
 	wg.Add(1)
 
-	delayDsc = delayDisconnect
-	event.On("DataPlaneReady", event.ListenerFunc(onDataPlaneReady))
-
 	time.Sleep(time.Duration(delayStart) * time.Second)
     msin :=  cfg.Ue.Msin
 
 	for i := 1; i <= numUes; i++ {
-		go registerSingleUe(cfg, wg, msin, i)
+		go registerSingleUe(cfg, wg, msin, i, delayDsc)
 		time.Sleep(time.Duration(delayUes) * time.Millisecond)
 	}
 
 	wg.Wait()
 }
 
-func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) {
+func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int, delayDsc int) {
 	imsi := imsiGenerator(i, msin)
 	log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 	cfg.Ue.Msin = imsi
 	log_time.LogUeTime(0, imsi, "StartRegistration")
-	go ue.RegistrationUe(cfg, int64(i), &wg)
+	go ue.RegistrationUe(cfg, int64(i), &wg, delayDsc)
 	//wg.Add(1)
-}
-
-func onDataPlaneReady(e event.Event) error {
-	ue := e.Get("ue").(*context.UEContext)
-	go deregisterSingleUe(ue)
-	return nil
-}
-
-func deregisterSingleUe(ue *context.UEContext) {
-	time.Sleep(time.Duration(delayDsc) * time.Millisecond)
-	log_time.LogUeTime(0, ue.GetMsin(), "StartDeregistration")
-	ue.Terminate()
 }

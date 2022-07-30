@@ -107,7 +107,7 @@ func main() {
 				Flags: []cli.Flag{
 					&cli.IntFlag{Name: "number-of-ues", Value: 1, Aliases: []string{"n"}},
 					&cli.IntFlag{Name: "delay-per-ue", Value: 1, Aliases: []string{"d"}},
-					&cli.IntFlag{Name: "delay-to-disconnect", Value: 1, Aliases: []string{"i"}},
+					&cli.IntFlag{Name: "delay-to-disconnect", Value: -1, Aliases: []string{"i"}},
 					&cli.IntFlag{Name: "startup-delay", Value: 1, Aliases: []string{"t"}},
 					&cli.BoolFlag{Name: "enable-analytics", Aliases: []string{"a"}},
 				},
