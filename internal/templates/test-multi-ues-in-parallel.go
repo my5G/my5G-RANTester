@@ -52,7 +52,7 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) 
 	//wg.Add(1)
 }
 
-func (ue *UEContext) onDataPlaneReady(e event.Event) error {
-	fmt.Printf("Data Plane Ready for %s\n", (*UEContext)(e.Get("ue")).GetMsin())
+func (ue *context.UEContext) onDataPlaneReady(e event.Event) error {
+	fmt.Printf("Data Plane Ready for %s\n", (*context.UEContext)(e.Get("ue")).GetMsin())
 	return nil
 }
