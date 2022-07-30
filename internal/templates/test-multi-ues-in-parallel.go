@@ -54,6 +54,12 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) 
 
 func onDataPlaneReady(e event.Event) error {
 	ue := e.Get("ue").(*context.UEContext)
-	fmt.Printf("Data Plane Ready for %s\n", ue.GetMsin())
+	go deregisterSingleUe(ue)
 	return nil
+}
+
+func deregisterSingleUe(ue *context.UEContext) {
+	time.Sleep(time.Duration(50) * time.Millisecond)
+	log_time.LogUeTime(0, imsi, "StartDeregistration")
+	ue.Terminate()
 }
