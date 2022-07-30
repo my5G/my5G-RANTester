@@ -10,7 +10,6 @@ import (
 	
 	log_time "my5G-RANTester/internal/analytics/log_time"
 	"github.com/gookit/event"
-	"fmt"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 )
 
@@ -60,6 +59,6 @@ func onDataPlaneReady(e event.Event) error {
 
 func deregisterSingleUe(ue *context.UEContext) {
 	time.Sleep(time.Duration(50) * time.Millisecond)
-	log_time.LogUeTime(0, imsi, "StartDeregistration")
+	log_time.LogUeTime(0, ue.GetMsin(), "StartDeregistration")
 	ue.Terminate()
 }
