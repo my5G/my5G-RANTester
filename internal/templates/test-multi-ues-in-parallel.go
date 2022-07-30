@@ -52,6 +52,6 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) 
 }
 
 func (ue *UEContext) onDataPlaneReady(e event.Event) error {
-	fmt.Printf("Data Plane Ready for %d\n", e.Get("ue").GetMsin())
+	fmt.Printf("Data Plane Ready for %s\n", (*UEContext)(e.Get("ue")).GetMsin())
 	return nil
 }
