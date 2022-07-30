@@ -13,7 +13,9 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 )
 
-func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalytics bool) {
+var delayDsc = 0
+
+func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, delayDisconnect int, showAnalytics bool) {
 
 	wg := sync.WaitGroup{}
 
@@ -29,6 +31,7 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalyt
 
 	wg.Add(1)
 
+	delayDsc = delayDisconnect
 	event.On("DataPlaneReady", event.ListenerFunc(onDataPlaneReady))
 
 	time.Sleep(time.Duration(delayStart) * time.Second)
@@ -58,7 +61,7 @@ func onDataPlaneReady(e event.Event) error {
 }
 
 func deregisterSingleUe(ue *context.UEContext) {
-	time.Sleep(time.Duration(50) * time.Millisecond)
+	time.Sleep(time.Duration(delayDsc) * time.Millisecond)
 	log_time.LogUeTime(0, ue.GetMsin(), "StartDeregistration")
 	ue.Terminate()
 }
