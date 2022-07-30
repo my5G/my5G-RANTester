@@ -73,8 +73,7 @@ func RegistrationUe2(conf config.Config, id int64, wg *sync.WaitGroup, delayDsc 
 		for running != false {
 			time.Sleep(time.Duration(5) * time.Millisecond)
 		}
-	}
-	else {
+	} else {
 		// Use a signal to verify when it needs to disconnect
 
 		// control the signals
