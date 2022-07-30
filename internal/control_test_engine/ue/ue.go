@@ -11,7 +11,9 @@ import (
 	"os/signal"
 	"sync"
 	
+	"time"
 	"github.com/gookit/event"
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
