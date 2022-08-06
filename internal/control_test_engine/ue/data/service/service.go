@@ -8,7 +8,6 @@ import (
 	"net"
 
 	log_time "my5G-RANTester/internal/analytics/log_time"
-	"github.com/gookit/event"
 )
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
@@ -93,6 +92,4 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	ue.SetTunInterface(newInterface)
 	ue.SetTunRoute(ueRoute)
 	ue.SetTunRule(ueRule)
-
-	event.MustFire(("Event" + ue.GetMsin()), event.M{"ue": ue})
 }

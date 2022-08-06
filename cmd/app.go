@@ -103,11 +103,10 @@ func main() {
 				Name:    "load-test-parallel",
 				Aliases: []string{"load-test-parallel"},
 				Usage: "\nLoad endurance stress tests.\n" +
-					"Example for testing multiple UEs: load-test-parallel -n 1000 -d 30 -t 30 -i 10 -a\n",
+					"Example for testing multiple UEs: load-test-parallel -n 1000 -d 30 -t 30 -a\n",
 				Flags: []cli.Flag{
 					&cli.IntFlag{Name: "number-of-ues", Value: 1, Aliases: []string{"n"}},
 					&cli.IntFlag{Name: "delay-per-ue", Value: 1, Aliases: []string{"d"}},
-					&cli.IntFlag{Name: "delay-to-disconnect", Value: -1, Aliases: []string{"i"}},
 					&cli.IntFlag{Name: "startup-delay", Value: 1, Aliases: []string{"t"}},
 					&cli.BoolFlag{Name: "enable-analytics", Aliases: []string{"a"}},
 				},
@@ -115,7 +114,6 @@ func main() {
 					var numUes int
 					var delayUes int
 					var delayStart int
-					var delayDisconnect int
 					var showAnalytics bool
 					name := "Testing registration of multiple UEs in parallel"
 					cfg := config.Data
@@ -125,7 +123,6 @@ func main() {
 						delayUes = c.Int("delay-per-ue")
 						delayStart = c.Int("startup-delay")
 						showAnalytics = c.Bool("enable-analytics")
-						delayDisconnect = c.Int("delay-to-disconnect")
 					} else {
 						log.Info(c.Command.Usage)
 						return nil
@@ -138,7 +135,7 @@ func main() {
 					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
 					log.Info("---------------------------------------")
-					templates.TestMultiUesInParallel(numUes, delayUes, delayStart, delayDisconnect, showAnalytics)
+					templates.TestMultiUesInParallel(numUes, delayUes, delayStart, showAnalytics)
 
 					return nil
 				},
