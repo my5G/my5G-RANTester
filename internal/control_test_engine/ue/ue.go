@@ -10,9 +10,6 @@ import (
 	"os"
 	"os/signal"
 	"sync"
-	
-	"time"
-	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
