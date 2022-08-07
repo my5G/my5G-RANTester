@@ -20,12 +20,12 @@ func LogUeTime(id string, task string) {
 
 	now := time.Now()
 
-	go ShowUeLog(gnbid, id, task, now)
+	go ShowUeLog(id, task, now)
 }
 
-func ShowUeLog(dev_type uint8, id string, task string, now time.Time) {
+func ShowUeLog(id string, task string, now time.Time) {
 	if enabled {
 		nsec_now := now.UnixNano()
-		log.Info(fmt.Sprintf("[ANALYTICS] %d, %s, %s, %d", dev_type, id, task, nsec_now))
+		log.Info(fmt.Sprintf("[ANALYTICS] %d, %s, %s, %d", gnbid, id, task, nsec_now))
 	}
 }
