@@ -9,6 +9,7 @@ import (
 	"time"
 	
 	log_time "my5G-RANTester/internal/analytics/log_time"
+	"strconv"
 )
 
 func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalytics bool) {
@@ -21,7 +22,8 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalyt
 		log.Fatal("Error in get configuration")
 	}
 
-	log_time.ChangeAnalyticsState(showAnalytics)
+	log_time.ChangeAnalyticsState(showAnalytics) // Enable/Disable analytics
+	log_time.SetGnodebId(strconv.Atoi(conf.GNodeB.PlmnList.GnbId)) // Set gNB ID
 
 	go gnb.InitGnb(cfg, &wg)
 
@@ -42,7 +44,7 @@ func registerSingleUe(cfg config.Config, wg sync.WaitGroup, msin string, i int) 
 	imsi := imsiGenerator(i, msin)
 	log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 	cfg.Ue.Msin = imsi
-	log_time.LogUeTime(0, imsi, "StartRegistration")
+	log_time.LogUeTime(imsi, "StartRegistration")
 	go ue.RegistrationUe(cfg, int64(i), &wg)
 	//wg.Add(1)
 }

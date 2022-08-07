@@ -86,7 +86,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	log.Info("[UE][DATA] UE is ready for using data plane")
 
-	log_time.LogUeTime(0, ue.GetMsin(), "DataPlaneReady")
+	log_time.LogUeTime(ue.GetMsin(), "DataPlaneReady")
 	
 	// contex of tun interface
 	ue.SetTunInterface(newInterface)

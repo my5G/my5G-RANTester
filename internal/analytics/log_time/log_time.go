@@ -11,15 +11,16 @@ func ChangeAnalyticsState(state bool){
 	enabled = state
 }
 
+var gnbid = 0
+func SetGnodebId(id int){
+	gnbid = id
+}
 
-// dev_type:
-// 	0: UE
-// 	1: GNB
-func LogUeTime(dev_type uint8, id string, task string) {
+func LogUeTime(id string, task string) {
 
 	now := time.Now()
 
-	go ShowUeLog(dev_type, id, task, now)
+	go ShowUeLog(gnbid, id, task, now)
 }
 
 func ShowUeLog(dev_type uint8, id string, task string, now time.Time) {
