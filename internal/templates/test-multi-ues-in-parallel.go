@@ -22,8 +22,9 @@ func TestMultiUesInParallel(numUes int, delayUes int, delayStart int, showAnalyt
 		log.Fatal("Error in get configuration")
 	}
 
+	gnbid, err := strconv.Atoi(conf.GNodeB.PlmnList.GnbId) // Parse gNB ID
+	log_time.SetGnodebId(gnbid) // Set gNB ID
 	log_time.ChangeAnalyticsState(showAnalytics) // Enable/Disable analytics
-	log_time.SetGnodebId(strconv.Atoi(conf.GNodeB.PlmnList.GnbId)) // Set gNB ID
 
 	go gnb.InitGnb(cfg, &wg)
 
