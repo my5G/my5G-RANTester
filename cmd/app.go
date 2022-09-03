@@ -82,7 +82,7 @@ func main() {
 			{
 				Name:    "load-test",
 				Aliases: []string{"load-test"},
-				Usage: "\nLoad endurance stress tests.\n" +
+				Usage: "\nLoad test with queued UEs (are not sent at the same time):.\n" +
 					"Example for testing multiple UEs: load-test -n 5 \n",
 				Flags: []cli.Flag{
 					&cli.IntFlag{Name: "number-of-ues", Value: 1, Aliases: []string{"n"}},
