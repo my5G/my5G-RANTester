@@ -17,14 +17,10 @@ func TestAttachGnbWithConfiguration() {
 		log.Fatal("Error in get configuration")
 	}
 
-	// wrong messages:
-	// cfg.GNodeB.PlmnList.Mcc = "891"
-	// cfg.GNodeB.PlmnList.Mnc = "23"
-	// cfg.GNodeB.PlmnList.Tac = "000002"
-	// cfg.GNodeB.SliceSupportList.St = "10"
-	// cfg.GNodeB.SliceSupportList.Sst = "010239"
+	// synch GNB
+	synchGnb := make(chan bool, 1)
 
-	go gnb.InitGnb(cfg, &wg)
+	go gnb.InitGnb(cfg, &wg, synchGnb)
 
 	wg.Add(1)
 

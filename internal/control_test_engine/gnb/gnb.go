@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-func InitGnb(conf config.Config, wg *sync.WaitGroup) {
+func InitGnb(conf config.Config, wg *sync.WaitGroup, syncGnb chan bool) {
 
 	// instance new gnb.
 	gnb := &context.GNBContext{}
@@ -53,6 +53,16 @@ func InitGnb(conf config.Config, wg *sync.WaitGroup) {
 	}
 
 	trigger.SendNgSetupRequest(gnb, amf)
+
+	// check the AMF connection establish
+	for {
+
+		// AMF is active
+		if amf.GetState() == 0x02 {
+			syncGnb <- true
+			break
+		}
+	}
 
 	// control the signals
 	sigGnb := make(chan os.Signal, 1)

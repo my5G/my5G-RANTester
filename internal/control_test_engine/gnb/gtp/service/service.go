@@ -47,15 +47,6 @@ func gtpListen(gnb *context.GNBContext) {
 	buf := make([]byte, 65535)
 	conn := gnb.GetN3Plane()
 
-	/*
-		defer func() {
-			err := conn.Close()
-			if err != nil {
-				log.Info("[GNB][GTP] Error in closing GTP/UDP tunnel\n")
-			}
-		}()
-	*/
-
 	for {
 
 		n, _, teid, err := conn.ReadFromGTP(buf)

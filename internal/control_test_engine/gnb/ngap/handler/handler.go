@@ -366,26 +366,25 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	// send NAS message to UE.
 	sender.SendToUe(ue, messageNas)
 
-// 	// configure GTP tunnel and listen.
-// 	if gnb.GetN3Plane() == nil {
-// 		// TODO check if GTP tunnel and gateway is ok.
-// 		serviceGtp.InitGTPTunnel(gnb)
-// 		serviceGateway.InitGatewayGnb(gnb)
-// 	}
+	// 	// configure GTP tunnel and listen.
+	// 	if gnb.GetN3Plane() == nil {
+	// 		// TODO check if GTP tunnel and gateway is ok.
+	// 		serviceGtp.InitGTPTunnel(gnb)
+	// 		serviceGateway.InitGatewayGnb(gnb)
+	// 	}
 
 	// send PDU Session Resource Setup Response.
 	trigger.SendPduSessionResourceSetupResponse(ue, gnb)
 
 	time.Sleep(20 * time.Millisecond)
 
-	
 	// configure GTP tunnel and listen.
 	if gnb.GetN3Plane() == nil {
 		// TODO check if GTP tunnel and gateway is ok.
 		serviceGtp.InitGTPTunnel(gnb)
 		serviceGateway.InitGatewayGnb(gnb)
 	}
-	
+
 	// ue is ready for data plane.
 	// send GNB UE IP message to UE.
 	UeGnBIp := ue.GetIp()
@@ -586,5 +585,5 @@ func HandlerNgSetupFailure(amf *context.GNBAmf, gnb *context.GNBContext, message
 	// redundant but useful for information about code.
 	amf.SetStateInactive()
 
-	log.Info("[GNB][NGAP] AMF is inactive")
+	log.Fatal("[GNB][NGAP] AMF is inactive")
 }

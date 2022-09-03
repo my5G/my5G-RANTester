@@ -6,7 +6,6 @@ import (
 	"my5G-RANTester/internal/control_test_engine/gnb"
 	"my5G-RANTester/internal/control_test_engine/ue"
 	"sync"
-	"time"
 )
 
 func TestAttachUeWithConfiguration() {
@@ -19,11 +18,15 @@ func TestAttachUeWithConfiguration() {
 		log.Fatal("Error in get configuration")
 	}
 
-	go gnb.InitGnb(cfg, &wg)
+	// synch GNB
+	synchGnb := make(chan bool, 1)
+
+	go gnb.InitGnb(cfg, &wg, synchGnb)
 
 	wg.Add(1)
 
-	time.Sleep(1 * time.Second)
+	// wait AMF get active state
+	<-synchGnb
 
 	go ue.RegistrationUe(cfg, 1, &wg)
 
