@@ -43,7 +43,7 @@ func TestMultiUesInQueue(numUes int) {
 
 		cfg.Ue.Msin = imsi
 
-		go ue.RegistrationUe2(cfg, uint8(i), &wg, synchUE)
+		go ue.RegistrationUe(cfg, uint8(i), &wg, synchUE)
 
 		wg.Add(1)
 

@@ -28,7 +28,10 @@ func TestAttachUeWithConfiguration() {
 	// wait AMF get active state
 	<-synchGnb
 
-	go ue.RegistrationUe(cfg, 1, &wg)
+	// synch UE
+	synchUE := make(chan bool, 1)
+
+	go ue.RegistrationUe(cfg, 1, &wg, synchUE)
 
 	wg.Add(1)
 
