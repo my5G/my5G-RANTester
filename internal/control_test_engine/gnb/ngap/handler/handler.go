@@ -366,13 +366,6 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	// send NAS message to UE.
 	sender.SendToUe(ue, messageNas)
 
-	// 	// configure GTP tunnel and listen.
-	// 	if gnb.GetN3Plane() == nil {
-	// 		// TODO check if GTP tunnel and gateway is ok.
-	// 		serviceGtp.InitGTPTunnel(gnb)
-	// 		serviceGateway.InitGatewayGnb(gnb)
-	// 	}
-
 	// send PDU Session Resource Setup Response.
 	trigger.SendPduSessionResourceSetupResponse(ue, gnb)
 
@@ -382,6 +375,11 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	if gnb.GetN3Plane() == nil {
 		// TODO check if GTP tunnel and gateway is ok.
 		serviceGtp.InitGTPTunnel(gnb)
+	}
+
+	// gnb with multiple UEs
+	if gnb.GetUePlane() == nil {
+		// TODO check if GTP tunnel and gateway is ok.
 		serviceGateway.InitGatewayGnb(gnb)
 	}
 
