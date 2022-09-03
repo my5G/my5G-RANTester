@@ -50,6 +50,8 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, syncUE cha
 	// registration procedure started.
 	trigger.InitRegistration(ue)
 
+	start := time.Now()
+
 	for {
 
 		// PDU Session is active for this UE
@@ -59,6 +61,12 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, syncUE cha
 		}
 
 		// handle registration reject/authentication reject/PDU session reject
+		// timeout is 5 000 ms
+		if time.Since(start).Milliseconds() >= 5000 {
+			log.Info("[TESTER][UE] TIMEOUT IN UE REGISTRATION: 5 000 ms")
+			syncUE <- true
+			break
+		}
 	}
 
 	// control the signals
