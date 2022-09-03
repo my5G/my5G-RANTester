@@ -5,9 +5,10 @@ import (
 )
 
 // AMF main states in the GNB Context.
-const Inactive = 0x00
-const Active = 0x01
-const Overload = 0x02
+const Null = 0x00
+const Inactive = 0x01
+const Active = 0x02
+const Overload = 0x03
 
 type GNBAmf struct {
 	amfIp               string         // AMF ip
@@ -167,6 +168,10 @@ func (amf *GNBAmf) AddedSlice(sst string, sd string) {
 
 func (amf *GNBAmf) getTNLAs() TNLAssociation {
 	return amf.tnla
+}
+
+func (amf *GNBAmf) SetStateNull() {
+	amf.state = Null
 }
 
 func (amf *GNBAmf) SetStateInactive() {

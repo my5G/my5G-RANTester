@@ -188,7 +188,7 @@ func (gnb *GNBContext) NewGnBAmf(ip string, port int) *GNBAmf {
 	amf.setAmfPort(port)
 
 	// set state to AMF.
-	amf.SetStateInactive()
+	amf.SetStateNull()
 
 	// store AMF in the AMF Pool of GNB.
 	gnb.amfPool.Store(amfId, amf)
