@@ -10,6 +10,11 @@ const Initialized = 0x00
 const Ongoing = 0x01
 const Ready = 0x02
 
+// UE main states in the PDU Session Context
+const PDUSessionResourceInactive = 0x03
+const PDUSessionResourcePending = 0x04
+const PDUSessionResourceActive = 0x05
+
 type GNBUe struct {
 	ranUeNgapId          int64          // Identifier for UE in GNB Context.
 	amfUeNgapId          int64          // Identifier for UE in AMF Context.
@@ -27,6 +32,7 @@ type Context struct {
 }
 
 type PDUSession struct {
+	state        int
 	pduSessionId int64
 	ranUeIP      net.IP
 	uplinkTeid   uint32
@@ -66,15 +72,15 @@ func (ue *GNBUe) CreatePduSession(pduSessionId int64, sst string, sd string, pdu
 	qosId int64, priArp int64, fiveQi int64, ulTeid uint32) string {
 
 	ue.context.pduSession.pduSessionId = pduSessionId
-
-	if !ue.pduSessionNssai(sst, sd) {
-		return "Slice was not found"
-	}
 	ue.context.pduSession.pduType = pduType
 	ue.context.pduSession.qosId = qosId
 	ue.context.pduSession.priArp = priArp
 	ue.context.pduSession.fiveQi = fiveQi
 	ue.context.pduSession.uplinkTeid = ulTeid
+
+	if !ue.pduSessionNssai(sst, sd) {
+		return "not found"
+	}
 
 	return ""
 }
@@ -223,6 +229,22 @@ func (ue *GNBUe) SetStateOngoing() {
 
 func (ue *GNBUe) SetStateReady() {
 	ue.state = Ready
+}
+
+func (ue *GNBUe) GetPDUSessionState() int {
+	return ue.context.pduSession.state
+}
+
+func (ue *GNBUe) SetStatePDUSessionResourceInactive() {
+	ue.context.pduSession.state = PDUSessionResourceInactive
+}
+
+func (ue *GNBUe) SetStatePDUSessionResourcePending() {
+	ue.context.pduSession.state = PDUSessionResourcePending
+}
+
+func (ue *GNBUe) SetStatePDUSessionResourceActive() {
+	ue.context.pduSession.state = PDUSessionResourceActive
 }
 
 func (ue *GNBUe) GetUnixSocket() net.Conn {
