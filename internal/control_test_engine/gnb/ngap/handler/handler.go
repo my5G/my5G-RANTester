@@ -20,6 +20,9 @@ func HandlerDownlinkNasTransport(gnb *context.GNBContext, message *ngapType.NGAP
 	var amfUeId int64
 	var messageNas []byte
 
+	// check fields
+	var nasPdu bool
+
 	valueMessage := message.InitiatingMessage.Value.DownlinkNASTransport
 
 	for _, ies := range valueMessage.ProtocolIEs.List {
@@ -41,6 +44,7 @@ func HandlerDownlinkNasTransport(gnb *context.GNBContext, message *ngapType.NGAP
 			ranUeId = ies.Value.RANUENGAPID.Value
 
 		case ngapType.ProtocolIEIDNASPDU:
+			nasPdu = true
 			if ies.Value.NASPDU == nil {
 				log.Fatal("[GNB][NGAP] NAS PDU is missing")
 				// TODO SEND ERROR INDICATION
@@ -63,6 +67,10 @@ func HandlerDownlinkNasTransport(gnb *context.GNBContext, message *ngapType.NGAP
 		if ue.GetAmfUeId() != amfUeId {
 			log.Fatal("[GNB][NGAP] AMF UE NGAP ID is incorrect")
 		}
+	}
+
+	if !nasPdu {
+		log.Fatal("[GNB][NGAP] Missing Mandatory fields in Downlink NAS Transport")
 	}
 
 	// send NAS message to UE.
@@ -88,10 +96,22 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 	var priArp int64
 	var ulTeid uint32
 	var upfAddress []byte
+
+	// check fields
+	var ueAgreggation bool
+	var securityKey bool
+	var guami bool
+	var allowedNssai bool
+	var ueSecurityCapabilities bool
+
+	// check mandatory fields of PDU session request setup list
+	var ulNgu bool
+	var pduSessionType bool
+	var qosFlowSetup bool
+
 	// var securityKey []byte
 
 	valueMessage := message.InitiatingMessage.Value.InitialContextSetupRequest
-
 	for _, ies := range valueMessage.ProtocolIEs.List {
 
 		// TODO MORE FIELDS TO CHECK HERE
@@ -114,23 +134,25 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 		case ngapType.ProtocolIEIDNASPDU:
 			if ies.Value.NASPDU == nil {
 				log.Info("[GNB][NGAP] NAS PDU is missing")
-				// TODO SEND ERROR INDICATION
 			}
 			messageNas = ies.Value.NASPDU.Value
 
 		case ngapType.ProtocolIEIDSecurityKey:
 			// TODO using for create new security context between GNB and UE.
+			securityKey = true
 			if ies.Value.SecurityKey == nil {
 				log.Fatal("[GNB][NGAP] Security-Key is missing")
 			}
 			// securityKey = ies.Value.SecurityKey.Value.Bytes
 
 		case ngapType.ProtocolIEIDGUAMI:
+			guami = true
 			if ies.Value.GUAMI == nil {
 				log.Fatal("[GNB][NGAP] GUAMI is missing")
 			}
 
 		case ngapType.ProtocolIEIDAllowedNSSAI:
+			allowedNssai = true
 			if ies.Value.AllowedNSSAI == nil {
 				log.Fatal("[GNB][NGAP] Allowed NSSAI is missing")
 			}
@@ -177,8 +199,17 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 		case ngapType.ProtocolIEIDUESecurityCapabilities:
 			// TODO using for create new security context between UE and GNB.
 			// TODO algorithms for create new security context between UE and GNB.
+			ueSecurityCapabilities = true
 			if ies.Value.UESecurityCapabilities == nil {
 				log.Fatal("[GNB][NGAP] UE Security Capabilities is missing")
+			}
+
+		case ngapType.ProtocolIEIDUEAggregateMaximumBitRate:
+			// check UE AggregateMaximum Bit Rate
+			if ies.Value.UEAggregateMaximumBitRate == nil {
+				ueAgreggation = false
+			} else {
+				ueAgreggation = true
 			}
 
 		case ngapType.ProtocolIEIDPDUSessionResourceSetupListCxtReq:
@@ -196,8 +227,6 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 					// NAS PDU -- DL NAS TRANSPORT and PDU establishment accept
 					if item.NASPDU != nil {
 						messageNas = item.NASPDU.Value
-					} else {
-						log.Info("[GNB][NGAP] NAS PDU is missing in Initial Context Setup Request")
 					}
 
 					// create a PDU session
@@ -231,10 +260,12 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 								switch ies.Id.Value {
 
 								case ngapType.ProtocolIEIDULNGUUPTNLInformation:
+									ulNgu = true
 									ulTeid = binary.BigEndian.Uint32(ies.Value.ULNGUUPTNLInformation.GTPTunnel.GTPTEID.Value)
 									upfAddress = ies.Value.ULNGUUPTNLInformation.GTPTunnel.TransportLayerAddress.Value.Bytes
 
 								case ngapType.ProtocolIEIDQosFlowSetupRequestList:
+									qosFlowSetup = true
 									for _, itemsQos := range ies.Value.QosFlowSetupRequestList.List {
 										qosId = itemsQos.QosFlowIdentifier.Value
 										fiveQi = itemsQos.QosFlowLevelQosParameters.QosCharacteristics.NonDynamic5QI.FiveQI.Value
@@ -244,6 +275,7 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 								case ngapType.ProtocolIEIDPDUSessionAggregateMaximumBitRate:
 
 								case ngapType.ProtocolIEIDPDUSessionType:
+									pduSessionType = true
 									pduSType = uint64(ies.Value.PDUSessionType.Value)
 
 								case ngapType.ProtocolIEIDSecurityIndication:
@@ -281,6 +313,16 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 
 	}
 
+	// check ueAgreggation
+	if !ueAgreggation && allocationPdu {
+		log.Fatal("[GNB][NGAP] UE Aggregate Maximum Bit Rate is missing in Initial Context Setup Request")
+	}
+
+	// check mandatory fields
+	if !ueSecurityCapabilities || !guami || !allowedNssai || !securityKey {
+		log.Fatal("[GNB][NGAP] Mandatory fields missing in Initial Context Setup Request")
+	}
+
 	// create UE context.
 	ue.CreateUeContext(mobilityRestrict, maskedImeisv, sst, sd)
 
@@ -299,6 +341,11 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 	}
 
 	if allocationPdu {
+
+		// check the mandatory fields
+		if !ulNgu || !pduSessionType || !qosFlowSetup {
+			log.Fatal("[GNB][NGAP] Mandatory fields missing in Initial Context Setup Request")
+		}
 
 		// change state of PDU Session for pending
 		ue.SetStatePDUSessionResourcePending()
@@ -349,11 +396,6 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 
 		time.Sleep(20 * time.Millisecond)
 
-		// ue is ready for data plane.
-		// send GNB UE IP message to UE.
-		UeGnBIp := ue.GetIp()
-		sender.SendToUe(ue, UeGnBIp)
-
 		// configure GTP tunnel and GNB-UE resources simulated.
 		if gnb.GetN3Plane() == nil {
 
@@ -365,6 +407,11 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 
 		// change state of PDU Session for active
 		ue.SetStatePDUSessionResourceActive()
+
+		// ue is ready for data plane.
+		// send GNB UE IP message to UE.
+		UeGnBIp := ue.GetIp()
+		sender.SendToUe(ue, UeGnBIp)
 	}
 }
 
@@ -382,6 +429,12 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	var qosId int64
 	var fiveQi int64
 	var priArp int64
+
+	// check mandatory fields
+	var pduSessionResourceSetupListSUReq bool
+	var ulNgu bool
+	var pduSessionType bool
+	var qosFlowSetup bool
 
 	valueMessage := message.InitiatingMessage.Value.PDUSessionResourceSetupRequest
 
@@ -407,9 +460,12 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 
 		case ngapType.ProtocolIEIDPDUSessionResourceSetupListSUReq:
 
+			pduSessionResourceSetupListSUReq = true
+
 			if ies.Value.PDUSessionResourceSetupListSUReq == nil {
 				log.Fatal("[GNB][NGAP] PDU SESSION RESOURCE SETUP LIST SU REQ is missing")
 			}
+
 			pDUSessionResourceSetupList := ies.Value.PDUSessionResourceSetupListSUReq
 
 			for _, item := range pDUSessionResourceSetupList.List {
@@ -449,10 +505,12 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 							switch ies.Id.Value {
 
 							case ngapType.ProtocolIEIDULNGUUPTNLInformation:
+								ulNgu = true
 								ulTeid = binary.BigEndian.Uint32(ies.Value.ULNGUUPTNLInformation.GTPTunnel.GTPTEID.Value)
 								upfAddress = ies.Value.ULNGUUPTNLInformation.GTPTunnel.TransportLayerAddress.Value.Bytes
 
 							case ngapType.ProtocolIEIDQosFlowSetupRequestList:
+								qosFlowSetup = true
 								for _, itemsQos := range ies.Value.QosFlowSetupRequestList.List {
 									qosId = itemsQos.QosFlowIdentifier.Value
 									fiveQi = itemsQos.QosFlowLevelQosParameters.QosCharacteristics.NonDynamic5QI.FiveQI.Value
@@ -462,6 +520,7 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 							case ngapType.ProtocolIEIDPDUSessionAggregateMaximumBitRate:
 
 							case ngapType.ProtocolIEIDPDUSessionType:
+								pduSessionType = true
 								pduSType = uint64(ies.Value.PDUSessionType.Value)
 
 							case ngapType.ProtocolIEIDSecurityIndication:
@@ -476,6 +535,7 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 				}
 
 			}
+
 		}
 	}
 
@@ -490,6 +550,10 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	if ue.GetAmfUeId() != amfUeId {
 		log.Fatal("[GNB][NGAP] Error in Pdu Session Resource Setup Request. Problem in AMF UE ID from CORE")
 		// TODO SEND ERROR INDICATION
+	}
+
+	if !pduSessionResourceSetupListSUReq || !ulNgu || !pduSessionType || !qosFlowSetup {
+		log.Fatal("[GNB][NGAP] Missing Mandatory fields in PDU Session Resource Setup Request")
 	}
 
 	// change state of PDU Session for pending
@@ -527,11 +591,6 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 
 	time.Sleep(20 * time.Millisecond)
 
-	// ue is ready for data plane.
-	// send GNB UE IP message to UE.
-	UeGnBIp := ue.GetIp()
-	sender.SendToUe(ue, UeGnBIp)
-
 	// configure GTP tunnel and listen.
 	if gnb.GetN3Plane() == nil {
 		// TODO check if GTP tunnel and gateway is ok.
@@ -540,12 +599,22 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	}
 
 	ue.SetStatePDUSessionResourceActive()
+
+	// ue is ready for data plane.
+	// send GNB UE IP message to UE.
+	UeGnBIp := ue.GetIp()
+	sender.SendToUe(ue, UeGnBIp)
 }
 
 func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, message *ngapType.NGAPPDU) {
 
 	err := false
 	var plmn string
+
+	// check mandatory fields
+	var amfName bool
+	var servedGUAMIList bool
+	var plmnSupportList bool
 
 	// check information about AMF and add in AMF context.
 	valueMessage := message.SuccessfulOutcome.Value.NGSetupResponse
@@ -555,6 +624,7 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 		switch ies.Id.Value {
 
 		case ngapType.ProtocolIEIDAMFName:
+			amfName = true
 			if ies.Value.AMFName == nil {
 				// TODO error indication. This field is mandatory critically reject
 				log.Info("[GNB][NGAP] Error in NG SETUP RESPONSE,AMF Name is missing")
@@ -566,6 +636,7 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 			}
 
 		case ngapType.ProtocolIEIDServedGUAMIList:
+			servedGUAMIList = true
 			if ies.Value.ServedGUAMIList.List == nil {
 				// TODO error indication. This field is mandatory critically reject
 				log.Info("[GNB][NGAP] Error in NG SETUP RESPONSE,Serverd Guami list is missing")
@@ -573,6 +644,14 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 				err = true
 			}
 			for _, items := range ies.Value.ServedGUAMIList.List {
+
+				if items.GUAMI.PLMNIdentity.Value == nil {
+					log.Info("[GNB][NGAP] Error in NG SETUP RESPONSE,Served Guami list is inappropriate")
+					log.Info("[GNB][NGAP] Error in NG SETUP RESPONSE, PLMN Identity is missing")
+					log.Info("[GNB][NGAP] AMF is inactive")
+					err = true
+				}
+
 				if items.GUAMI.AMFRegionID.Value.Bytes == nil {
 					log.Info("[GNB][NGAP] Error in NG SETUP RESPONSE,Served Guami list is inappropriate")
 					log.Info("[GNB][NGAP] Error in NG SETUP RESPONSE, AMFRegionId is missing")
@@ -600,7 +679,7 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 			}
 
 		case ngapType.ProtocolIEIDPLMNSupportList:
-
+			plmnSupportList = true
 			if ies.Value.PLMNSupportList == nil {
 				log.Info("[GNB][NGAP] Error in NG SETUP RESPONSE, PLMN Support list is missing")
 				err = true
@@ -640,6 +719,10 @@ func HandlerNgSetupResponse(amf *context.GNBAmf, gnb *context.GNBContext, messag
 			}
 		}
 
+	}
+
+	if !amfName || !plmnSupportList || !servedGUAMIList {
+		log.Fatal("[GNB][AMF] Mandatory fields is missing in NG Setup Response")
 	}
 
 	if err {
