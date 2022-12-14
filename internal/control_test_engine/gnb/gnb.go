@@ -1,7 +1,6 @@
 package gnb
 
 import (
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	serviceNas "my5G-RANTester/internal/control_test_engine/gnb/nas/service"
@@ -12,6 +11,8 @@ import (
 	"os/signal"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func InitGnb(conf config.Config, wg *sync.WaitGroup) {
@@ -39,7 +40,7 @@ func InitGnb(conf config.Config, wg *sync.WaitGroup) {
 
 	// start communication with AMF(SCTP).
 	if err := serviceNgap.InitConn(amf, gnb); err != nil {
-		log.Fatal("Error in", err)
+		log.Fatal("Error in ", err)
 	} else {
 		log.Info("[GNB] SCTP/NGAP service is running")
 		// wg.Add(1)

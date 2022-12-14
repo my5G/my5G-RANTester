@@ -1,12 +1,13 @@
 package templates
 
 import (
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
 	"my5G-RANTester/internal/control_test_engine/ue"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func TestAttachUeWithConfiguration() {

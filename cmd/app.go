@@ -5,10 +5,11 @@ import (
 	"my5G-RANTester/internal/templates"
 
 	// "fmt"
+	"os"
+
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 const version = "1.0.1"
@@ -57,6 +58,23 @@ func main() {
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
 					log.Info("---------------------------------------")
 					templates.TestAttachUeWithConfiguration()
+					return nil
+				},
+			},
+			{
+				Name:    "non3gpp-ue",
+				Aliases: []string{"ue"},
+				Usage:   "Testing a non3gpp-ue attached with configuration",
+				Action: func(c *cli.Context) error {
+					name := "Testing an ue attached with configuration"
+					cfg := config.Data
+
+					log.Info("---------------------------------------")
+					log.Info("[TESTER] Starting test function: ", name)
+					log.Info("[TESTER][UE] Number of Non3GPP UEs: ", 1)
+					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
+					log.Info("---------------------------------------")
+					templates.TestAttachNon3gppUeWithConfiguration()
 					return nil
 				},
 			},
