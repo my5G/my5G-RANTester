@@ -119,7 +119,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 }
 
 func setupUDPSocket(ctx *context.UEContext) *net.UDPConn {
-	bindAddr := fmt.Sprintf("%s:500", "192.168.2.209") // Static IP
+	bindAddr := fmt.Sprintf("%s:500", "10.0.2.5") // Static IP
 	udpAddr, err := net.ResolveUDPAddr("udp", bindAddr)
 	if err != nil {
 		log.Fatal("Resolve UDP address failed")
