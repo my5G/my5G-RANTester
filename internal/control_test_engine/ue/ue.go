@@ -60,7 +60,7 @@ func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
 }
 
 func RegistrationUeMonitor(conf config.Config,
-	id uint8, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time) {
+	id int64, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
