@@ -9,7 +9,9 @@ import (
 func DispatchState(ue *context.UEContext, message []byte) {
 
 	// if state is PDU session inactive send to analyze NAS
-	switch ue.GetStateSM() {
+	var state = ue.GetStateSM()
+
+	switch state {
 
 	case context.SM5G_PDU_SESSION_INACTIVE:
 		nas.DispatchNas(ue, message)

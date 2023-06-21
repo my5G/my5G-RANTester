@@ -6,6 +6,8 @@ import (
 	"github.com/vishvananda/netlink"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"net"
+
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
@@ -84,9 +86,10 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	log.Info("[UE][DATA] UE is ready for using data plane")
 
+	log_time.LogUeTime(ue.GetMsin(), "DataPlaneReady")
+	
 	// contex of tun interface
 	ue.SetTunInterface(newInterface)
 	ue.SetTunRoute(ueRoute)
 	ue.SetTunRule(ueRule)
-
 }

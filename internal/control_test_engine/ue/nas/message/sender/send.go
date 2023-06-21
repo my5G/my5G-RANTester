@@ -6,8 +6,8 @@ import (
 )
 
 func SendToGnb(ue *context.UEContext, message []byte) {
-
 	conn := ue.GetUnixConn()
+	
 	_, err := conn.Write(message)
 	if err != nil {
 		fmt.Println("Tratar o erro")

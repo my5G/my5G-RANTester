@@ -14,9 +14,7 @@ import (
 	"time"
 )
 
-func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
-
-	// wg := sync.WaitGroup{}
+func RegistrationUe(conf config.Config, id int64, wg *sync.WaitGroup) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
@@ -50,8 +48,6 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	// registration procedure started.
 	trigger.InitRegistration(ue)
 
-	// wg.Wait()
-
 	// control the signals
 	sigUe := make(chan os.Signal, 1)
 	signal.Notify(sigUe, os.Interrupt)
@@ -61,11 +57,10 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	ue.Terminate()
 	wg.Done()
 	// os.Exit(0)
-
 }
 
 func RegistrationUeMonitor(conf config.Config,
-	id uint8, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time) {
+	id int64, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time) {
 
 	// new UE instance.
 	ue := &context.UEContext{}

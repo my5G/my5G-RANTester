@@ -15,6 +15,8 @@ import (
 	"net"
 	"reflect"
 	"regexp"
+	
+	log_time "my5G-RANTester/internal/analytics/log_time"
 )
 
 // 5GMM main states in the UE.
@@ -31,7 +33,7 @@ const SM5G_PDU_SESSION_ACTIVE_PENDING = 0x07
 const SM5G_PDU_SESSION_ACTIVE = 0x08
 
 type UEContext struct {
-	id         uint8
+	id         int64
 	UeSecurity SECURITY
 	StateMM    int
 	StateSM    int
@@ -47,7 +49,7 @@ type Amf struct {
 }
 
 type PDUSession struct {
-	Id        uint8
+	Id        int64
 	ueIP      string
 	ueGnbIP   net.IP
 	Dnn       string
@@ -79,7 +81,7 @@ type SECURITY struct {
 func (ue *UEContext) NewRanUeContext(msin string,
 	cipheringAlg, integrityAlg uint8,
 	k, opc, op, amf, sqn, mcc, mnc, dnn string,
-	sst int32, sd string, id uint8) {
+	sst int32, sd string, id int64) {
 
 	// added SUPI.
 	ue.UeSecurity.Msin = msin
@@ -146,7 +148,7 @@ func (ue *UEContext) NewRanUeContext(msin string,
 
 }
 
-func (ue *UEContext) GetUeId() uint8 {
+func (ue *UEContext) GetUeId() int64 {
 	return ue.id
 }
 
@@ -164,38 +166,47 @@ func (ue *UEContext) GetSupi() string {
 
 func (ue *UEContext) SetStateSM_PDU_SESSION_INACTIVE() {
 	ue.StateSM = SM5G_PDU_SESSION_INACTIVE
+	log_time.LogUeTime(ue.GetMsin(), "SM5G_PDU_SESSION_INACTIVE")
 }
 
 func (ue *UEContext) SetStateSM_PDU_SESSION_ACTIVE() {
 	ue.StateSM = SM5G_PDU_SESSION_ACTIVE
+	log_time.LogUeTime(ue.GetMsin(), "SM5G_PDU_SESSION_ACTIVE")
 }
 
 func (ue *UEContext) SetStateSM_PDU_SESSION_PENDING() {
 	ue.StateSM = SM5G_PDU_SESSION_ACTIVE_PENDING
+	log_time.LogUeTime(ue.GetMsin(), "SM5G_PDU_SESSION_ACTIVE_PENDING")
 }
 
 func (ue *UEContext) SetStateMM_DEREGISTERED_INITIATED() {
 	ue.StateMM = MM5G_DEREGISTERED_INIT
+	log_time.LogUeTime(ue.GetMsin(), "MM5G_DEREGISTERED_INIT")
 }
 
 func (ue *UEContext) SetStateMM_MM5G_SERVICE_REQ_INIT() {
 	ue.StateMM = MM5G_SERVICE_REQ_INIT
+	log_time.LogUeTime(ue.GetMsin(), "MM5G_SERVICE_REQ_INIT")
 }
 
 func (ue *UEContext) SetStateMM_REGISTERED_INITIATED() {
 	ue.StateMM = MM5G_REGISTERED_INITIATED
+	log_time.LogUeTime(ue.GetMsin(), "MM5G_REGISTERED_INITIATED")
 }
 
 func (ue *UEContext) SetStateMM_REGISTERED() {
 	ue.StateMM = MM5G_REGISTERED
+	log_time.LogUeTime(ue.GetMsin(), "MM5G_REGISTERED")
 }
 
 func (ue *UEContext) SetStateMM_NULL() {
 	ue.StateMM = MM5G_NULL
+	log_time.LogUeTime(ue.GetMsin(), "MM5G_NULL")
 }
 
 func (ue *UEContext) SetStateMM_DEREGISTERED() {
 	ue.StateMM = MM5G_DEREGISTERED
+	log_time.LogUeTime(ue.GetMsin(), "MM5G_DEREGISTERED")
 }
 
 func (ue *UEContext) GetStateSM() int {
@@ -234,7 +245,7 @@ func (ue *UEContext) GetGnbIp() net.IP {
 	return ue.PduSession.ueGnbIP
 }
 
-func (ue *UEContext) GetPduSesssionId() uint8 {
+func (ue *UEContext) GetPduSesssionId() int64 {
 	return ue.PduSession.Id
 }
 

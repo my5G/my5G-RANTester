@@ -29,7 +29,6 @@ func InitConn(ue *context.UEContext) error {
 	return nil
 }
 
-// ue listen unix sockets.
 func UeListen(ue *context.UEContext) {
 
 	buf := make([]byte, 65535)

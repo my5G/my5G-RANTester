@@ -45,7 +45,7 @@ func TestUesLatencyInInterval(interval int) int64 {
 
 			time.Sleep(400 * time.Millisecond)
 
-			go ue.RegistrationUeMonitor(cfg, uint8(i), &monitor, &wg, start)
+			go ue.RegistrationUeMonitor(cfg, int64(i), &monitor, &wg, start)
 
 			wg.Add(1)
 

@@ -27,7 +27,7 @@ func UlNasTransport(ue *context.UEContext, requestType uint8) ([]byte, error) {
 	return pdu, nil
 }
 
-func getUlNasTransport_PduSessionEstablishmentRequest(pduSessionId uint8, requestType uint8, dnnString string, sNssai *models.Snssai) (nasPdu []byte) {
+func getUlNasTransport_PduSessionEstablishmentRequest(pduSessionId int64, requestType uint8, dnnString string, sNssai *models.Snssai) (nasPdu []byte) {
 
 	pduSessionEstablishmentRequest := sm_5gs.GetPduSessionEstablishmentRequest(pduSessionId)
 
@@ -41,7 +41,7 @@ func getUlNasTransport_PduSessionEstablishmentRequest(pduSessionId uint8, reques
 	ulNasTransport.ExtendedProtocolDiscriminator.SetExtendedProtocolDiscriminator(nasMessage.Epd5GSMobilityManagementMessage)
 	ulNasTransport.PduSessionID2Value = new(nasType.PduSessionID2Value)
 	ulNasTransport.PduSessionID2Value.SetIei(nasMessage.ULNASTransportPduSessionID2ValueType)
-	ulNasTransport.PduSessionID2Value.SetPduSessionID2Value(pduSessionId)
+	ulNasTransport.PduSessionID2Value.SetPduSessionID2Value(uint8(pduSessionId))
 	ulNasTransport.RequestType = new(nasType.RequestType)
 	ulNasTransport.RequestType.SetIei(nasMessage.ULNASTransportRequestTypeType)
 	ulNasTransport.RequestType.SetRequestTypeValue(requestType)
