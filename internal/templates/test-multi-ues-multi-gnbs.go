@@ -30,6 +30,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	time.Sleep(1 * time.Second)
 
 	msin := cfg.Ue.Msin
+	startTime := time.Now()
 	for i := 1; i <= numUes; i++ {
 
 		imsi := imsiGenerator(i, msin)
@@ -41,6 +42,9 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		sleepTime := time.Duration(rand.Intn(100)+1) * time.Millisecond
 		time.Sleep(sleepTime)
 	}
+	endTime := time.Now()
+	executionTime := endTime.Sub(startTime)
+	log.Info("Total Registeration Time =", executionTime)
 
 	wg.Wait()
 }
