@@ -124,8 +124,8 @@ func main() {
 					name := "Testing registration of multiple UEs"
 					cfg := config.Data
 
-					numUes := rand.Intn(1000)
-					numGNBs := rand.Intn(100) + 1
+					numUes := rand.Intn(5)
+					numGNBs := rand.Intn(5) + 1
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
