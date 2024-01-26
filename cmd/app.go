@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/templates"
 
