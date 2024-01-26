@@ -24,17 +24,27 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		log.Fatal("Error in get configuration")
 	}
 
-	for i := 1; i <= numGNBs; i++ {
+	// Modify gNB port
+	gnbControlPort := cfg.GNodeB.ControlIF.Port
+	gnbDataPort := cfg.GNodeB.DataIF.Port
+
+	for i := 0; i < numGNBs; i++ {
+		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
+		cfg.GNodeB.DataIF.Port = gnbDataPort + i
 		go gnb.InitGnb(cfg, &wg)
 		wg.Add(1)
 		time.Sleep(1 * time.Second)
 	}
 
-	time.Sleep(1 * time.Second)
+	//time.Sleep(1 * time.Second)
 
 	msin := cfg.Ue.Msin
 	startTime := time.Now()
 	for i := 1; i <= numUes; i++ {
+
+		portOffset := rand.Intn(numGNBs)
+		cfg.GNodeB.ControlIF.Port = gnbControlPort + portOffset
+		cfg.GNodeB.DataIF.Port = gnbDataPort + portOffset
 
 		imsi := imsiGenerator(i, msin)
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
