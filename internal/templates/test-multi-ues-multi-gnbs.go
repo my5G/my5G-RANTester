@@ -42,9 +42,9 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		sleepTime := time.Duration(rand.Intn(100)+1) * time.Millisecond
 		time.Sleep(sleepTime)
 	}
+
+	wg.Wait()
 	endTime := time.Now()
 	executionTime := endTime.Sub(startTime)
 	log.Info("Total Registeration Time =", executionTime)
-
-	wg.Wait()
 }
