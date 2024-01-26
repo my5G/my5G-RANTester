@@ -24,8 +24,10 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		log.Fatal("Error in get configuration")
 	}
 
-	go gnb.InitGnb(cfg, &wg)
-	wg.Add(1)
+	for i := 1; i <= numGNBs; i++ {
+		go gnb.InitGnb(cfg, &wg)
+		wg.Add(1)
+	}
 
 	time.Sleep(1 * time.Second)
 
