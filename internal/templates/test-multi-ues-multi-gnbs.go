@@ -13,8 +13,8 @@ import (
 
 func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
-	log.Info("Num of UEs =", numUes)
-	log.Info("Num of GNBs =", numGNBs)
+	log.Info("Num of UEs = ", numUes)
+	log.Info("Num of GNBs = ", numGNBs)
 
 	wg := sync.WaitGroup{}
 
@@ -28,9 +28,14 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	gnbControlPort := cfg.GNodeB.ControlIF.Port
 	gnbDataPort := cfg.GNodeB.DataIF.Port
 
+	log.Info("Initial gnbControlPort = ", gnbControlPort)
+	log.Info("Initial gnbDataPort = ", gnbDataPort)
+
 	for i := 0; i < numGNBs; i++ {
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
 		cfg.GNodeB.DataIF.Port = gnbDataPort + i
+		log.Info("Initializing gnb with gnbControlPort = ", gnbControlPort)
+		log.Info("Initializing gnb with gnbDataPort = ", gnbDataPort)
 		go gnb.InitGnb(cfg, &wg)
 		wg.Add(1)
 		time.Sleep(1 * time.Second)
@@ -45,6 +50,9 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		portOffset := rand.Intn(numGNBs)
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + portOffset
 		cfg.GNodeB.DataIF.Port = gnbDataPort + portOffset
+
+		log.Info("Registering ue with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
+		log.Info("Registering ue with gnbDataPort = ", cfg.GNodeB.DataIF.Port)
 
 		imsi := imsiGenerator(i, msin)
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
