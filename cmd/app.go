@@ -112,6 +112,33 @@ func main() {
 				},
 			},
 			{
+				Name:    "Multi-UEs-Multi-GNBs",
+				Aliases: []string{"ues-gnbs"},
+				Usage: "\nTest multiple UEs connect to multiple GNBs.\n" +
+					"Random num [0-1000] of UEs with Random num [1-100] of GNBs\n",
+				// Flags: []cli.Flag{
+				// 	&cli.IntFlag{Name: "number-of-ues", Value: 1, Aliases: []string{"n"}},
+				// },
+				Action: func(c *cli.Context) error {
+					name := "Testing registration of multiple UEs"
+					cfg := config.Data
+
+					numUes := rand.Intn(1000)
+					numGNBs := rand.Intn(100) + 1
+
+					log.Info("---------------------------------------")
+					log.Info("[TESTER] Starting test function: ", name)
+					log.Info("[TESTER][UE] Number of UEs: ", numUes)
+					log.Info("[TESTER][GNB] gNodeB control interface IP/Port: ", cfg.GNodeB.ControlIF.Ip, "/", cfg.GNodeB.ControlIF.Port)
+					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
+					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
+					log.Info("---------------------------------------")
+					templates.TestMultiUesMultiGNBs(numUes, numGNBs)
+
+					return nil
+				},
+			},
+			{
 				Name:    "amf-load-loop",
 				Aliases: []string{"amf-load-loop"},
 				Usage: "\nTest AMF responses in interval\n" +
