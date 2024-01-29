@@ -50,6 +50,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	log.Info("Initializing gnb with gnbDataIP = ", cfg.GNodeB.DataIF.Ip)
 	log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
 	log.Info("Initializing gnb with gnbDataPort = ", cfg.GNodeB.DataIF.Port)
+
 	go gnb.InitGnb(cfg, &wg)
 	wg.Add(1)
 	time.Sleep(1 * time.Second)
