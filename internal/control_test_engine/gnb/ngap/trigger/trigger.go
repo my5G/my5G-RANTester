@@ -53,7 +53,7 @@ func SendNgSetupRequest(gnb *context.GNBContext, amf *context.GNBAmf) {
 
 	}
 
-	log.Info("ngapMessage = ", string(ngapMsg))
+	// log.Info("ngapMessage = ", string(ngapMsg))
 
 	conn := amf.GetSCTPConn()
 	err = sender.SendToAmF(ngapMsg, conn)

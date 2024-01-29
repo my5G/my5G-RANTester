@@ -14,6 +14,9 @@ func InitConn(amf *context.GNBAmf, gnb *context.GNBContext) error {
 	remote := fmt.Sprintf("%s:%d", amf.GetAmfIp(), amf.GetAmfPort())
 	local := fmt.Sprintf("%s:%d", gnb.GetGnbIp(), gnb.GetGnbPort())
 
+	log.Info("Remote address: ", remote)
+	log.Info("Local address: ", local)
+
 	rem, err := sctp.ResolveSCTPAddr("sctp", remote)
 	if err != nil {
 		return err
