@@ -30,6 +30,8 @@ func InitConn(amf *context.GNBAmf, gnb *context.GNBContext) error {
 
 	// streams := amf.GetTNLAStreams()
 
+	log.Info("before conn")
+
 	conn, err := sctp.DialSCTPExt(
 		"sctp",
 		loc,
