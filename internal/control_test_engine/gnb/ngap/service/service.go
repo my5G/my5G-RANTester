@@ -83,6 +83,7 @@ func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 
 		// handling NGAP message.
 		go ngap.Dispatch(amf, gnb, forwardData)
+		log.Info("End for loop")
 
 	}
 	log.Info("After for loop")
