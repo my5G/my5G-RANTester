@@ -28,23 +28,32 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	gnbControlPort := cfg.GNodeB.ControlIF.Port
 	gnbDataPort := cfg.GNodeB.DataIF.Port
 
+	log.Info("Initial gnbControlIP = ", gnbControlPort)
+	log.Info("Initial gnbDataIP = ", gnbDataPort)
 	log.Info("Initial gnbControlPort = ", gnbControlPort)
 	log.Info("Initial gnbDataPort = ", gnbDataPort)
 
-	for i := 0; i < numGNBs; i++ {
-		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
-		cfg.GNodeB.DataIF.Port = gnbDataPort + i
-		log.Info("Initializing gnb with gnbControlPort = ", gnbControlPort)
-		log.Info("Initializing gnb with gnbDataPort = ", gnbDataPort)
-		go gnb.InitGnb(cfg, &wg)
-		wg.Add(1)
-		time.Sleep(1 * time.Second)
-	}
+	log.Info("Initializing gnb with gnbControlIP = ", cfg.GNodeB.ControlIF.IP)
+	log.Info("Initializing gnb with gnbDataIP = ", cfg.GNodeB.DataIF.IP)
+
+	go gnb.InitGnb(cfg, &wg)
+	wg.Add(1)
+	time.Sleep(1 * time.Second)
+
+	cfg.GNodeB.ControlIF.IP = "127.0.0.1"
+	cfg.GNodeB.ControlIF.Port = 9488
+	cfg.GNodeB.DataIF.IP = "127.0.0.1"
+	cfg.GNodeB.DataIF.Port = 2152
+	log.Info("Initializing gnb with gnbControlIP = ", cfg.GNodeB.ControlIF.IP)
+	log.Info("Initializing gnb with gnbDataIP = ", cfg.GNodeB.DataIF.IP)
+	go gnb.InitGnb(cfg, &wg)
+	wg.Add(1)
+	time.Sleep(1 * time.Second)
 
 	//time.Sleep(1 * time.Second)
 
 	msin := cfg.Ue.Msin
-	startTime := time.Now()
+	//startTime := time.Now()
 	for i := 1; i <= numUes; i++ {
 
 		portOffset := rand.Intn(numGNBs)
@@ -65,7 +74,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	}
 
 	wg.Wait()
-	endTime := time.Now()
-	executionTime := endTime.Sub(startTime)
-	log.Info("Total Registeration Time =", executionTime)
+	// endTime := time.Now()
+	// executionTime := endTime.Sub(startTime)
+	// log.Info("Total Registeration Time =", executionTime)
 }
