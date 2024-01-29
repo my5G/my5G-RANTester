@@ -1,10 +1,10 @@
 package templates
 
 import (
-	"math/rand"
+	// "math/rand"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
-	"my5G-RANTester/internal/control_test_engine/ue"
+	// "my5G-RANTester/internal/control_test_engine/ue"
 	"sync"
 	"time"
 
