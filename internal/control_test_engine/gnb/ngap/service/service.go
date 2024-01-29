@@ -65,10 +65,14 @@ func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 		}()
 	*/
 
+	log.Info("Before for loop")
+
 	for {
 
+		log.Info("Inside for loop")
 		n, info, err := conn.SCTPRead(buf[:])
 		if err != nil {
+			log.Info("SCTPRead Error ", err)
 			break
 		}
 
@@ -81,5 +85,6 @@ func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 		go ngap.Dispatch(amf, gnb, forwardData)
 
 	}
+	log.Info("After for loop")
 
 }
