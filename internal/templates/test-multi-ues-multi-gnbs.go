@@ -54,24 +54,24 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 	msin := cfg.Ue.Msin
 	//startTime := time.Now()
-	for i := 1; i <= numUes; i++ {
+	// for i := 1; i <= numUes; i++ {
 
-		portOffset := rand.Intn(numGNBs)
-		cfg.GNodeB.ControlIF.Port = gnbControlPort + portOffset
-		cfg.GNodeB.DataIF.Port = gnbDataPort + portOffset
+	// 	portOffset := rand.Intn(numGNBs)
+	// 	cfg.GNodeB.ControlIF.Port = gnbControlPort + portOffset
+	// 	cfg.GNodeB.DataIF.Port = gnbDataPort + portOffset
 
-		log.Info("Registering ue with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
-		log.Info("Registering ue with gnbDataPort = ", cfg.GNodeB.DataIF.Port)
+	// 	log.Info("Registering ue with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
+	// 	log.Info("Registering ue with gnbDataPort = ", cfg.GNodeB.DataIF.Port)
 
-		imsi := imsiGenerator(i, msin)
-		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
-		cfg.Ue.Msin = imsi
-		go ue.RegistrationUe(cfg, uint8(i), &wg)
-		wg.Add(1)
+	// 	imsi := imsiGenerator(i, msin)
+	// 	log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
+	// 	cfg.Ue.Msin = imsi
+	// 	go ue.RegistrationUe(cfg, uint8(i), &wg)
+	// 	wg.Add(1)
 
-		sleepTime := time.Duration(rand.Intn(100)+1) * time.Millisecond
-		time.Sleep(sleepTime)
-	}
+	// 	sleepTime := time.Duration(rand.Intn(100)+1) * time.Millisecond
+	// 	time.Sleep(sleepTime)
+	// }
 
 	wg.Wait()
 	// endTime := time.Now()
