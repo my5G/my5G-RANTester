@@ -19,10 +19,12 @@ func InitConn(amf *context.GNBAmf, gnb *context.GNBContext) error {
 
 	rem, err := sctp.ResolveSCTPAddr("sctp", remote)
 	if err != nil {
+		log.Info("sctp remote error: ", err)
 		return err
 	}
 	loc, err := sctp.ResolveSCTPAddr("sctp", local)
 	if err != nil {
+		log.Info("sctp local error: ", err)
 		return err
 	}
 
@@ -34,6 +36,7 @@ func InitConn(amf *context.GNBAmf, gnb *context.GNBContext) error {
 		rem,
 		sctp.InitMsg{NumOstreams: 2, MaxInstreams: 2})
 	if err != nil {
+		log.Info("conn error", err)
 		amf.SetSCTPConn(nil)
 		return err
 	}
