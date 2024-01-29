@@ -25,8 +25,8 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	}
 
 	// Modify gNB port
-	gnbControlPort := cfg.GNodeB.ControlIF.Port
-	gnbDataPort := cfg.GNodeB.DataIF.Port
+	// gnbControlPort := cfg.GNodeB.ControlIF.Port
+	// gnbDataPort := cfg.GNodeB.DataIF.Port
 
 	// log.Info("Initial gnbControlIP = ", gnbControlPort)
 	// log.Info("Initial gnbDataIP = ", gnbDataPort)
