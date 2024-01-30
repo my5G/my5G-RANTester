@@ -28,13 +28,12 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	}
 
 	gnbControlPort := cfg.GNodeB.ControlIF.Port
+	gnbID, err := strconv.Atoi(string(cfg.GNodeB.PlmnList.GnbId))
+	if err != nil {
+		log.Error("Failed to extract gnbID")
+	}
 
 	for i := 0; i < numGNBs; i++ {
-		gnbID, err := strconv.Atoi(string(cfg.GNodeB.PlmnList.GnbId))
-		if err != nil {
-			log.Error("Failed to extract gnbID")
-		}
-		gnbID++
 		newGnbID := fmt.Sprintf("%d", gnbID)
 
 		cfg.GNodeB.PlmnList.GnbId = newGnbID
@@ -45,6 +44,8 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		go gnb.InitGnb(cfg, &wg)
 		wg.Add(1)
 		time.Sleep(1 * time.Second)
+
+		gnbID++
 	}
 
 	//time.Sleep(1 * time.Second)
