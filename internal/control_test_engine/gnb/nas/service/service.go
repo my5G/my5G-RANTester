@@ -41,6 +41,10 @@ func gnbListen(gnb *context.GNBContext) {
 
 	log.Info("Before ln := gnb.GetListener()")
 	ln := gnb.GetListener()
+	if ln == nil {
+		log.Error("Listener is nil. Make sure it's properly initialized.")
+		return
+	}
 	log.Info("After ln := gnb.GetListener()")
 
 	for {
