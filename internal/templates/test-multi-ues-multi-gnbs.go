@@ -2,8 +2,11 @@ package templates
 
 import (
 	// "math/rand"
+	"fmt"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
+	"strconv"
+
 	// "my5G-RANTester/internal/control_test_engine/ue"
 	"sync"
 	"time"
@@ -24,8 +27,13 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		log.Fatal("Error in get configuration")
 	}
 
+	gnbControlPort := cfg.GNodeB.ControlIF.Port
+
 	for i := 0; i < numGNBs; i++ {
-		gnbID := strconv.Atoi(string(cfg.GNodeB.PlmnList.GnbId))
+		gnbID, err := strconv.Atoi(string(cfg.GNodeB.PlmnList.GnbId))
+		if err != nil {
+			log.Error("Failed to extract gnbID")
+		}
 		gnbID++
 		newGnbID := fmt.Sprintf("%d", gnbID)
 
@@ -33,23 +41,11 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
 		log.Info("Initializing gnb with GnbId = ", cfg.GNodeB.PlmnList.GnbId)
 		log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
-		
+
 		go gnb.InitGnb(cfg, &wg)
 		wg.Add(1)
 		time.Sleep(1 * time.Second)
 	}
-
-	wg.Add(1)
-	go gnb.InitGnb(cfg, &wg)
-	time.Sleep(1 * time.Second)
-
-	cfg2.GNodeB.ControlIF.Port = 9488
-	cfg2.GNodeB.DataIF.Port = 2152
-	cfg2.GNodeB.PlmnList.GnbId = "000002"
-
-	wg.Add(1)
-	go gnb.InitGnb(cfg2, &wg)
-	time.Sleep(1 * time.Second)
 
 	//time.Sleep(1 * time.Second)
 
