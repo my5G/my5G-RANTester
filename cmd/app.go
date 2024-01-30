@@ -1,7 +1,7 @@
 package main
 
 import (
-	"math/rand"
+	// "math/rand"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/templates"
 
@@ -125,9 +125,10 @@ func main() {
 					cfg := config.Data
 
 					// numUes := rand.Intn(5)
-					numGNBs := rand.Intn(5) + 1
+					// numGNBs := rand.Intn(5) + 1
 
 					numUes := 5
+					numGNBs := 2
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
