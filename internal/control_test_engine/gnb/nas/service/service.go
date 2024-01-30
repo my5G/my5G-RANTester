@@ -19,7 +19,7 @@ func InitServer(gnb *context.GNBContext) error {
 
 	log.Info("Before gnb.SetListener(ln)")
 	gnb.SetListener(ln)
-	log.Info("After gnb.SetListener(ln)")
+	log.Info("After gnb.SetListener(ln) ln: ", ln)
 
 	/*
 		sigc := make(chan os.Signal, 1)
@@ -45,7 +45,7 @@ func gnbListen(gnb *context.GNBContext) {
 		log.Error("Listener is nil. Make sure it's properly initialized.")
 		return
 	}
-	log.Info("After ln := gnb.GetListener()")
+	log.Info("After ln := gnb.GetListener() ln: ", ln)
 
 	for {
 
