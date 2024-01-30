@@ -80,7 +80,6 @@ func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 		if buf == nil{
 			log.Info("Buffer is null")
 		}
-		log.Info("Buffer = ", string(buf))
 		n, info, err := conn.SCTPRead(buf[:])
 		if err != nil {
 			log.Info("SCTPRead Error ", err)
