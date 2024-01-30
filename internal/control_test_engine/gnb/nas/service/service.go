@@ -49,7 +49,7 @@ func gnbListen(gnb *context.GNBContext) {
 
 		log.Info("Before fd, err := ln.Accept()")
 		fd, err := ln.Accept()
-		log.Info("After fd, err := ln.Accept()")
+		log.Info("After fd, err := ln.Accept() fd: ", fd)
 
 		if err != nil {
 			log.Info("[GNB][UE] Accept error: ", err)
