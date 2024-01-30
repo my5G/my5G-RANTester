@@ -2,6 +2,7 @@ package main
 
 import (
 	// "math/rand"
+	"runtime/debug"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/templates"
 
@@ -39,6 +40,12 @@ func init() {
 }
 
 func main() {
+
+	defer func() {
+        if r := recover(); r != nil {
+            debug.PrintStack()
+        }
+    }()
 
 	app := &cli.App{
 		Commands: []*cli.Command{
