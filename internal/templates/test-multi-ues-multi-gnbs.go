@@ -2,6 +2,7 @@ package templates
 
 import (
 	// "math/rand"
+
 	"fmt"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
@@ -34,7 +35,8 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	}
 
 	for i := 0; i < numGNBs; i++ {
-		newGnbID := fmt.Sprintf("%d", gnbID)
+		//newGnbID := fmt.Sprintf("%d", gnbID)
+		newGnbID := constructGnbID(gnbID)
 
 		cfg.GNodeB.PlmnList.GnbId = newGnbID
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
@@ -75,4 +77,18 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	// endTime := time.Now()
 	// executionTime := endTime.Sub(startTime)
 	// log.Info("Total Registeration Time =", executionTime)
+}
+
+func constructGnbID(gnbID int) string {
+	var newGnbID string
+
+	if gnbID < 9 {
+		newGnbID = fmt.Sprintf("00000%d", gnbID)
+	} else if gnbID > 9 && gnbID < 100 {
+		newGnbID = fmt.Sprintf("0000%d", gnbID)
+	} else {
+		newGnbID = fmt.Sprintf("000%d", gnbID)
+	}
+
+	return newGnbID
 }
