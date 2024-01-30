@@ -58,16 +58,16 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	// cfg.GNodeB.DataIF.Port = 2152
 	// cfg.GNodeB.PlmnList.GnbId = "000001"
 
-	go gnb.InitGnb(cfg, &wg)
 	wg.Add(1)
+	go gnb.InitGnb(cfg, &wg)
 	time.Sleep(1 * time.Second)
 
 	cfg2.GNodeB.ControlIF.Port = 9488
 	cfg2.GNodeB.DataIF.Port = 2152
 	cfg2.GNodeB.PlmnList.GnbId = "000002"
 
-	go gnb.InitGnb(cfg2, &wg)
 	wg.Add(1)
+	go gnb.InitGnb(cfg2, &wg)
 	time.Sleep(1 * time.Second)
 
 	//time.Sleep(1 * time.Second)
