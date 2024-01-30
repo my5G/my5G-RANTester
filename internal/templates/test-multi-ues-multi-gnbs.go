@@ -24,6 +24,12 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		log.Fatal("Error in get configuration")
 	}
 
+	cfg2, err := config.GetConfig()
+	if err != nil {
+		//return nil
+		log.Fatal("Error in get configuration")
+	}
+
 	// Modify gNB port
 	// gnbControlPort := cfg.GNodeB.ControlIF.Port
 	// gnbDataPort := cfg.GNodeB.DataIF.Port
@@ -48,19 +54,19 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	// log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
 	// log.Info("Initializing gnb with gnbDataPort = ", cfg.GNodeB.DataIF.Port)
 
-	cfg.GNodeB.ControlIF.Port = 9487
-	cfg.GNodeB.DataIF.Port = 2152
-	cfg.GNodeB.PlmnList.GnbId = "000001"
+	// cfg.GNodeB.ControlIF.Port = 9487
+	// cfg.GNodeB.DataIF.Port = 2152
+	// cfg.GNodeB.PlmnList.GnbId = "000001"
 
 	go gnb.InitGnb(cfg, &wg)
 	wg.Add(1)
 	time.Sleep(1 * time.Second)
 
-	cfg.GNodeB.ControlIF.Port = 9488
-	cfg.GNodeB.DataIF.Port = 2152
-	cfg.GNodeB.PlmnList.GnbId = "000002"
+	cfg2.GNodeB.ControlIF.Port = 9488
+	cfg2.GNodeB.DataIF.Port = 2152
+	cfg2.GNodeB.PlmnList.GnbId = "000002"
 
-	go gnb.InitGnb(cfg, &wg)
+	go gnb.InitGnb(cfg2, &wg)
 	wg.Add(1)
 	time.Sleep(1 * time.Second)
 
