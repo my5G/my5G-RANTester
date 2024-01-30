@@ -77,6 +77,9 @@ func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 	for {
 
 		log.Info("Inside for loop")
+		if buf == nil{
+			log.Info("Buffer is null")
+		}
 		n, info, err := conn.SCTPRead(buf[:])
 		if err != nil {
 			log.Info("SCTPRead Error ", err)
