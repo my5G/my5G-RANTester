@@ -61,9 +61,7 @@ func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 	buf := make([]byte, 65535)
 	conn := amf.GetSCTPConn()
 
-	if conn == nil {
-		log.Info("Connection is null")
-	}
+	log.Info("Conn: ", conn)
 
 	/*
 		defer func() {
