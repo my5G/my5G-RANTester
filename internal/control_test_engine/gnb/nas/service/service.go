@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	"my5G-RANTester/internal/control_test_engine/gnb/nas"
 	"net"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func InitServer(gnb *context.GNBContext) error {
@@ -16,7 +17,9 @@ func InitServer(gnb *context.GNBContext) error {
 		fmt.Errorf("Listen error: ", err)
 	}
 
+	log.Info("Before gnb.SetListener(ln)")
 	gnb.SetListener(ln)
+	log.Info("After gnb.SetListener(ln)")
 
 	/*
 		sigc := make(chan os.Signal, 1)
@@ -36,11 +39,18 @@ func InitServer(gnb *context.GNBContext) error {
 
 func gnbListen(gnb *context.GNBContext) {
 
+	log.Info("Before ln := gnb.GetListener()")
 	ln := gnb.GetListener()
+	log.Info("After ln := gnb.GetListener()")
 
 	for {
 
+		log.Info("Inside nas/service for loop")
+
+		log.Info("Before fd, err := ln.Accept()")
 		fd, err := ln.Accept()
+		log.Info("After fd, err := ln.Accept()")
+
 		if err != nil {
 			log.Info("[GNB][UE] Accept error: ", err)
 			break
@@ -53,12 +63,15 @@ func gnbListen(gnb *context.GNBContext) {
 		// store UE connection
 		// select AMF and get sctp association
 		// make a tun interface
+		log.Info("Before ue := gnb.NewGnBUe(fd)")
 		ue := gnb.NewGnBUe(fd)
+		log.Info("After ue := gnb.NewGnBUe(fd)")
 		if ue == nil {
 			break
 		}
 
 		// accept and handle connection.
+		log.Info("Before go processingConn(ue, gnb)")
 		go processingConn(ue, gnb)
 	}
 
@@ -67,11 +80,15 @@ func gnbListen(gnb *context.GNBContext) {
 func processingConn(ue *context.GNBUe, gnb *context.GNBContext) {
 
 	buf := make([]byte, 65535)
+
+	log.Info("Before conn := ue.GetUnixSocket()")
 	conn := ue.GetUnixSocket()
+	log.Info("After conn := ue.GetUnixSocket() Conn: ", conn)
 
 	for {
 
 		n, err := conn.Read(buf[:])
+		log.Info("nas/Buffer: ", string(buf[:20]))
 		if err != nil {
 			return
 		}
@@ -80,6 +97,7 @@ func processingConn(ue *context.GNBUe, gnb *context.GNBContext) {
 		copy(forwardData, buf[:n])
 
 		// send to dispatch.
+		log.Info("Before go nas.Dispatch(ue, forwardData, gnb)")
 		go nas.Dispatch(ue, forwardData, gnb)
 	}
 }
