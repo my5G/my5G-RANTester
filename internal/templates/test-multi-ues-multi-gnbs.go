@@ -24,39 +24,20 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		log.Fatal("Error in get configuration")
 	}
 
-	cfg2, err := config.GetConfig()
-	if err != nil {
-		//return nil
-		log.Fatal("Error in get configuration")
+	for i := 0; i < numGNBs; i++ {
+		gnbID := strconv.Atoi(string(cfg.GNodeB.PlmnList.GnbId))
+		gnbID++
+		newGnbID := fmt.Sprintf("%d", gnbID)
+
+		cfg.GNodeB.PlmnList.GnbId = newGnbID
+		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
+		log.Info("Initializing gnb with GnbId = ", cfg.GNodeB.PlmnList.GnbId)
+		log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
+		
+		go gnb.InitGnb(cfg, &wg)
+		wg.Add(1)
+		time.Sleep(1 * time.Second)
 	}
-
-	// Modify gNB port
-	// gnbControlPort := cfg.GNodeB.ControlIF.Port
-	// gnbDataPort := cfg.GNodeB.DataIF.Port
-
-	// log.Info("Initial gnbControlIP = ", gnbControlPort)
-	// log.Info("Initial gnbDataIP = ", gnbDataPort)
-	// log.Info("Initial gnbControlPort = ", gnbControlPort)
-	// log.Info("Initial gnbDataPort = ", gnbDataPort)
-
-	// log.Info("Initializing gnb with gnbControlIP = ", cfg.GNodeB.ControlIF.Ip)
-	// log.Info("Initializing gnb with gnbDataIP = ", cfg.GNodeB.DataIF.Ip)
-	// log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
-	// log.Info("Initializing gnb with gnbDataPort = ", cfg.GNodeB.DataIF.Port)
-
-	
-
-	// cfg.GNodeB.ControlIF.Ip = "172.23.0.250"
-	// cfg.GNodeB.DataIF.Ip = "172.23.0.250"
-	
-	// log.Info("Initializing gnb with gnbControlIP = ", cfg.GNodeB.ControlIF.Ip)
-	// log.Info("Initializing gnb with gnbDataIP = ", cfg.GNodeB.DataIF.Ip)
-	// log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
-	// log.Info("Initializing gnb with gnbDataPort = ", cfg.GNodeB.DataIF.Port)
-
-	// cfg.GNodeB.ControlIF.Port = 9487
-	// cfg.GNodeB.DataIF.Port = 2152
-	// cfg.GNodeB.PlmnList.GnbId = "000001"
 
 	wg.Add(1)
 	go gnb.InitGnb(cfg, &wg)
