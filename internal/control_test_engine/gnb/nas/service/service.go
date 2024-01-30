@@ -14,7 +14,7 @@ func InitServer(gnb *context.GNBContext) error {
 
 	// initiated GNB server with unix sockets.
 	gnbID, err := strconv.Atoi(string(gnb.GetGnbId()))
-	sockPath := fmt.Sprintf("/tmp/gnb%d.sock", )
+	sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
 
 	ln, err := net.Listen("unix", sockPath)
 	if err != nil {
