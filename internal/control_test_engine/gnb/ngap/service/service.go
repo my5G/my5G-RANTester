@@ -1,7 +1,6 @@
 package service
 
 import (
-	"runtime/debug"
 	"fmt"
 	"github.com/ishidawataru/sctp"
 	log "github.com/sirupsen/logrus"
@@ -59,12 +58,6 @@ func InitConn(amf *context.GNBAmf, gnb *context.GNBContext) error {
 
 func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 
-	defer func() {
-		if r := recover(); r != nil {
-			debug.PrintStack()
-		}
-	}()
-
 	buf := make([]byte, 65535)
 	conn := amf.GetSCTPConn()
 
@@ -87,6 +80,7 @@ func GnbListen(amf *context.GNBAmf, gnb *context.GNBContext) {
 		if buf == nil{
 			log.Info("Buffer is null")
 		}
+		log.Info("Buffer = ", string(buf))
 		n, info, err := conn.SCTPRead(buf[:])
 		if err != nil {
 			log.Info("SCTPRead Error ", err)
