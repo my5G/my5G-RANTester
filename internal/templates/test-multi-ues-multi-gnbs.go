@@ -38,7 +38,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 	for i := 0; i < numGNBs; i++ {
 		//newGnbID := fmt.Sprintf("%d", gnbID)
-		newGnbID := constructGnbID(gnbID)
+		newGnbID := gnbIdGenerator(gnbID)
 
 		cfg.GNodeB.PlmnList.GnbId = newGnbID
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
@@ -60,7 +60,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 		offset := rand.Intn(numGNBs)
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + offset
-		cfg.GNodeB.PlmnList.GnbId = constructGnbID(baseGnbID + offset)
+		cfg.GNodeB.PlmnList.GnbId = gnbIdGenerator(baseGnbID + offset)
 
 		log.Info("Registering ue with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
 
@@ -80,7 +80,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	// log.Info("Total Registeration Time =", executionTime)
 }
 
-func constructGnbID(gnbID int) string {
+func gnbIdGenerator(gnbID int) string {
 	var newGnbID string
 
 	if gnbID <= 9 {
