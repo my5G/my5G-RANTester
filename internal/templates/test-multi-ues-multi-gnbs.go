@@ -56,8 +56,9 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	// startTime := time.Now()
 	for i := 1; i <= numUes; i++ {
 
-		portOffset := rand.Intn(numGNBs)
-		cfg.GNodeB.ControlIF.Port = gnbControlPort + portOffset
+		offset := rand.Intn(numGNBs)
+		cfg.GNodeB.ControlIF.Port = gnbControlPort + offset
+		cfg.GNodeB.PlmnList.GnbId = constructGnbID(gnbID + offset)
 
 		log.Info("Registering ue with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
 

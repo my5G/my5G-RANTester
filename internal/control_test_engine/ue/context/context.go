@@ -38,6 +38,7 @@ type UEContext struct {
 	UnixConn   net.Conn
 	PduSession PDUSession
 	amfInfo    Amf
+	gnbID      string
 }
 
 type Amf struct {
@@ -160,6 +161,10 @@ func (ue *UEContext) GetMsin() string {
 
 func (ue *UEContext) GetSupi() string {
 	return ue.UeSecurity.Supi
+}
+
+func (ue *UEContext) GetGnbId() string {
+	return ue.gnbID
 }
 
 func (ue *UEContext) SetStateSM_PDU_SESSION_INACTIVE() {
