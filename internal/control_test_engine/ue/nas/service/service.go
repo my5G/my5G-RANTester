@@ -6,6 +6,8 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func CloseConn(ue *context.UEContext) {
