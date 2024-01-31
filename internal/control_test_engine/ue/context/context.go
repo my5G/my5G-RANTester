@@ -80,7 +80,7 @@ type SECURITY struct {
 func (ue *UEContext) NewRanUeContext(msin string,
 	cipheringAlg, integrityAlg uint8,
 	k, opc, op, amf, sqn, mcc, mnc, dnn string,
-	sst int32, sd string, id uint8) {
+	sst int32, sd string, id uint8, gnbID string) {
 
 	// added SUPI.
 	ue.UeSecurity.Msin = msin
@@ -144,6 +144,8 @@ func (ue *UEContext) NewRanUeContext(msin string,
 
 	// added initial state for SM(INACTIVE)
 	ue.SetStateSM_PDU_SESSION_INACTIVE()
+
+	ue.gnbID = gnbID
 
 }
 

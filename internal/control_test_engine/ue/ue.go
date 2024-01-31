@@ -36,7 +36,8 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 		conf.Ue.Dnn,
 		int32(conf.Ue.Snssai.Sst),
 		conf.Ue.Snssai.Sd,
-		id)
+		id,
+		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
 	err := service.InitConn(ue)
