@@ -18,6 +18,7 @@ func InitConn(ue *context.UEContext) error {
 	// initiated communication with GNB(unix sockets).
 	gnbID, err := strconv.Atoi(string(ue.GetGnbId()))
 	sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
+	log.Info("Ue.gnbID = ", gnbID)
 
 	conn, err := net.Dial("unix", sockPath)
 	if err != nil {
