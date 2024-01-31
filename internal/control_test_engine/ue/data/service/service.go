@@ -19,6 +19,8 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	ueGnbIp := ue.GetGnbIp()
 	nameInf := fmt.Sprintf("uetun%d", ue.GetPduSesssionId())
 
+	log.Info("nameInf = ", nameInf)
+
 	newInterface := &netlink.Iptun{
 		LinkAttrs: netlink.LinkAttrs{
 			Name: nameInf,
