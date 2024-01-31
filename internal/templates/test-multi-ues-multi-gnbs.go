@@ -34,6 +34,8 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		log.Error("Failed to extract gnbID")
 	}
 
+	baseGnbID := gnbID
+
 	for i := 0; i < numGNBs; i++ {
 		//newGnbID := fmt.Sprintf("%d", gnbID)
 		newGnbID := constructGnbID(gnbID)
@@ -58,7 +60,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 		offset := rand.Intn(numGNBs)
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + offset
-		cfg.GNodeB.PlmnList.GnbId = constructGnbID(gnbID + offset)
+		cfg.GNodeB.PlmnList.GnbId = constructGnbID(baseGnbID + offset)
 
 		log.Info("Registering ue with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
 
