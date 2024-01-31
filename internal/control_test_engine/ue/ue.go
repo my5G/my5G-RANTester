@@ -1,7 +1,6 @@
 package ue
 
 import (
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/nas/service"
@@ -12,6 +11,8 @@ import (
 	"os/signal"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
@@ -86,7 +87,8 @@ func RegistrationUeMonitor(conf config.Config,
 		conf.Ue.Dnn,
 		int32(conf.Ue.Snssai.Sst),
 		conf.Ue.Snssai.Sd,
-		id)
+		id,
+		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
 	err := service.InitConn(ue)
