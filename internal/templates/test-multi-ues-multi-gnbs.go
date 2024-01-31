@@ -1,14 +1,14 @@
 package templates
 
 import (
-	// "math/rand"
+	"math/rand"
 
 	"fmt"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
 	"strconv"
 
-	// "my5G-RANTester/internal/control_test_engine/ue"
+	"my5G-RANTester/internal/control_test_engine/ue"
 	"sync"
 	"time"
 
@@ -80,11 +80,11 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 func constructGnbID(gnbID int) string {
 	var newGnbID string
 
-	if gnbID < 9 {
+	if gnbID <= 9 {
 		newGnbID = fmt.Sprintf("00000%d", gnbID)
-	} else if gnbID > 9 && gnbID < 100 {
+	} else if gnbID > 9 && gnbID <= 99 {
 		newGnbID = fmt.Sprintf("0000%d", gnbID)
-	} else {
+	} else if gnbID > 99 && gnbID <= 999 {
 		newGnbID = fmt.Sprintf("000%d", gnbID)
 	}
 
