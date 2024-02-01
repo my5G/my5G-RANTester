@@ -127,7 +127,7 @@ func main() {
 					// numUes := rand.Intn(5)
 					// numGNBs := rand.Intn(5) + 1
 
-					numUes := 100
+					numUes := 50
 					numGNBs := 10
 
 					log.Info("---------------------------------------")
