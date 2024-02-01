@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net"
-	"strconv"
+	// "strconv"
 	"sync"
 
 	"github.com/ishidawataru/sctp"
@@ -106,10 +106,10 @@ func (gnb *GNBContext) NewGnBUe(conn net.Conn) *GNBUe {
 
 	// set ran UE IP
 	ueIp := gnb.getRanUeIp()
-	gnbId, err := strconv.Atoi(string(gnb.GetGnbId()))
-	if err != nil {
-		log.Error("Error Converting gnbId to INT")
-	}
+	// gnbId, err := strconv.Atoi(string(gnb.GetGnbId()))
+	// if err != nil {
+	// 	log.Error("Error Converting gnbId to INT")
+	// }
 	ue.SetIp(ueIp)
 	// ue.SetIpModified(ueIp, uint8(gnbId))
 
