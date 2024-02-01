@@ -11,6 +11,5 @@ require (
 	github.com/vishvananda/netlink v1.1.0
 	github.com/wmnsk/go-gtp v0.7.4
 	golang.org/x/net v0.20.0
-	golang.org/x/tools v0.17.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )
