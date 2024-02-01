@@ -110,8 +110,8 @@ func (gnb *GNBContext) NewGnBUe(conn net.Conn) *GNBUe {
 	if err != nil {
 		log.Error("Error Converting gnbId to INT")
 	}
-	//ue.SetIp(ueIp, uint8(gnbId))
-	ue.SetIpModified(ueIp, uint8(gnbId))
+	ue.SetIp(ueIp)
+	// ue.SetIpModified(ueIp, uint8(gnbId))
 
 	// store UE in the GNB UE IP Pool.
 	gnb.ueIpPool.Store(ue.GetIp().String(), ue)
