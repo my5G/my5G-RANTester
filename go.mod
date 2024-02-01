@@ -10,6 +10,6 @@ require (
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vishvananda/netlink v1.1.0
 	github.com/wmnsk/go-gtp v0.7.4
-	golang.org/x/net v0.20.0
+	golang.org/x/net v0.0.0-20210501142056-aec3718b3fa0
 	gopkg.in/yaml.v2 v2.4.0
 )

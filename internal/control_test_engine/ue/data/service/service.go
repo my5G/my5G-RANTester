@@ -26,25 +26,12 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	log.Info("ueGnbIp = ", ueGnbIp)
 
 
-	existingInterfaces, err := netlink.LinkList()
-	if err != nil {
-		log.Info("[UE][DATA] Error listing existing interfaces: ", err)
-	} else {
-		log.Info("[UE][DATA] Existing interfaces: ", existingInterfaces)
-	}
-
 	newInterface := &netlink.Iptun{
 		LinkAttrs: netlink.LinkAttrs{
 			Name: nameInf,
 		},
 		Local:  ueGnbIp,
 		Remote: gatewayIp,
-	}
-
-	// Error check when setting IP interface up
-	if err := netlink.LinkSetUp(newInterface); err != nil {
-		log.Info("[UE][DATA] Error in setting virtual interface up: ", err)
-		return
 	}
 
 	if err := netlink.LinkAdd(newInterface); err != nil {
