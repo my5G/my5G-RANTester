@@ -269,6 +269,10 @@ func (ue *GNBUe) SetIp(ueIp uint8) {
 	ue.context.pduSession.ranUeIP = net.IPv4(127, 0, 0, ueIp)
 }
 
+func (ue *GNBUe) SetIpModified(ueIp uint8, gnbId uint8) {
+	ue.context.pduSession.ranUeIP = net.IPv4(127, 0, gnbId, ueIp)
+}
+
 func (ue *GNBUe) GetIp() net.IP {
 	return ue.context.pduSession.ranUeIP
 

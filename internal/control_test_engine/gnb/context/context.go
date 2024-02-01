@@ -3,12 +3,14 @@ package context
 import (
 	"encoding/hex"
 	"fmt"
+	"net"
+	"strconv"
+	"sync"
+
 	"github.com/ishidawataru/sctp"
 	log "github.com/sirupsen/logrus"
 	gtpv1 "github.com/wmnsk/go-gtp/v1"
 	"golang.org/x/net/ipv4"
-	"net"
-	"sync"
 )
 
 type GNBContext struct {
@@ -104,7 +106,12 @@ func (gnb *GNBContext) NewGnBUe(conn net.Conn) *GNBUe {
 
 	// set ran UE IP
 	ueIp := gnb.getRanUeIp()
-	ue.SetIp(ueIp)
+	gnbId, err := strconv.Atoi(string(gnb.GetGnbId()))
+	if err != nil {
+		log.Error("Error Converting gnbId to INT")
+	}
+	//ue.SetIp(ueIp, uint8(gnbId))
+	ue.SetIpModified(ueIp, uint8(gnbId))
 
 	// store UE in the GNB UE IP Pool.
 	gnb.ueIpPool.Store(ue.GetIp().String(), ue)
