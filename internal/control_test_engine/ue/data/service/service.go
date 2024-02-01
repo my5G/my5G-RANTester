@@ -21,6 +21,10 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	log.Info("nameInf = ", nameInf)
 	log.Info("Ue/GNBID = ", ue.GetGnbId())
+	log.Info("gatewayIp = ", gatewayIp)
+	log.Info("ueIp = ", ueIp)
+	log.Info("ueGnbIp = ", ueGnbIp)
+
 
 	existingInterfaces, err := netlink.LinkList()
 	if err != nil {
