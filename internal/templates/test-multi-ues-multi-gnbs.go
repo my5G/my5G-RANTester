@@ -70,8 +70,8 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		go ue.RegistrationUe(cfg, uint8(i), &wg)
 		wg.Add(1)
 
-		// sleepTime := time.Duration(rand.Intn(100)+1) * time.Millisecond
-		// time.Sleep(sleepTime)
+		sleepTime := time.Duration(rand.Intn(100)+1) * time.Millisecond
+		time.Sleep(sleepTime)
 	}
 
 	wg.Wait()
