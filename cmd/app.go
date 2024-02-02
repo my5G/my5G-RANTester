@@ -128,8 +128,14 @@ func main() {
 					// numUes := rand.Intn(5)
 					// numGNBs := rand.Intn(5) + 1
 
-					numUes := strconv.Atoi(cfg.Ue.UeNum)
-					numGNBs := strconv.Atoi(cfg.GNodeB.GnbNum)
+					numUes, numUesErr := strconv.Atoi(cfg.Ue.UeNum)
+					if numUesErr{
+						log.Info("numUesErr")
+					}
+					numGNBs, numGNBsErr := strconv.Atoi(cfg.GNodeB.GnbNum)
+					if numGNBsErr{
+						log.Info("numGNBsErr")
+					}
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
