@@ -140,7 +140,7 @@ func main() {
 					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
 					log.Info("---------------------------------------")
-					templates.TestMultiUesMultiGNBs(numUes, numGNBs)
+					//templates.TestMultiUesMultiGNBs(numUes, numGNBs)
 
 					return nil
 				},
