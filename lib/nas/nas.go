@@ -175,6 +175,7 @@ const (
 
 func (a *Message) PlainNasDecode(byteArray *[]byte) error {
 	epd := GetEPD(*byteArray)
+	log.Info("epd = ", epd)
 	switch epd {
 	case nasMessage.Epd5GSMobilityManagementMessage:
 		return a.GmmMessageDecode(byteArray)
