@@ -127,12 +127,13 @@ func main() {
 					// numUes := rand.Intn(5)
 					// numGNBs := rand.Intn(5) + 1
 
-					numUes := 10
-					numGNBs := 1
+					numUes := cfg.Ue.UeNum
+					numGNBs := cfg.GNodeB.GnbNum
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
 					log.Info("[TESTER][UE] Number of UEs: ", numUes)
+					log.Info("[TESTER][UE] Number of GNBs: ", numGNBs)
 					log.Info("[TESTER][GNB] gNodeB control interface IP/Port: ", cfg.GNodeB.ControlIF.Ip, "/", cfg.GNodeB.ControlIF.Port)
 					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)

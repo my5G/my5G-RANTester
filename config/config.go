@@ -1,12 +1,13 @@
 package config
 
 import (
-	log "github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"path"
 	"path/filepath"
 	"runtime"
+
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 // Conf: Used for access to configuration
@@ -32,6 +33,7 @@ type Config struct {
 			Sst string `yaml: "sst"`
 			Sd  string `yaml: "sd"`
 		} `yaml: "slicesupportlist"`
+		GnbNum int `yaml: "gnbNum"`
 	} `yaml:"gnodeb"`
 	Ue struct {
 		Msin  string `yaml: "msin"`
@@ -48,6 +50,7 @@ type Config struct {
 			Sst int    `yaml: "sst"`
 			Sd  string `yaml: "sd"`
 		} `yaml: "snssai"`
+		UeNum int `yaml: "ueNum"`
 	} `yaml:"ue"`
 	AMF struct {
 		Ip   string `yaml: "ip"`

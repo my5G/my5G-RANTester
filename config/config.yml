@@ -13,6 +13,7 @@ gnodeb:
   slicesupportlist:
     sst: "01"
     sd: "010203"
+  gnbNum: 1
 
 ue:
   msin: "0000000001"
@@ -27,6 +28,7 @@ ue:
   snssai:
     sst: 01
     sd: "010203"
+  ueNum: 10
 
 amfif:
   ip: "127.0.0.1"
