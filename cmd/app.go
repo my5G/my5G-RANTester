@@ -129,8 +129,8 @@ func main() {
 					// numUes := rand.Intn(5)
 					// numGNBs := rand.Intn(5) + 1
 
-					numUes := cfg.Ue.UeNum
-					numGNBs := cfg.GNodeB.GnbNum
+					numUes := 10
+					numGNBs := 2
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
@@ -140,7 +140,7 @@ func main() {
 					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
 					log.Info("---------------------------------------")
-					//templates.TestMultiUesMultiGNBs(numUes, numGNBs)
+					templates.TestMultiUesMultiGNBs(numUes, numGNBs)
 
 					return nil
 				},
