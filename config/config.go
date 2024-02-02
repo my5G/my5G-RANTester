@@ -15,6 +15,7 @@ var Data = getConfig()
 
 type Config struct {
 	GNodeB struct {
+		GnbNum int `yaml: "gnbNum"`
 		ControlIF struct {
 			Ip   string `yaml: "ip"`
 			Port int    `yaml: "port"`
@@ -33,7 +34,6 @@ type Config struct {
 			Sst string `yaml: "sst"`
 			Sd  string `yaml: "sd"`
 		} `yaml: "slicesupportlist"`
-		GnbNum int `yaml: "gnbNum"`
 	} `yaml:"gnodeb"`
 	Ue struct {
 		Msin  string `yaml: "msin"`
@@ -42,6 +42,7 @@ type Config struct {
 		Amf   string `yaml: "amf"`
 		Sqn   string `yaml: "sqn"`
 		Dnn   string `yaml: "dnn"`
+		UeNum int `yaml: "ueNum"`
 		Hplmn struct {
 			Mcc string `yaml: "mcc"`
 			Mnc string `yaml: "mnc"`
@@ -50,7 +51,6 @@ type Config struct {
 			Sst int    `yaml: "sst"`
 			Sd  string `yaml: "sd"`
 		} `yaml: "snssai"`
-		UeNum int `yaml: "ueNum"`
 	} `yaml:"ue"`
 	AMF struct {
 		Ip   string `yaml: "ip"`
