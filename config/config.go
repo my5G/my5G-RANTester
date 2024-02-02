@@ -15,7 +15,7 @@ var Data = getConfig()
 
 type Config struct {
 	GNodeB struct {
-		GnbNum int `yaml: "gnbNum"`
+		GnbNum string `yaml: "gnbNum"`
 		ControlIF struct {
 			Ip   string `yaml: "ip"`
 			Port int    `yaml: "port"`
@@ -42,7 +42,7 @@ type Config struct {
 		Amf   string `yaml: "amf"`
 		Sqn   string `yaml: "sqn"`
 		Dnn   string `yaml: "dnn"`
-		UeNum int `yaml: "ueNum"`
+		UeNum string `yaml: "ueNum"`
 		Hplmn struct {
 			Mcc string `yaml: "mcc"`
 			Mnc string `yaml: "mnc"`
