@@ -2,15 +2,16 @@ package main
 
 import (
 	// "math/rand"
-	"strconv"
+	//"strconv"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/templates"
 
 	// "fmt"
+	"os"
+
 	"github.com/davecgh/go-spew/spew"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"os"
 )
 
 const version = "1.0.1"
@@ -128,14 +129,8 @@ func main() {
 					// numUes := rand.Intn(5)
 					// numGNBs := rand.Intn(5) + 1
 
-					numUes, numUesErr := strconv.Atoi(cfg.Ue.UeNum)
-					if numUesErr{
-						log.Info("numUesErr")
-					}
-					numGNBs, numGNBsErr := strconv.Atoi(cfg.GNodeB.GnbNum)
-					if numGNBsErr{
-						log.Info("numGNBsErr")
-					}
+					numUes := cfg.Ue.UeNum
+					numGNBs := cfg.GNodeB.GnbNum
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
