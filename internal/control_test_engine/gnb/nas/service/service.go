@@ -96,7 +96,7 @@ func processingConn(ue *context.GNBUe, gnb *context.GNBContext) {
 	for {
 
 		n, err := conn.Read(buf[:])
-		// log.Info("nas/Buffer: ", string(buf[:20]))
+		log.Info("nas/Buffer: ", string(buf[:20]))
 		if err != nil {
 			return
 		}
