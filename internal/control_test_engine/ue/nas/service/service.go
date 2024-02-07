@@ -64,7 +64,7 @@ func UeListen(ue *context.UEContext) {
 			break
 		}
 
-		log.Info("conn.Read(buf[:]) = %+v", n)
+		log.Info("conn.Read(buf[:]) = ", string(buf))
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
