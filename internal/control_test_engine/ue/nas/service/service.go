@@ -5,6 +5,8 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
+
+	"github.com/prometheus/common/log"
 )
 
 func CloseConn(ue *context.UEContext) {
@@ -61,6 +63,8 @@ func UeListen(ue *context.UEContext) {
 		if err != nil {
 			break
 		}
+
+		log.Info("conn.Read(buf[:]) = %+v", n)
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
