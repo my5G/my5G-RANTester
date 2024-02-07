@@ -19,15 +19,9 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 		log.Fatal("[UE][NAS] NAS message is nil")
 	}
 
-
-	log.Info("Ue/imsi = ", ue.GetMsin())
-	log.Info("Message Received = ", string(message))
-
 	// decode NAS message.
 	m := new(nas.Message)
 	m.SecurityHeaderType = nas.GetSecurityHeaderType(message) & 0x0f
-
-	log.Info("SecurityHeaderType = ", m.SecurityHeaderType)
 
 	payload := message
 
