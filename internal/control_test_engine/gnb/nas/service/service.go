@@ -5,7 +5,6 @@ import (
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	"my5G-RANTester/internal/control_test_engine/gnb/nas"
 	"net"
-	"strconv"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -13,17 +12,22 @@ import (
 func InitServer(gnb *context.GNBContext) error {
 
 	// initiated GNB server with unix sockets.
-	gnbID, err := strconv.Atoi(string(gnb.GetGnbId()))
-	sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
+	/*
+		gnbID, err := strconv.Atoi(string(gnb.GetGnbId()))
+		sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
 
-	ln, err := net.Listen("unix", sockPath)
+		ln, err := net.Listen("unix", sockPath)
+		if err != nil {
+			fmt.Errorf("Listen error: ", err)
+		}
+	*/
+
+	ln, err := net.Listen("unix", "/tmp/gnb.sock")
 	if err != nil {
 		fmt.Errorf("Listen error: ", err)
 	}
 
-	// log.Info("Before gnb.SetListener(ln)")
 	gnb.SetListener(ln)
-	log.Info("After gnb.SetListener(ln) ln: ", ln)
 
 	/*
 		sigc := make(chan os.Signal, 1)
