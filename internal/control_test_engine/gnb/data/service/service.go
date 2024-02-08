@@ -86,7 +86,7 @@ func processingData(ue *context.GNBUe, gnb *context.GNBContext, packet []byte) {
 	}
 
 	log.Info("teidUplink = ", teidUplink)
-	log.Info("packet = ", packet)
+	// log.Info("packet = ", packet)
 	log.Info("upfAddr = ", upfAddr)
 
 	// send Data plane with GTP header.
