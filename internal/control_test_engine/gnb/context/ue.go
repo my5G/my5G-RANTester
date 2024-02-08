@@ -270,6 +270,9 @@ func (ue *GNBUe) SetIp(ueIp int) {
 	if ueIp % 256 == 0{
 		ip1++
 	}
+	if ueIp > 255{
+		ueIp += 1
+	}
 	var ueIp_int8 uint8 = uint8(ueIp)
 	ue.context.pduSession.ranUeIP = net.IPv4(127, 0, ip1, ueIp_int8)
 }
