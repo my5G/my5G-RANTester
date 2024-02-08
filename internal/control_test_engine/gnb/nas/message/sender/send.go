@@ -8,7 +8,6 @@ import (
 func SendToUe(ue *context.GNBUe, message []byte) {
 
 	conn := ue.GetUnixSocket()
-	log.Info("*****SendToUe Message = ", string(message))
 	_, err := conn.Write(message)
 	if err != nil {
 		log.Info("[GNB][UE] Error sending NAS message to UE")
