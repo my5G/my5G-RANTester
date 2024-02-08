@@ -85,6 +85,10 @@ func processingData(ue *context.GNBUe, gnb *context.GNBContext, packet []byte) {
 		return
 	}
 
+	log.Info("teidUplink = ", teidUplink)
+	log.Info("packet = ", packet)
+	log.Info("upfAddr = ", upfAddr)
+
 	// send Data plane with GTP header.
 	_, err = conn.WriteToGTP(teidUplink, packet, upfAddr)
 	if err != nil {
