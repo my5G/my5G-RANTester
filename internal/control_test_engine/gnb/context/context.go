@@ -24,7 +24,7 @@ type GNBContext struct {
 	idUeGenerator  int64  // ran UE id.
 	idAmfGenerator int64  // ran amf id
 	teidGenerator  uint32 // ran UE downlink Teid
-	ueIpGenerator  uint8  // ran ue ip.
+	ueIpGenerator  int  // ran ue ip.
 }
 
 type DataInfo struct {
@@ -253,7 +253,7 @@ func (gnb *GNBContext) getGnbAmf(amfId int64) (*GNBAmf, error) {
 	return amf.(*GNBAmf), nil
 }
 
-func (gnb *GNBContext) getRanUeIp() uint8 {
+func (gnb *GNBContext) getRanUeIp() int {
 
 	// TODO implement mutex
 
