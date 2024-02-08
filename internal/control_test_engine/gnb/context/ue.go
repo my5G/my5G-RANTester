@@ -266,12 +266,11 @@ func (ue *GNBUe) SetRanUeId(id int64) {
 }
 
 func (ue *GNBUe) SetIp(ueIp int) {
-	var ip1_int8 uint8 = 0
+	var ip1 uint8 = 0
 	if ueIp % 256 == 0{
 		ip1++
 	}
-	var ueIp_int8 uint8 = ueIp
-	ue.context.pduSession.ranUeIP = net.IPv4(127, 0, ip1, ueIp)
+	ue.context.pduSession.ranUeIP = net.IPv4(127, 0, ip1, (uint8)ueIp)
 }
 
 func (ue *GNBUe) SetIpModified(ueIp uint8, gnbId uint8) {
