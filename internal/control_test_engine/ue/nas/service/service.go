@@ -5,6 +5,7 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
+	"strconv"
 
 	"github.com/prometheus/common/log"
 )
@@ -17,17 +18,11 @@ func CloseConn(ue *context.UEContext) {
 func InitConn(ue *context.UEContext) error {
 
 	// initiated communication with GNB(unix sockets).
-	/*
-		gnbID, err := strconv.Atoi(string(ue.GetGnbId()))
-		sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
-		log.Info("Ue.gnbID = ", gnbID)
+	gnbID, err := strconv.Atoi(string(ue.GetGnbId()))
+	sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
+	log.Info("Ue.gnbID = ", gnbID)
 
-		conn, err := net.Dial("unix", sockPath)
-		if err != nil {
-			return fmt.Errorf("[UE] Error on Dial with server", err)
-		}
-	*/
-	conn, err := net.Dial("unix", "/tmp/gnb.sock")
+	conn, err := net.Dial("unix", sockPath)
 	if err != nil {
 		return fmt.Errorf("[UE] Error on Dial with server", err)
 	}
@@ -63,9 +58,6 @@ func UeListen(ue *context.UEContext) {
 		if err != nil {
 			break
 		}
-
-		log.Info("conn.Read(buf[:]) length= ", n)
-		fmt.Printf("conn.Read(buf[:]) = %+v", buf)
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])

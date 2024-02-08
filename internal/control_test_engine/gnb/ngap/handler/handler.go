@@ -66,7 +66,6 @@ func HandlerDownlinkNasTransport(gnb *context.GNBContext, message *ngapType.NGAP
 	}
 
 	// send NAS message to UE.
-	log.Info("Line69:sender.SendToUe(ue, messageNas)")
 	sender.SendToUe(ue, messageNas)
 }
 
@@ -205,7 +204,6 @@ func HandlerInitialContextSetupRequest(gnb *context.GNBContext, message *ngapTyp
 
 	// send NAS message to UE.
 	log.Info("[GNB][NAS][UE] Send Registration Accept.")
-	log.Info("Line207:sender.SendToUe(ue, messageNas)")
 	sender.SendToUe(ue, messageNas)
 
 	// send Initial Context Setup Response.
@@ -366,7 +364,6 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	}
 
 	// send NAS message to UE.
-	log.Info("Line367:sender.SendToUe(ue, messageNas)")
 	sender.SendToUe(ue, messageNas)
 
 // 	// configure GTP tunnel and listen.
@@ -392,7 +389,6 @@ func HandlerPduSessionResourceSetupRequest(gnb *context.GNBContext, message *nga
 	// ue is ready for data plane.
 	// send GNB UE IP message to UE.
 	UeGnBIp := ue.GetIp()
-	log.Info("Line392:sender.SendToUe(ue, UeGnBIp)")
 	sender.SendToUe(ue, UeGnBIp)
 }
 

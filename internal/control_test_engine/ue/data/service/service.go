@@ -8,6 +8,8 @@ import (
 	"net"
 )
 
+var UesCounter = 0
+
 func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	// get UE GNB IP.
@@ -19,10 +21,6 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	ueGnbIp := ue.GetGnbIp()
 	nameInf := fmt.Sprintf("uetun%d", ue.GetPduSesssionId())
 
-	log.Info("nameInf = ", nameInf)
-	log.Info("ueGnbIp = ", ueGnbIp)
-	log.Info("Ue/GNBID = ", ue.GetGnbId())
-
 	newInterface := &netlink.Iptun{
 		LinkAttrs: netlink.LinkAttrs{
 			Name: nameInf,
@@ -31,6 +29,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 		Remote: gatewayIp,
 	}
 
+	netlink.LinkDel(newInterface)
 	if err := netlink.LinkAdd(newInterface); err != nil {
 		log.Info("UE][DATA] Error in setting virtual interface", err)
 		return
@@ -86,7 +85,9 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 		return
 	}
 
+	UesCounter++
 	log.Info("[UE][DATA] UE is ready for using data plane")
+	log.Info(">>>>>Registered UEs = ", UesCounter)
 
 	// contex of tun interface
 	ue.SetTunInterface(newInterface)
