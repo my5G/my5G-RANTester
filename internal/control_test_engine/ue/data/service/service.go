@@ -80,7 +80,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 		Mask: net.IPv4Mask(255, 255, 255, 255),
 	}
 
-	ueRule.Table = int(ue.GetPduSesssionId())
+	// ueRule.Table = int(ue.GetPduSesssionId())
 
 	if err := netlink.RuleAdd(ueRule); err != nil {
 		log.Info("[UE][DATA] Error in setting rule", err)
