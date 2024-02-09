@@ -59,12 +59,12 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	// create route in linux to table 1
 	ueRoute := &netlink.Route{
 		LinkIndex: newInterface.Attrs().Index,
-		Src:       net.ParseIP(ueIp).To4(),
+		// Src:       net.ParseIP(ueIp).To4(),
 		Dst: &net.IPNet{
-			IP:   net.IPv4zero,
-			Mask: net.IPv4Mask(0, 0, 0, 0),
+			IP:   net.ParseIP(ueIp).To4(),
+			Mask: net.IPv4Mask(255, 255, 255, 255),
 		},
-		Table: int(ue.GetPduSesssionId()),
+		// Table: int(ue.GetPduSesssionId()),
 	}
 
 	if err := netlink.RouteAdd(ueRoute); err != nil {
