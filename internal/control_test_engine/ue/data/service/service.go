@@ -9,19 +9,17 @@ import (
 )
 
 var UesCounter = 0
-var UesRegistered = 0
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	// get UE GNB IP.
 	ue.SetGnbIp(message)
-	UesCounter++
 
 	// create interface for data plane.
 	gatewayIp := ue.GetGatewayIp()
 	ueIp := ue.GetIp()
 	ueGnbIp := ue.GetGnbIp()
-	nameInf := fmt.Sprintf("uetun%d", UesCounter)
+	nameInf := fmt.Sprintf("uetun%d", ue.GetPduSesssionId())
 
 	newInterface := &netlink.Iptun{
 		LinkAttrs: netlink.LinkAttrs{
@@ -87,9 +85,9 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 		return
 	}
 
-	UesRegistered++
+	UesCounter++
 	log.Info("[UE][DATA] UE is ready for using data plane")
-	log.Info(">>>>>Registered UEs = ", UesRegistered)
+	log.Info(">>>>>Registered UEs = ", UesCounter)
 
 	// contex of tun interface
 	ue.SetTunInterface(newInterface)
