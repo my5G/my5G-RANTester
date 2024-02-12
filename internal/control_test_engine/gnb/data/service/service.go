@@ -56,15 +56,16 @@ func gatewayListen(gnb *context.GNBContext) {
 		copy(forwardData, payload[:])
 
 		// find owner of  the Data Plane.
+		log.Info("Searching UeIp = ", ipHeader.Src.String())
 		ue, err := gnb.GetGnbUeByIp(ipHeader.Src.String())
 		if err != nil || ue == nil {
-			log.Info("================================================================")
-			log.Info("Ue Ip = ", ue.GetIp())
-			log.Info("Ue PduSessionId = ", ue.GetPduSessionId())
-			log.Info("GNB ID = ", gnb.GetGnbId())
-			log.Info("GNB IP = ", gnb.GetGnbIp())
-			log.Info("[GNB][DATA] Invalid GNB UE IP. UE is not found in GNB UE IP Pool")
-			log.Info("================================================================")
+			if ue == nil{
+				log.Info("Ue is nil")
+			}
+			if err != nil{
+				log.Info("Returned error")
+			}
+			log.Info("[GNB][DATA] Invalid GNB UE IP. UE is not found in GNB UE IP Pool ")
 			return
 		}
 
