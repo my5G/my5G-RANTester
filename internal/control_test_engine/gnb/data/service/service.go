@@ -57,6 +57,7 @@ func gatewayListen(gnb *context.GNBContext) {
 
 		// find owner of  the Data Plane.
 		log.Info("Searching UeIp = ", ipHeader.Src.String())
+		log.Info("GNB ID = ", gnb.GetGnbId())
 		ue, err := gnb.GetGnbUeByIp(ipHeader.Src.String())
 		if err != nil || ue == nil {
 			if ue == nil{
