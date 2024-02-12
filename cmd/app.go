@@ -130,7 +130,7 @@ func main() {
 					// numGNBs := rand.Intn(5) + 1
 
 					numUes := 250
-					numGNBs := 20
+					numGNBs := 1
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
