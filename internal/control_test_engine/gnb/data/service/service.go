@@ -60,13 +60,7 @@ func gatewayListen(gnb *context.GNBContext) {
 		log.Info("GNB ID = ", gnb.GetGnbId())
 		ue, err := gnb.GetGnbUeByIp(ipHeader.Src.String())
 		if err != nil || ue == nil {
-			if ue == nil{
-				log.Info("Ue is nil")
-			}
-			if err != nil{
-				log.Info("Returned error")
-			}
-			log.Info("[GNB][DATA] Invalid GNB UE IP. UE is not found in GNB UE IP Pool ")
+			// log.Info("[GNB][DATA] Invalid GNB UE IP. UE is not found in GNB UE IP Pool ")
 			return
 		}
 
