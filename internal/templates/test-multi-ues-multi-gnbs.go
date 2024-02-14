@@ -66,7 +66,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 		// imsi := imsiGenerator(i, msin)
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", cfg.Ue.Msin, " UE")
-		cfg.Ue.Msin = imsi
+		// cfg.Ue.Msin = imsi
 		go ue.RegistrationUe(cfg, uint8(i), &wg)
 		wg.Add(1)
 
