@@ -54,7 +54,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 	// time.Sleep(1 * time.Second)
 
-	msin := cfg.Ue.Msin
+	// msin := cfg.Ue.Msin
 	// startTime := time.Now()
 	for i := 1; i <= numUes; i++ {
 
