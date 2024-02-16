@@ -80,6 +80,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	ueRule.Table = 253
 
+	netlink.RuleDel(ueRule);
 	if err := netlink.RuleAdd(ueRule); err != nil {
 		log.Info("[UE][DATA] Error in setting rule", err)
 		return
