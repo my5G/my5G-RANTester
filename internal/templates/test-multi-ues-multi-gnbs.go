@@ -71,7 +71,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		wg.Add(1)
 
 		// sleepTime := time.Duration(rand.Intn(100)+1) * time.Millisecond
-		sleepTime := 750 * time.Millisecond
+		sleepTime := 100 * time.Millisecond
 		time.Sleep(sleepTime)
 	}
 
