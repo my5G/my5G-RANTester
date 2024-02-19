@@ -6,11 +6,12 @@ import (
 	"github.com/vishvananda/netlink"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"net"
+	"time"
 )
 
 var UesCounter = 0
 
-func InitDataPlane(ue *context.UEContext, message []byte) {
+func InitDataPlane(ue *context.UEContext, message []byte, startTime time.Time) {
 
 	// get UE GNB IP.
 	ue.SetGnbIp(message)
@@ -89,6 +90,9 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	UesCounter++
 	log.Info("[UE][DATA] UE is ready for using data plane")
 	log.Info(">>>>>Registered UEs = ", UesCounter)
+	endTime := time.Now()
+	executionTime := endTime.Sub(startTime)
+	log.Info(">>>>>Ue Registeration Duration = ", executionTime)
 
 	// contex of tun interface
 	ue.SetTunInterface(newInterface)

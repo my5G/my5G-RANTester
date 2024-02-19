@@ -15,7 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
+func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, startTime time.Time) {
 
 	// wg := sync.WaitGroup{}
 
@@ -41,7 +41,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	err := service.InitConn(ue)
+	err := service.InitConn(ue, startTime)
 	if err != nil {
 		log.Fatal("Error in", err)
 	} else {
