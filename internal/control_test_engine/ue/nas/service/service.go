@@ -6,7 +6,6 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
 	"strconv"
-	"time"
 
 	"github.com/prometheus/common/log"
 )
@@ -16,7 +15,7 @@ func CloseConn(ue *context.UEContext) {
 	conn.Close()
 }
 
-func InitConn(ue *context.UEContext, startTime time.Time) error {
+func InitConn(ue *context.UEContext) error {
 
 	// initiated communication with GNB(unix sockets).
 	gnbID, err := strconv.Atoi(string(ue.GetGnbId()))
@@ -32,13 +31,13 @@ func InitConn(ue *context.UEContext, startTime time.Time) error {
 	ue.SetUnixConn(conn)
 
 	// listen NAS.
-	go UeListen(ue, startTime)
+	go UeListen(ue)
 
 	return nil
 }
 
 // ue listen unix sockets.
-func UeListen(ue *context.UEContext, startTime time.Time) {
+func UeListen(ue *context.UEContext) {
 
 	buf := make([]byte, 65535)
 	conn := ue.GetUnixConn()
@@ -64,7 +63,7 @@ func UeListen(ue *context.UEContext, startTime time.Time) {
 		copy(forwardData, buf[:n])
 
 		// handling NAS message.
-		go state.DispatchState(ue, forwardData, startTime)
+		go state.DispatchState(ue, forwardData)
 
 	}
 }
