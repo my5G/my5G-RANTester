@@ -9,6 +9,7 @@ import (
 )
 
 var UesCounter = 0
+var UeTunCounter = 0
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
 
@@ -19,7 +20,8 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	gatewayIp := ue.GetGatewayIp()
 	ueIp := ue.GetIp()
 	ueGnbIp := ue.GetGnbIp()
-	nameInf := fmt.Sprintf("uetun%d", ue.GetPduSesssionId())
+	UeTunCounter++
+	nameInf := fmt.Sprintf("uetun%d", UeTunCounter)
 
 	newInterface := &netlink.Iptun{
 		LinkAttrs: netlink.LinkAttrs{
