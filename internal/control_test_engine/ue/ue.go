@@ -5,7 +5,7 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"my5G-RANTester/internal/control_test_engine/ue/nas/service"
 	"my5G-RANTester/internal/control_test_engine/ue/nas/trigger"
-	"my5G-RANTester/internal/monitoring"
+	// "my5G-RANTester/internal/monitoring"
 	"my5G-RANTester/lib/nas/security"
 	"os"
 	"os/signal"
