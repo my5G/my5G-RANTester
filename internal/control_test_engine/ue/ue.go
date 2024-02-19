@@ -91,7 +91,7 @@ func RegistrationUeMonitor(conf config.Config,
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	err := service.InitConn(ue)
+	err := service.InitConn(ue, startTime)
 	if err != nil {
 		log.Fatal("Error in", err)
 	} else {
