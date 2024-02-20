@@ -17,7 +17,6 @@ func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 	if message == nil {
 		// TODO return error
 		log.Fatal("[UE][NAS] NAS message is nil")
-		errUe <- 1
 	}
 
 	// decode NAS message.
@@ -83,7 +82,6 @@ func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 		// check integrity
 		if !reflect.DeepEqual(mac32, macReceived) {
 			log.Info("[UE][NAS] NAS MAC verification failed(received:", macReceived, "expected:", mac32)
-			errUe <- 1
 			return
 		} else {
 			log.Info("[UE][NAS] successful NAS MAC verification")
