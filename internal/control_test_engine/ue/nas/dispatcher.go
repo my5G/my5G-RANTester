@@ -117,6 +117,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 		if err != nil {
 			// TODO return error
 			log.Info("[UE][NAS] Decode NAS error", err)
+			return
 		}
 	}
 
