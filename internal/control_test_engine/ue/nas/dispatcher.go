@@ -9,7 +9,7 @@ import (
 	"reflect"
 )
 
-func DispatchNas(ue *context.UEContext, message []byte) {
+func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 
 	var cph bool
 
@@ -106,6 +106,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 		if err != nil {
 			// TODO return error
 			log.Info("[UE][NAS] Decode NAS error", err)
+			errUe <- 1
 		}
 
 	} else {
@@ -117,7 +118,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 		if err != nil {
 			// TODO return error
 			log.Info("[UE][NAS] Decode NAS error", err)
-			return
+			errUe <- 1
 		}
 	}
 
