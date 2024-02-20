@@ -59,6 +59,8 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	sigUe := make(chan os.Signal, 1)
 	signal.Notify(sigUe, os.Interrupt)
 
+	go terminateUeAfter10Secs(errUe)
+
 	// Block until a signal is received.
 	select {
 	case <- errUe:
@@ -71,6 +73,11 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	}
 	// os.Exit(0)
 
+}
+
+func terminateUeAfter10Secs(errUe chan<- int) {
+	time.sleepTime(10 * time.Second)
+	errUe <- 1
 }
 
 func RegistrationUeMonitor(conf config.Config,
