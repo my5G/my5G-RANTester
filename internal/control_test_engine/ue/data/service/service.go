@@ -9,7 +9,6 @@ import (
 )
 
 var UesCounter = 0
-var UeTunCounter = 0
 
 func InitDataPlane(ue *context.UEContext, message []byte) {
 
@@ -20,8 +19,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	gatewayIp := ue.GetGatewayIp()
 	ueIp := ue.GetIp()
 	ueGnbIp := ue.GetGnbIp()
-	UeTunCounter++
-	nameInf := fmt.Sprintf("uetun%d", UeTunCounter)
+	nameInf := fmt.Sprintf("uetun%d", ue.GetPduSesssionId())
 
 	newInterface := &netlink.Iptun{
 		LinkAttrs: netlink.LinkAttrs{
@@ -82,7 +80,6 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	ueRule.Table = 253
 
-	netlink.RuleDel(ueRule);
 	if err := netlink.RuleAdd(ueRule); err != nil {
 		log.Info("[UE][DATA] Error in setting rule", err)
 		return
