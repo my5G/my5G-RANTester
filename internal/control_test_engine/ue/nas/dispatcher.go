@@ -17,6 +17,7 @@ func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 	if message == nil {
 		// TODO return error
 		log.Fatal("[UE][NAS] NAS message is nil")
+		errUe <- 1
 	}
 
 	// decode NAS message.
@@ -82,6 +83,7 @@ func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 		// check integrity
 		if !reflect.DeepEqual(mac32, macReceived) {
 			log.Info("[UE][NAS] NAS MAC verification failed(received:", macReceived, "expected:", mac32)
+			errUe <- 1
 			return
 		} else {
 			log.Info("[UE][NAS] successful NAS MAC verification")
@@ -92,6 +94,7 @@ func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 			if err = security.NASEncrypt(ue.UeSecurity.CipheringAlg, ue.UeSecurity.KnasEnc, ue.UeSecurity.DLCount.Get(), security.Bearer3GPP,
 				security.DirectionDownlink, payload[1:]); err != nil {
 				log.Info("error in encrypt algorithm")
+				errUe <- 1
 				return
 			} else {
 				log.Info("[UE][NAS] successful NAS CIPHERING")
@@ -107,6 +110,7 @@ func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 			// TODO return error
 			log.Info("[UE][NAS] Decode NAS error", err)
 			errUe <- 1
+			return
 		}
 
 	} else {
@@ -119,6 +123,7 @@ func DispatchNas(ue *context.UEContext, message []byte, errUe chan<- int) {
 			// TODO return error
 			log.Info("[UE][NAS] Decode NAS error", err)
 			errUe <- 1
+			return
 		}
 	}
 
