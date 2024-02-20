@@ -10,7 +10,7 @@ import (
 
 var UesCounter = 0
 
-func InitDataPlane(ue *context.UEContext, message []byte) {
+func InitDataPlane(ue *context.UEContext, message []byte, errUe chan<- int) {
 
 	// get UE GNB IP.
 	ue.SetGnbIp(message)
@@ -32,6 +32,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 	netlink.LinkDel(newInterface)
 	if err := netlink.LinkAdd(newInterface); err != nil {
 		log.Info("UE][DATA] Error in setting virtual interface", err)
+		errUe <- 1
 		return
 	}
 
@@ -45,12 +46,14 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	if err := netlink.AddrAdd(newInterface, addrTun); err != nil {
 		log.Info("[UE][DATA] Error in adding IP for virtual interface", err)
+		errUe <- 1
 		return
 	}
 
 	// Set IP interface up
 	if err := netlink.LinkSetUp(newInterface); err != nil {
 		log.Info("[UE][DATA] Error in setting virtual interface up ", err)
+		errUe <- 1
 		return
 	}
 
@@ -67,6 +70,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	if err := netlink.RouteAdd(ueRoute); err != nil {
 		log.Info("[UE][DATA] Error in setting route", err)
+		errUe <- 1
 		return
 	}
 
@@ -82,6 +86,7 @@ func InitDataPlane(ue *context.UEContext, message []byte) {
 
 	if err := netlink.RuleAdd(ueRule); err != nil {
 		log.Info("[UE][DATA] Error in setting rule", err)
+		errUe <- 1
 		return
 	}
 

@@ -16,6 +16,6 @@ func DispatchState(ue *context.UEContext, message []byte, errUe chan<- int) {
 	case context.SM5G_PDU_SESSION_ACTIVE_PENDING:
 		nas.DispatchNas(ue, message, errUe)
 	case context.SM5G_PDU_SESSION_ACTIVE:
-		data.InitDataPlane(ue, message)
+		data.InitDataPlane(ue, message, errUe)
 	}
 }
