@@ -47,12 +47,12 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 		go gnb.InitGnb(cfg, &wg)
 		wg.Add(1)
-		time.Sleep(1 * time.Second)
+		time.Sleep(50 * time.Millisecond)
 
 		gnbID++
 	}
 
-	// time.Sleep(1 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	msin := cfg.Ue.Msin
 	// startTime := time.Now()
