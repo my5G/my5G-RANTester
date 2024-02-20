@@ -76,7 +76,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 }
 
 func terminateUeAfter10Secs(errUe chan<- int) {
-	time.sleepTime(10 * time.Second)
+	time.Sleep(10 * time.Second)
 	errUe <- 1
 }
 
