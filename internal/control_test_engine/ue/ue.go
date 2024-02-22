@@ -41,10 +41,11 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	errUe := make(chan int, 1)
-	err := service.InitConn(ue, errUe)
+	err := service.InitConn(ue)
 	if err != nil {
-		log.Fatal("Error in", err)
+		log.Warn("Error in ", err)
+		wg.Done()
+		return
 	} else {
 		log.Info("[UE] UNIX/NAS service is running")
 		// wg.Add(1)
@@ -60,15 +61,9 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 	signal.Notify(sigUe, os.Interrupt)
 
 	// Block until a signal is received.
-	select {
-	case <- errUe:
-		ue.Terminate()
-		wg.Done()
-		// break
-	case <- sigUe:
-		ue.Terminate()
-		wg.Done()
-	}
+	<- sigUe
+	ue.Terminate()
+	wg.Done()
 	// os.Exit(0)
 
 }
@@ -98,8 +93,7 @@ func RegistrationUeMonitor(conf config.Config,
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	errUe := make(chan int, 1)
-	err := service.InitConn(ue, errUe)
+	err := service.InitConn(ue)
 	if err != nil {
 		log.Fatal("Error in", err)
 	} else {

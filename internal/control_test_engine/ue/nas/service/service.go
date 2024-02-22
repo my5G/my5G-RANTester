@@ -15,7 +15,7 @@ func CloseConn(ue *context.UEContext) {
 	conn.Close()
 }
 
-func InitConn(ue *context.UEContext, errUe chan<- int) error {
+func InitConn(ue *context.UEContext) error {
 
 	// initiated communication with GNB(unix sockets).
 	gnbID, err := strconv.Atoi(string(ue.GetGnbId()))
@@ -37,7 +37,7 @@ func InitConn(ue *context.UEContext, errUe chan<- int) error {
 }
 
 // ue listen unix sockets.
-func UeListen(ue *context.UEContext, errUe chan<- int) {
+func UeListen(ue *context.UEContext) {
 
 	buf := make([]byte, 65535)
 	conn := ue.GetUnixConn()
@@ -50,10 +50,11 @@ func UeListen(ue *context.UEContext, errUe chan<- int) {
 			}
 		}()
 	*/
-
+	timeoutDuration := 1 * time.Second
 	for {
 
 		// read message.
+		conn.SetReadDeadline(time.Now().Add(timeoutDuration))
 		n, err := conn.Read(buf[:])
 		if err != nil {
 			break
@@ -63,7 +64,7 @@ func UeListen(ue *context.UEContext, errUe chan<- int) {
 		copy(forwardData, buf[:n])
 
 		// handling NAS message.
-		go state.DispatchState(ue, forwardData, errUe)
+		go state.DispatchState(ue, forwardData)
 
 	}
 }
