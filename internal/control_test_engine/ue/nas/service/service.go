@@ -6,6 +6,7 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
 	"strconv"
+	"time"
 
 	"github.com/prometheus/common/log"
 )
@@ -31,7 +32,7 @@ func InitConn(ue *context.UEContext) error {
 	ue.SetUnixConn(conn)
 
 	// listen NAS.
-	go UeListen(ue, errUe)
+	go UeListen(ue)
 
 	return nil
 }
