@@ -32,7 +32,8 @@ func TestMultiUesInQueue(numUes int) {
 		imsi := imsiGenerator(i, msin)
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 		cfg.Ue.Msin = imsi
-		go ue.RegistrationUe(cfg, uint8(i), &wg)
+		ueRegistrationSignal := make(chan int, 1)
+		go ue.RegistrationUe(cfg, uint8(i), &wg, ueRegistrationSignal)
 		wg.Add(1)
 
 		time.Sleep(10 * time.Second)
