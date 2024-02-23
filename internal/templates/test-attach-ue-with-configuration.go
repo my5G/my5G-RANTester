@@ -25,7 +25,7 @@ func TestAttachUeWithConfiguration() {
 
 	time.Sleep(1 * time.Second)
 
-	go ue.RegistrationUe(cfg, 1, &wg)
+	// go ue.RegistrationUe(cfg, 1, &wg)
 
 	wg.Add(1)
 
