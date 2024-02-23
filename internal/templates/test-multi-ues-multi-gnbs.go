@@ -58,7 +58,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 	msin := cfg.Ue.Msin
 	// startTime := time.Now()
-	for i := 1; i <= numUes; i++ {
+	for i := 0; i < numUes; i++ {
 
 		offset := rand.Intn(numGNBs)
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + offset
