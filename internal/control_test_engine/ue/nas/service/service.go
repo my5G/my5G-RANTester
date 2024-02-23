@@ -16,12 +16,11 @@ func CloseConn(ue *context.UEContext) {
 	conn.Close()
 }
 
-func InitConn(ue *context.UEContext) error {
+func InitConn(ue *context.UEContext, ueRegistrationSignal chan int) error {
 
 	// initiated communication with GNB(unix sockets).
 	gnbID, err := strconv.Atoi(string(ue.GetGnbId()))
 	sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
-	log.Info("Ue.gnbID = ", gnbID)
 
 	conn, err := net.Dial("unix", sockPath)
 	if err != nil {
@@ -32,13 +31,13 @@ func InitConn(ue *context.UEContext) error {
 	ue.SetUnixConn(conn)
 
 	// listen NAS.
-	go UeListen(ue)
+	go UeListen(ue, ueRegistrationSignal)
 
 	return nil
 }
 
 // ue listen unix sockets.
-func UeListen(ue *context.UEContext) {
+func UeListen(ue *context.UEContext, ueRegistrationSignal chan int) {
 
 	buf := make([]byte, 65535)
 	conn := ue.GetUnixConn()
@@ -58,6 +57,7 @@ func UeListen(ue *context.UEContext) {
 		conn.SetReadDeadline(time.Now().Add(timeoutDuration))
 		n, err := conn.Read(buf[:])
 		if err != nil {
+			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())
 			break
 		}
 
@@ -65,7 +65,7 @@ func UeListen(ue *context.UEContext) {
 		copy(forwardData, buf[:n])
 
 		// handling NAS message.
-		go state.DispatchState(ue, forwardData)
+		go state.DispatchState(ue, forwardData, ueRegistrationSignal)
 
 	}
 }

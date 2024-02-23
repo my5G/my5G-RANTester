@@ -64,9 +64,7 @@ func InitGnb(conf config.Config, wg *sync.WaitGroup) {
 		log.Info("[GNB] UNIX/NAS service is running")
 	}
 
-	log.Info("Before SendNgSetupRequest")
 	trigger.SendNgSetupRequest(gnb, amf)
-	log.Info("After SendNgSetupRequest")
 
 	// control the signals
 	sigGnb := make(chan os.Signal, 1)

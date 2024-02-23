@@ -15,7 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
+func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ueRegistrationSignal chan int) {
 
 	// wg := sync.WaitGroup{}
 
@@ -41,10 +41,11 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	err := service.InitConn(ue)
+	err := service.InitConn(ue, ueRegistrationSignal)
 	if err != nil {
 		log.Warn("Error in ", err)
 		wg.Done()
+		ueRegistrationSignal <- 0
 		return
 	} else {
 		log.Info("[UE] UNIX/NAS service is running")
@@ -69,7 +70,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup) {
 }
 
 func RegistrationUeMonitor(conf config.Config,
-	id uint8, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time) {
+	id uint8, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time, ueRegistrationSignal chan int) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
@@ -93,7 +94,7 @@ func RegistrationUeMonitor(conf config.Config,
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	err := service.InitConn(ue)
+	err := service.InitConn(ue, ueRegistrationSignal)
 	if err != nil {
 		log.Fatal("Error in", err)
 	} else {
