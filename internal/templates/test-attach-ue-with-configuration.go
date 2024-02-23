@@ -24,8 +24,8 @@ func TestAttachUeWithConfiguration() {
 	wg.Add(1)
 
 	time.Sleep(1 * time.Second)
-
-	// go ue.RegistrationUe(cfg, 1, &wg)
+	ueRegistrationSignal := make(chan int, 1)
+	go ue.RegistrationUe(cfg, 1, &wg, ueRegistrationSignal)
 
 	wg.Add(1)
 

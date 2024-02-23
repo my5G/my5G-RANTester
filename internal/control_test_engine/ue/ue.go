@@ -70,7 +70,7 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ueRegistra
 }
 
 func RegistrationUeMonitor(conf config.Config,
-	id uint8, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time) {
+	id uint8, monitor *monitoring.Monitor, wg *sync.WaitGroup, start time.Time, , ueRegistrationSignal chan int) {
 
 	// new UE instance.
 	ue := &context.UEContext{}
@@ -94,13 +94,13 @@ func RegistrationUeMonitor(conf config.Config,
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	// err := service.InitConn(ue, ueRegistrationSignal)
-	// if err != nil {
-	// 	log.Fatal("Error in", err)
-	// } else {
-	// 	log.Info("[UE] UNIX/NAS service is running")
-	// 	// wg.Add(1)
-	// }
+	err := service.InitConn(ue, ueRegistrationSignal)
+	if err != nil {
+		log.Fatal("Error in", err)
+	} else {
+		log.Info("[UE] UNIX/NAS service is running")
+		// wg.Add(1)
+	}
 
 	// registration procedure started.
 	trigger.InitRegistration(ue)
