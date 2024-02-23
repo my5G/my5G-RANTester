@@ -11,6 +11,8 @@ import (
 	"github.com/prometheus/common/log"
 )
 
+const SM5G_PDU_SESSION_ACTIVE = 0x08
+
 func CloseConn(ue *context.UEContext) {
 	conn := ue.GetUnixConn()
 	conn.Close()
@@ -50,17 +52,24 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int) {
 			}
 		}()
 	*/
-	timeoutDuration := 1 * time.Second
+	
 	for {
 
 		// read message.
-		conn.SetReadDeadline(time.Now().Add(timeoutDuration))
+		// if registered continue else break
+		if ue.GetStateSM() == SM5G_PDU_SESSION_ACTIVE{
+			conn.SetReadDeadline(time.Time{})
+		} else {
+			timeoutDuration := 1 * time.Second
+			conn.SetReadDeadline(time.Now().Add(timeoutDuration))
+		}
+		
 		n, err := conn.Read(buf[:])
 		if err != nil {
-			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())
+			log.Error("*****Error on conn.Read with nonRegistered UE-imsi = ", ue.GetMsin())
 			break
 		}
-
+		
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
 
