@@ -57,6 +57,8 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	ueRegistrationSignal := make(chan int, 1)
 
 	msin := cfg.Ue.Msin
+	var ueSessionIdOffset uint8 = 0
+	var ueSessionId uint8
 	// startTime := time.Now()
 	for i := 1; i <= numUes; i++ {
 
@@ -69,7 +71,13 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		imsi := imsiGenerator(i, msin)
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 		cfg.Ue.Msin = imsi
-		go ue.RegistrationUe(cfg, uint8(i), &wg, ueRegistrationSignal)
+		
+		if i % 256 == 0 {
+			ueSessionIdOffset++
+		}
+		ueSessionId = uint8(i) + ueSessionIdOffset
+		
+		go ue.RegistrationUe(cfg, ueSessionId, &wg, ueRegistrationSignal)
 		wg.Add(1)
 
 		<-ueRegistrationSignal
