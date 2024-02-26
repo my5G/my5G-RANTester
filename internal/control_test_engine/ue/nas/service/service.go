@@ -45,13 +45,13 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 	conn := ue.GetUnixConn()
 
 	
-	// defer func() {
-	// 	err := conn.Close()
-	// 	log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
-	// 	if err != nil {
-	// 		fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
-	// 	}
-	// }()
+	defer func() {
+		err := conn.Close()
+		log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
+		if err != nil {
+			fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
+		}
+	}()
 	
 	
 	for {
