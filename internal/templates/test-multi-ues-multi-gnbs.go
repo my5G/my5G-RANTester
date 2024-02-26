@@ -86,7 +86,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		// 	// Add it to re-registeration queue
 		// }
 
-		sleepTime := 100 * time.Millisecond
+		sleepTime := 200 * time.Millisecond
 		time.Sleep(sleepTime)
 	}
 
