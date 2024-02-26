@@ -68,6 +68,7 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 		n, err := conn.Read(buf[:])
 		if err != nil {
 			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())
+			log.Error("*****Error = ", err)
 			ueTerminationSignal <- 1
 			return
 		}
