@@ -72,7 +72,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 		cfg.Ue.Msin = imsi
 		
-		if i % 256 == 0 {
+		if (i + int(ueSessionIdOffset)) % 256 == 0 {
 			ueSessionIdOffset++
 		}
 		ueSessionId = uint8(i) + ueSessionIdOffset

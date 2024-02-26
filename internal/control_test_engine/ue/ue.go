@@ -41,7 +41,9 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ueRegistra
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.
-	err := service.InitConn(ue, ueRegistrationSignal)
+	ueTerminationSignal := make(chan int, 1)
+
+	err := service.InitConn(ue, ueRegistrationSignal, ueTerminationSignal)
 	if err != nil {
 		log.Warn("Error in ", err)
 		wg.Done()
@@ -62,9 +64,18 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ueRegistra
 	signal.Notify(sigUe, os.Interrupt)
 
 	// Block until a signal is received.
-	<- sigUe
-	ue.Terminate()
-	wg.Done()
+	select {
+	case <-sigUe:
+		ue.Terminate()
+		wg.Done()
+	case <-ueTerminationSignal:
+		ueRegistrationSignal <- 0
+		ue.Terminate()
+		wg.Done()
+	}
+	// <- sigUe
+	// ue.Terminate()
+	// wg.Done()
 	// os.Exit(0)
 
 }

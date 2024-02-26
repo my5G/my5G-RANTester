@@ -18,7 +18,7 @@ func CloseConn(ue *context.UEContext) {
 	conn.Close()
 }
 
-func InitConn(ue *context.UEContext, ueRegistrationSignal chan int) error {
+func InitConn(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminationSignal chan int) error {
 
 	// initiated communication with GNB(unix sockets).
 	gnbID, err := strconv.Atoi(string(ue.GetGnbId()))
@@ -33,25 +33,25 @@ func InitConn(ue *context.UEContext, ueRegistrationSignal chan int) error {
 	ue.SetUnixConn(conn)
 
 	// listen NAS.
-	go UeListen(ue, ueRegistrationSignal)
+	go UeListen(ue, ueRegistrationSignal, ueTerminationSignal)
 
 	return nil
 }
 
 // ue listen unix sockets.
-func UeListen(ue *context.UEContext, ueRegistrationSignal chan int) {
+func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminationSignal chan int) {
 
 	buf := make([]byte, 65535)
 	conn := ue.GetUnixConn()
 
 	
-	defer func() {
-		err := conn.Close()
-		log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
-		if err != nil {
-			fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
-		}
-	}()
+	// defer func() {
+	// 	err := conn.Close()
+	// 	log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
+	// 	if err != nil {
+	// 		fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
+	// 	}
+	// }()
 	
 	
 	for {
@@ -68,6 +68,7 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int) {
 		n, err := conn.Read(buf[:])
 		if err != nil {
 			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())
+			ueTerminationSignal <- 1
 			return
 		}
 		
