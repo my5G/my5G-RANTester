@@ -6,7 +6,7 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
 	"strconv"
-	"time"
+	// "time"
 
 	"github.com/prometheus/common/log"
 )
