@@ -12,8 +12,6 @@ var UesCounter = 0
 
 func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal chan int) {
 
-        log.Info("[UE][DATA] InitDataPlane")
-
 	// get UE GNB IP.
 	ue.SetGnbIp(message)
 
@@ -33,7 +31,7 @@ func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal c
 
 	netlink.LinkDel(newInterface)
 	if err := netlink.LinkAdd(newInterface); err != nil {
-		log.Info("[UE][DATA] Error in setting virtual interface", err)
+		log.Info("UE][DATA] Error in setting virtual interface", err)
 		return
 	}
 

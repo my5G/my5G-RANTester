@@ -65,9 +65,15 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 
 		// check security header(Downlink data).
 		if ue.UeSecurity.DLCount.SQN() > sequenceNumber {
+                        log.Printf("[UE][NAS] NAS MAC Calculate, if ue.UeSecurity.DLCount.SQN() > sequenceNumber, ue.UeSecurity.DLCount.SQN(): %+v, sequenceNumber: %+v", ue.UeSecurity.DLCount.SQN(), sequenceNumber)
 			ue.UeSecurity.DLCount.SetOverflow(ue.UeSecurity.DLCount.Overflow() + 1)
 		}
 		ue.UeSecurity.DLCount.SetSQN(sequenceNumber)
+
+		log.Printf("[UE][NAS] NAS MAC Calculate, ue: %+v", ue)
+		log.Printf("[UE][NAS] NAS MAC Calculate, payload: %+v", payload)
+		log.Printf("[UE][NAS] NAS MAC Calculate, sequenceNumber: %+v", sequenceNumber)
+		log.Printf("[UE][NAS] NAS MAC Calculate, macReceived: %+v", macReceived)
 
 		mac32, err := security.NASMacCalculate(ue.UeSecurity.IntegrityAlg,
 			ue.UeSecurity.KnasInt,

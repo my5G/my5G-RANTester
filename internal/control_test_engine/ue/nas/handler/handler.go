@@ -128,6 +128,9 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 	// sending to GNB
 	sender.SendToGnb(ue, registrationComplete)
 
+	log.Info("[UE][NAS] Sent Register Complete to GNB")
+	log.Info("[UE][NAS] Wait for Configuration Update Command")
+
 	// waiting receive Configuration Update Command.
 	time.Sleep(20 * time.Millisecond)
 
@@ -140,8 +143,12 @@ func HandlerRegistrationAccept(ue *context.UEContext, message *nas.Message) {
 	// change the sate of ue(SM).
 	ue.SetStateSM_PDU_SESSION_PENDING()
 
+	log.Info("[UE] Changed UE State to PDU SESSION PENDING")
+
 	// sending to GNB
 	sender.SendToGnb(ue, ulNasTransport)
+	log.Info("[UE][NAS] Sent UL NAS Transport with PDU Session Establishment Request to GNB")
+
 }
 
 func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message) {
@@ -149,15 +156,18 @@ func HandlerDlNasTransportPduaccept(ue *context.UEContext, message *nas.Message)
 	//getting PDU Session establishment accept.
 	payloadContainer := nas_control.GetNasPduFromPduAccept(message)
 	if payloadContainer.GsmHeader.GetMessageType() == nas.MsgTypePDUSessionEstablishmentAccept {
-		log.Info("[UE][NAS] Receiving PDU Session Establishment Accept")
+		log.Info("[UE][NAS] Received PDU Session Establishment Accept")
 
 		// update PDU Session information.
 
 		// change the state of ue(SM)(PDU Session Active).
 		ue.SetStateSM_PDU_SESSION_ACTIVE()
+		log.Info("[UE] Changed UE State to PDU SESSION ACTIVE")
 
 		// get UE ip
 		UeIp := payloadContainer.PDUSessionEstablishmentAccept.GetPDUAddressInformation()
 		ue.SetIp(UeIp)
+		log.Info("[UE] Set UE IP Address OK")
+
 	}
 }

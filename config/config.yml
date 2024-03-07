@@ -1,38 +1,35 @@
 gnodeb:
+  gnbNum: "1"
   controlif:
-    ip: "127.0.0.1"
-    port: 9487
+    ip: "172.22.0.254"
+    port: 6000
   dataif:
-    ip: "127.0.0.1"
+    ip: "172.22.0.254"
     port: 2152
   plmnlist:
-    mcc: "208"
-    mnc: "93"
+    mcc: "001"
+    mnc: "01"
     tac: "000001"
-    gnbid: "000001"
+    gnbid: "000051"
   slicesupportlist:
     sst: "01"
-    sd: "010203"
-  gnbNum: "1"
+    # sd: "010203"
 
 ue:
-  msin: "0000000001"
+  msin: "1000050009"
   key: "8baf473f2f8fd09487cccbd7097c6862"
-  opc: "8e27b6af0e692e750f32667a3b14605d"
+  opc: "11111111111111111111111111111111"
   amf: "8000"
   sqn: "0000000"
   dnn: "internet"
+  ueNum: "10"
   hplmn:
-    mcc: "208"
-    mnc: "93"
+    mcc: "001"
+    mnc: "01"
   snssai:
-    sst: 01
-    sd: "010203"
-  ueNum: "15"
+    sst: 1
+    # sd: "010203"
 
 amfif:
-  ip: "127.0.0.1"
+  ip: "172.22.0.10"
   port: 38412
-
-logs:
-    level: 4
