@@ -6,10 +6,15 @@ import (
 	"my5G-RANTester/internal/control_test_engine/gnb/ngap/handler"
 	"my5G-RANTester/lib/ngap"
 	"my5G-RANTester/lib/ngap/ngapType"
+	"sync"
 )
 
-func Dispatch(amf *context.GNBAmf, gnb *context.GNBContext, message []byte) {
+var m sync.Mutex
 
+func Dispatch(amf *context.GNBAmf, gnb *context.GNBContext, message []byte) {
+	m.Lock()
+	defer m.Unlock()
+	
 	if message == nil {
 		// TODO return error
 		log.Info("[GNB][NGAP] NGAP message is nil")

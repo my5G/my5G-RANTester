@@ -4,10 +4,14 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	data "my5G-RANTester/internal/control_test_engine/ue/data/service"
 	"my5G-RANTester/internal/control_test_engine/ue/nas"
+	"sync"
 )
 
-func DispatchState(ue *context.UEContext, message []byte, ueRegistrationSignal chan int) {
+var m sync.Mutex
 
+func DispatchState(ue *context.UEContext, message []byte, ueRegistrationSignal chan int) {
+	m.Lock()
+	defer m.Unlock()
 	// if state is PDU session inactive send to analyze NAS
 	switch ue.GetStateSM() {
 
