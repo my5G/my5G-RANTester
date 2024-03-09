@@ -60,16 +60,13 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 
 		// read message.
 		// if registered continue else break
-		// if ue.GetStateSM() == SM5G_PDU_SESSION_ACTIVE{
-		// 	conn.SetReadDeadline(time.Time{})
-		// } else {
-		// 	timeoutDuration := 1 * time.Second
-		// 	conn.SetReadDeadline(time.Now().Add(timeoutDuration))
-		// }
+		if ue.GetStateSM() == SM5G_PDU_SESSION_ACTIVE{
+			conn.SetReadDeadline(time.Time{})
+		} else {
+			timeoutDuration := 30 * time.Second
+			conn.SetReadDeadline(time.Now().Add(timeoutDuration))
+		}
 		
-		timeoutDuration := 30 * time.Second
-		conn.SetDeadline(time.Now().Add(timeoutDuration))
-
 		n, err := conn.Read(buf[:])
 		if err != nil {
 			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())
