@@ -65,15 +65,15 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 
 		// check security header(Downlink data).
 		if ue.UeSecurity.DLCount.SQN() > sequenceNumber {
-                        log.Printf("[UE][NAS] NAS MAC Calculate, if ue.UeSecurity.DLCount.SQN() > sequenceNumber, ue.UeSecurity.DLCount.SQN(): %+v, sequenceNumber: %+v", ue.UeSecurity.DLCount.SQN(), sequenceNumber)
+            // log.Printf("[UE][NAS] NAS MAC Calculate, if ue.UeSecurity.DLCount.SQN() > sequenceNumber, ue.UeSecurity.DLCount.SQN(): %+v, sequenceNumber: %+v", ue.UeSecurity.DLCount.SQN(), sequenceNumber)
 			ue.UeSecurity.DLCount.SetOverflow(ue.UeSecurity.DLCount.Overflow() + 1)
 		}
 		ue.UeSecurity.DLCount.SetSQN(sequenceNumber)
 
-		log.Printf("[UE][NAS] NAS MAC Calculate, ue: %+v", ue)
-		log.Printf("[UE][NAS] NAS MAC Calculate, payload: %+v", payload)
-		log.Printf("[UE][NAS] NAS MAC Calculate, sequenceNumber: %+v", sequenceNumber)
-		log.Printf("[UE][NAS] NAS MAC Calculate, macReceived: %+v", macReceived)
+		// log.Printf("[UE][NAS] NAS MAC Calculate, ue: %+v", ue)
+		// log.Printf("[UE][NAS] NAS MAC Calculate, payload: %+v", payload)
+		// log.Printf("[UE][NAS] NAS MAC Calculate, sequenceNumber: %+v", sequenceNumber)
+		// log.Printf("[UE][NAS] NAS MAC Calculate, macReceived: %+v", macReceived)
 
 		mac32, err := security.NASMacCalculate(ue.UeSecurity.IntegrityAlg,
 			ue.UeSecurity.KnasInt,
@@ -87,7 +87,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 
 		// check integrity
 		if !reflect.DeepEqual(mac32, macReceived) {
-			log.Info("[UE][NAS] NAS MAC verification failed(received:", macReceived, "expected:", mac32)
+			log.Info("[UE][NAS] NAS MAC verification failed(received: ", macReceived, ", expected: ", mac32)
 			return
 		} else {
 			log.Info("[UE][NAS] successful NAS MAC verification")
@@ -111,7 +111,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 		err = m.PlainNasDecode(&payload)
 		if err != nil {
 			// TODO return error
-			log.Info("[UE][NAS] Decode NAS error", err)
+			log.Info("[UE][NAS] Decode NAS error: ", err)
 			return
 		}
 
@@ -123,7 +123,7 @@ func DispatchNas(ue *context.UEContext, message []byte) {
 		err := m.PlainNasDecode(&payload)
 		if err != nil {
 			// TODO return error
-			log.Info("[UE][NAS] Decode NAS error", err)
+			log.Info("[UE][NAS] Decode NAS error: ", err)
 			return
 		}
 	}
