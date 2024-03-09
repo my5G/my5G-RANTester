@@ -74,7 +74,6 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ueRegistra
 		wg.Done()
 	case <-time.After(60 * time.Second):
 		ueRegistrationSignal <- 0
-		ue.Terminate()
 		wg.Done()
 	}
 	// <- sigUe
