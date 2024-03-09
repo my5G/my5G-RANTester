@@ -80,7 +80,13 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		go ue.RegistrationUe(cfg, ueSessionId, &wg, ueRegistrationSignal)
 		wg.Add(1)
 
-		<-ueRegistrationSignal
+		select {
+		case <-ueRegistrationSignal:
+			log.Info("[TESTER] IMSI ", imsi, " UE REGISTERED OK")
+		case <-time.After(60 * time.Second):
+			log.Info("[TESTER] IMSI ", imsi, " UE REGISTER TIMEOUT")
+		}
+		//<-ueRegistrationSignal
 		// ueStatus := <-ueRegistrationSignal
 		// if ueStatus == 0 {
 		// 	// Add it to re-registeration queue
