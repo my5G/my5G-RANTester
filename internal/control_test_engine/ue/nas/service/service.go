@@ -68,7 +68,7 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 		// }
 		
 		timeoutDuration := 30 * time.Second
-		conn.SetReadDeadline(time.Now().Add(timeoutDuration))
+		conn.SetDeadline(timeoutDuration)
 
 		n, err := conn.Read(buf[:])
 		if err != nil {
