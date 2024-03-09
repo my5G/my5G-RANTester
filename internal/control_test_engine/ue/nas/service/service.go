@@ -6,6 +6,8 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
 	"strconv"
+	"time"
+
 	// "time"
 
 	"github.com/prometheus/common/log"
@@ -65,6 +67,9 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 		// 	conn.SetReadDeadline(time.Now().Add(timeoutDuration))
 		// }
 		
+		timeoutDuration := 30 * time.Second
+		conn.SetReadDeadline(time.Now().Add(timeoutDuration))
+
 		n, err := conn.Read(buf[:])
 		if err != nil {
 			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())

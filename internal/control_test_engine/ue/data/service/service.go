@@ -12,7 +12,7 @@ var UesCounter = 0
 
 func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal chan int) {
 
-        log.Info("[UE][DATA] InitDataPlane")
+	log.Info("[UE][DATA] InitDataPlane")
 
 	// get UE GNB IP.
 	ue.SetGnbIp(message)
