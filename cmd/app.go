@@ -129,8 +129,8 @@ func main() {
 					// numUes := rand.Intn(5)
 					// numGNBs := rand.Intn(5) + 1
 
-					numUes := 100000
-					numGNBs := 25
+					numUes := 20000
+					numGNBs := 10
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
