@@ -1,5 +1,5 @@
 gnodeb:
-  gnbNum: "1"
+  gnbNum: 2
   controlif:
     ip: "172.22.0.254"
     port: 6000
@@ -16,13 +16,13 @@ gnodeb:
     # sd: "010203"
 
 ue:
+  ueNum: 10
   msin: "1000050009"
   key: "8baf473f2f8fd09487cccbd7097c6862"
   opc: "11111111111111111111111111111111"
   amf: "8000"
   sqn: "0000000"
   dnn: "internet"
-  ueNum: "10"
   hplmn:
     mcc: "001"
     mnc: "01"
@@ -33,3 +33,6 @@ ue:
 amfif:
   ip: "172.22.0.10"
   port: 38412
+
+tester:
+  testernum: 2

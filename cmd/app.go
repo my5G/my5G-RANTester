@@ -2,11 +2,10 @@ package main
 
 import (
 	// "math/rand"
-	//"strconv"
+
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/templates"
 
-	// "fmt"
 	"os"
 
 	"github.com/davecgh/go-spew/spew"
@@ -115,22 +114,18 @@ func main() {
 				},
 			},
 			{
-				Name:    "Multi-UEs-Multi-GNBs",
-				Aliases: []string{"ues-gnbs"},
+				Name:    "Multi-UEs-Multi-GNBs-Seq",
+				Aliases: []string{"ues-gnbs-seq"},
 				Usage: "\nTest multiple UEs connect to multiple GNBs.\n" +
 					"Random num [0-1000] of UEs with Random num [1-100] of GNBs\n",
-				// Flags: []cli.Flag{
-				// 	&cli.IntFlag{Name: "number-of-ues", Value: 1, Aliases: []string{"n"}},
-				// },
+
 				Action: func(c *cli.Context) error {
 					name := "Testing registration of multiple UEs"
 					cfg := config.Data
 
-					// numUes := rand.Intn(5)
-					// numGNBs := rand.Intn(5) + 1
-
-					numUes := 20000
-					numGNBs := 10
+					numUes := cfg.Ue.UeNum
+					numGNBs := cfg.GNodeB.GnbNum
+					numTesters := cfg.Tester.TesterNum
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
@@ -140,7 +135,36 @@ func main() {
 					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
 					log.Info("---------------------------------------")
-					templates.TestMultiUesMultiGNBs(numUes, numGNBs)
+
+					for i := 0; i < numTesters; i++ {
+						go templates.TestMultiUesMultiGNBsSeq(numUes, numGNBs, i)
+					}
+
+					return nil
+				},
+			},
+			{
+				Name:    "Multi-UEs-Multi-GNBs-Parallel",
+				Aliases: []string{"ues-gnbs-parallel"},
+				Usage: "\nTest multiple UEs connect to multiple GNBs.\n" +
+					"Random num [0-1000] of UEs with Random num [1-100] of GNBs\n",
+
+				Action: func(c *cli.Context) error {
+					name := "Testing registration of multiple UEs"
+					cfg := config.Data
+
+					numUes := cfg.Ue.UeNum
+					numGNBs := cfg.GNodeB.GnbNum
+
+					log.Info("---------------------------------------")
+					log.Info("[TESTER] Starting test function: ", name)
+					log.Info("[TESTER][UE] Number of UEs: ", numUes)
+					log.Info("[TESTER][UE] Number of GNBs: ", numGNBs)
+					log.Info("[TESTER][GNB] gNodeB control interface IP/Port: ", cfg.GNodeB.ControlIF.Ip, "/", cfg.GNodeB.ControlIF.Port)
+					log.Info("[TESTER][GNB] gNodeB data interface IP/Port: ", cfg.GNodeB.DataIF.Ip, "/", cfg.GNodeB.DataIF.Port)
+					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
+					log.Info("---------------------------------------")
+					templates.TestMultiUesMultiGNBsParallel(numUes, numGNBs)
 
 					return nil
 				},

@@ -3,7 +3,6 @@ package templates
 import (
 	"math/rand"
 
-	"fmt"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
 	"strconv"
@@ -15,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
+func TestMultiUesMultiGNBsParallel(numUes int, numGNBs int) {
 
 	log.Info("Num of UEs = ", numUes)
 	log.Info("Num of GNBs = ", numGNBs)
@@ -54,7 +53,7 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 
 	// time.Sleep(1 * time.Second)
 
-	ueRegistrationSignal := make(chan int, 1)
+	ueRegistrationSignal := make(chan int, numUes)
 
 	msin := cfg.Ue.Msin
 	var ueSessionIdOffset uint8 = 0
@@ -71,26 +70,19 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 		imsi := imsiGenerator(i, msin)
 		log.Info("[TESTER] TESTING REGISTRATION USING IMSI ", imsi, " UE")
 		cfg.Ue.Msin = imsi
-		
-		if (i + int(ueSessionIdOffset)) % 256 == 0 {
+
+		if (i+int(ueSessionIdOffset))%256 == 0 {
 			ueSessionIdOffset++
 		}
 		ueSessionId = uint8(i) + ueSessionIdOffset
-		
+
 		go ue.RegistrationUe(cfg, ueSessionId, &wg, ueRegistrationSignal)
 		wg.Add(1)
 
 		select {
 		case <-ueRegistrationSignal:
-			log.Info("[TESTER] IMSI ", imsi, " UE REGISTERED OK")
-		case <-time.After(60 * time.Second):
-			log.Info("[TESTER] IMSI ", imsi, " UE REGISTER TIMEOUT")
+		default:
 		}
-		//<-ueRegistrationSignal
-		// ueStatus := <-ueRegistrationSignal
-		// if ueStatus == 0 {
-		// 	// Add it to re-registeration queue
-		// }
 
 		sleepTime := 200 * time.Millisecond
 		time.Sleep(sleepTime)
@@ -100,18 +92,4 @@ func TestMultiUesMultiGNBs(numUes int, numGNBs int) {
 	// endTime := time.Now()
 	// executionTime := endTime.Sub(startTime)
 	// log.Info("Total Registeration Time =", executionTime)
-}
-
-func constructGnbID(gnbID int) string {
-	var newGnbID string
-
-	if gnbID <= 9 {
-		newGnbID = fmt.Sprintf("00000%d", gnbID)
-	} else if gnbID > 9 && gnbID <= 99 {
-		newGnbID = fmt.Sprintf("0000%d", gnbID)
-	} else if gnbID > 99 && gnbID <= 999 {
-		newGnbID = fmt.Sprintf("000%d", gnbID)
-	}
-
-	return newGnbID
 }

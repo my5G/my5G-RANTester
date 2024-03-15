@@ -15,7 +15,7 @@ var Data = getConfig()
 
 type Config struct {
 	GNodeB struct {
-		GnbNum string `yaml: "gnbNum"`
+		GnbNum    int `yaml: "gnbNum"`
 		ControlIF struct {
 			Ip   string `yaml: "ip"`
 			Port int    `yaml: "port"`
@@ -36,13 +36,13 @@ type Config struct {
 		} `yaml: "slicesupportlist"`
 	} `yaml:"gnodeb"`
 	Ue struct {
+		UeNum int    `yaml: "ueNum"`
 		Msin  string `yaml: "msin"`
 		Key   string `yaml: "key"`
 		Opc   string `yaml: "opc"`
 		Amf   string `yaml: "amf"`
 		Sqn   string `yaml: "sqn"`
 		Dnn   string `yaml: "dnn"`
-		UeNum string `yaml: "ueNum"`
 		Hplmn struct {
 			Mcc string `yaml: "mcc"`
 			Mnc string `yaml: "mnc"`
@@ -59,6 +59,9 @@ type Config struct {
 	Logs struct {
 		Level int `yaml: "level"`
 	} `yaml:"logs"`
+	Tester struct {
+		TesterNum int `yaml: "testernum"`
+	} `yaml:"tester"`
 }
 
 func RootDir() string {
